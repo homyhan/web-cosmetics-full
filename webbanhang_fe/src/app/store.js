@@ -1,13 +1,14 @@
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
 import {thunk} from 'redux-thunk';
 import { bookingReducer } from '../feature/booking/bookingSlice';
+import { adminReducer } from '../feature/admin/adminSlice';
 
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const reducer = combineReducers({
     booking: bookingReducer,
-    
+    admin: adminReducer
   });
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
 

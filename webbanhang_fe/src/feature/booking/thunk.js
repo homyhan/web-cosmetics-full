@@ -11,4 +11,16 @@ export const fetchProducts = async (dispatch) => {
     } catch (error) {
       console.log(error);
     }
-  };
+};
+
+export const fetCategories = async (dispatch)=>{
+  try{
+    const res = await cosmeticsServ.getCategories();
+    dispatch({
+      type: "SET_CATEGORY",
+      payload: res.data
+    })
+  }catch(err){
+    console.log(err);
+  }
+}
