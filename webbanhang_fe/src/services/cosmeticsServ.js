@@ -15,5 +15,8 @@ export const cosmeticsServ = {
     },
     updateCategory: (id, data)=>{
         return http.put("/category/"+id, data);
+    },
+    deleteCategory: (id)=>{
+        return http.delete("/category/"+id);
     }
 }
