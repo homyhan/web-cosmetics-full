@@ -13,7 +13,7 @@ export const fetchProducts = async (dispatch) => {
     }
 };
 
-export const fetCategories = async (dispatch)=>{
+export const fetchCategories = async (dispatch)=>{
   try{
     const res = await cosmeticsServ.getCategories();
     dispatch({
