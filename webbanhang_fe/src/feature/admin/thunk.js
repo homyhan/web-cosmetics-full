@@ -29,3 +29,11 @@ export const updateCategory =(id, data)=> async (dispatch)=>{
       console.log(err);
     }
   }
+
+export const deleteCategory =(id)=>async(dispatch)=>{
+  try{
+    const res = await cosmeticsServ.deleteCategory(id);
+  }catch(err){
+    console.log(err);
+  }
+}
