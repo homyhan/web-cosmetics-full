@@ -3,7 +3,8 @@ import { produce } from "immer";
 const initialState = {
     products:[],
     categories:[],
-    selectedCate: {}
+    selectedCate: {},
+    selectedProd: {}
   };
 
   export const adminReducer = (state = initialState, { type, payload }) => {
@@ -14,12 +15,16 @@ const initialState = {
         }
         if(type==="SET_CATEGORY"){
           
-          draft.categories = payload
+          draft.categories = payload;
         }
 
         if(type==="CATE_ITEM"){
             
-            draft.selectedCate= payload
+            draft.selectedCate= payload;
+        }
+        if(type==="SET_SELECTED_PROD"){
+          console.log(payload);
+          draft.selectedProd = payload;
         }
       
     });

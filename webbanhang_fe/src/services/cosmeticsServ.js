@@ -18,5 +18,17 @@ export const cosmeticsServ = {
     },
     deleteCategory: (id)=>{
         return http.delete("/category/"+id);
+    },
+    getProduct:(id)=>{
+        return http.get("/product/"+id);
+    },
+    addProduct: (data)=>{
+        return http.post("/products", data);
+    },
+    deleteProduct: (id)=>{
+        return http.delete("/products/"+id)
+    },
+    updateProduct: (id, data)=>{
+        return http.put("/products/"+id, data)
     }
 }

@@ -7,6 +7,8 @@ import HomeAdmin from './feature/admin/HomeAdmin';
 import CategoryAdmin from './feature/admin/CategoryAdmin';
 import FormCategory from './feature/admin/FormCategory';
 import EditCateAdmin from './feature/admin/EditCateAdmin';
+import FormAddProduct from './feature/admin/FormAddProduct';
+import FormEditProduct from './feature/admin/FormEditProduct';
 
 function App() {
   return (
@@ -16,7 +18,9 @@ function App() {
         <Route path='/admin' element={<RouterComponent Component={HomeAdmin}></RouterComponent>}></Route>
         <Route path='/admin/category' element={<RouterComponent Component={CategoryAdmin}></RouterComponent>}></Route>
         <Route path='/admin/add-category' element={<RouterComponent Component={FormCategory}></RouterComponent>}></Route>
+        <Route path='/admin/add-product' element={<RouterComponent Component={FormAddProduct}></RouterComponent>}></Route>
         <Route path='/admin/edit-category/:id' element={<RouterComponent Component={EditCateAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/edit-product/:id' element={<RouterComponent Component={FormEditProduct}></RouterComponent>}></Route>
       </Routes>
     </BrowserRouter>
   );
