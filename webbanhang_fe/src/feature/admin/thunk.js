@@ -3,7 +3,8 @@ import { cosmeticsServ } from "../../services/cosmeticsServ";
 export const postCategories =(data)=> async (dispatch)=>{
     try{
       const res = await cosmeticsServ.postCategory(data);
-      
+      // console.log("ressss", res);
+      return res.data;
     }catch(err){
       console.log(err);
     }
@@ -23,8 +24,8 @@ export const getCategory =(id)=> async (dispatch)=>{
   }
 export const updateCategory =(id, data)=> async (dispatch)=>{
     try{
-      const res = await cosmeticsServ.updateCategory(id, data);
-      
+      const res = await cosmeticsServ.updateCategory(id, data);      
+      return res.data;
     }catch(err){
       console.log(err);
     }
@@ -53,6 +54,7 @@ export const getProduct =(id)=>async(dispatch)=>{
 export const addProduct= (data)=>async(dispatch)=>{
   try{
     const res = await cosmeticsServ.addProduct(data);
+    return res.data;
   }catch(err){
     console.log(err);
   }
@@ -68,7 +70,8 @@ export const deleteProduct = (id)=>async (dispatch)=>{
 
 export const updateProduct = (id, data)=>async (dispatch)=>{
   try{
-    const res = await cosmeticsServ.updateProduct(id, data)
+    const res = await cosmeticsServ.updateProduct(id, data);
+    return res.data;
   }catch(err){
     console.log(err);
   }

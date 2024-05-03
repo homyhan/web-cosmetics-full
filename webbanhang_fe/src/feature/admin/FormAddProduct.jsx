@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../booking/thunk";
 import { addProduct, getCategory } from "./thunk";
 import { cosmeticsServ } from "../../services/cosmeticsServ";
+import Swal from 'sweetalert2'
 
 const FormAddProduct = () => {
     const [value, setValue] = useState('');
@@ -31,7 +32,7 @@ const FormAddProduct = () => {
         setCategory({"nameCategory": res?.data?.nameCategory});
     }
 
-    const handleAdd = ()=>{
+    const handleAdd = async ()=>{
         const newProduct = {
             nameProd,
             price,
@@ -41,7 +42,14 @@ const FormAddProduct = () => {
             category,
         };
         console.log(newProduct);
-        dispatch(addProduct(newProduct))
+        const res = await dispatch(addProduct(newProduct))
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: res,
+          showConfirmButton: false,
+          timer: 1500
+        });
     }
 
   return (

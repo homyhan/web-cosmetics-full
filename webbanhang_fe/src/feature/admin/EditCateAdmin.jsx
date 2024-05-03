@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import LayoutAdmin from '../../HOCs/LayoutAdmin';
 import { getCategory, updateCategory } from './thunk';
+import Swal from 'sweetalert2'
 
 const EditCateAdmin = () => {
     
@@ -16,8 +17,15 @@ const EditCateAdmin = () => {
     
     setCategoryName(event.target.value);
   };
-  const handleSubmit = () => {
-    dispatch(updateCategory(idCate, {nameCategory: categoryName}))
+  const handleSubmit = async () => {
+   const res = await dispatch(updateCategory(idCate, {nameCategory: categoryName}))
+   Swal.fire({
+    position: "Center",
+    icon: "success",
+    title: res,
+    showConfirmButton: false,
+    timer: 1500
+  });  
   };
 
 
