@@ -33,7 +33,12 @@ public class ProductController {
         }
         product.setCategory(cate);
         Product addedProd = productRepositoty.save(product);
-        return ResponseEntity.noContent().build();
+        if (addedProd != null) {
+            return ResponseEntity.status(HttpStatus.OK).body("Thêm sản phẩm mới thành công");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Thêm sản phẩm mới thất bại - Lỗi không xác định");
+        }
+//        return ResponseEntity.noContent().build();
     }
     @GetMapping("/products")
     public ResponseEntity<List<Product>> retrieveAllProduct() {
@@ -113,8 +118,13 @@ public class ProductController {
             existingProduct.setCategory(existingCategory);
         }
 
-        productRepositoty.save(existingProduct);
-        return ResponseEntity.noContent().build();
+       Product newProd = productRepositoty.save(existingProduct);
+        if (newProd != null) {
+            return ResponseEntity.status(HttpStatus.OK).body("Cập nhật sản phẩm thành công");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cập nhật sản phẩm thất bại - Lỗi không xác định");
+        }
+//        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/products/{id}")
