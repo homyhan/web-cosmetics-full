@@ -21,8 +21,12 @@ public class CategoryController {
     @PostMapping("/category")
     public ResponseEntity<String> createCategory(@RequestBody Category category){
 
-        categoryRepository.save(category);
-        return ResponseEntity.noContent().build();
+       Category cateSaved= categoryRepository.save(category);
+        if (cateSaved != null) {
+            return ResponseEntity.status(HttpStatus.OK).body("Thêm danh mục thành công");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Thêm danh mục thất bại - Lỗi không xác định");
+        }
     }
 
     @GetMapping("/category")
@@ -50,8 +54,13 @@ public class CategoryController {
 
         existingCategory.setNameCategory(updatedCategory.getNameCategory());
 
-        categoryRepository.save(existingCategory);
-        return ResponseEntity.noContent().build();
+        Category newCategory = categoryRepository.save(existingCategory);
+        if (newCategory != null) {
+            return ResponseEntity.status(HttpStatus.OK).body("Sửa danh mục thành công");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Sửa danh mục thất bại - Lỗi không xác định");
+        }
+//        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/category/{id}")
