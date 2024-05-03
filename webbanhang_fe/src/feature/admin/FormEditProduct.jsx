@@ -4,9 +4,10 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct, updateCategory, updateProduct } from "./thunk";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fetchCategories } from "../booking/thunk";
 import { cosmeticsServ } from "../../services/cosmeticsServ";
+import Swal from 'sweetalert2'
 
 const FormEditProduct = () => {
   const dispatch = useDispatch();
@@ -14,6 +15,7 @@ const FormEditProduct = () => {
   const idProd = params?.id;
   const { selectedProd, categories } = useSelector((state) => state.admin);
   const [cate, setCate] = useState(0);
+  
   const [formData, setFormData] = useState({
     nameProd: selectedProd?.nameProd || "",
     price: selectedProd?.price || "",
@@ -66,10 +68,25 @@ const FormEditProduct = () => {
     const categoryObject = mapCategoryIdToCategoryObject(cate);
     if(cate==0){
       const updatedData = { ...formData, category: {"nameCategory": selectedProd?.category?.nameCategory}  };
-     await dispatch(updateProduct(idProd, updatedData))
+    const res= await dispatch(updateProduct(idProd, updatedData));
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: res,
+      showConfirmButton: false,
+      timer: 1500
+    });
     }else{
       const updatedData = { ...formData, category: categoryObject };
-     await dispatch(updateProduct(idProd, updatedData))
+      const res = await dispatch(updateProduct(idProd, updatedData))
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res,
+        showConfirmButton: false,
+        timer: 1500
+      });
+      
     }
   };
 
