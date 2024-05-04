@@ -90,10 +90,14 @@ const LayoutAdmin = (props) => {
                 Category
               </a>
             </li>
-            <li className={activeTab === "friends" ? "active" : ""}>
+            <li  onClick={() => {
+                navigate("/admin/banner");
+                handleNavClick("activity");
+              }}
+              className={activeTab === "friends" ? "active" : ""}>
               <a href="#" onClick={() => handleNavClick("friends")}>
-                <i className="fa fa-user"></i>
-                Contacts
+                <i className="fa fa-brands fa-medium"></i>
+                Banner
               </a>
             </li>
             <li>

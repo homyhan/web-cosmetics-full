@@ -9,6 +9,9 @@ import FormCategory from './feature/admin/FormCategory';
 import EditCateAdmin from './feature/admin/EditCateAdmin';
 import FormAddProduct from './feature/admin/FormAddProduct';
 import FormEditProduct from './feature/admin/FormEditProduct';
+import BannerAdmin from './feature/admin/BannerAdmin';
+import EditBannerAdmin from './feature/admin/EditBannerAdmin';
+import NewBannerAdmin from './feature/admin/NewBannerAdmin';
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
         <Route path='/admin/add-product' element={<RouterComponent Component={FormAddProduct}></RouterComponent>}></Route>
         <Route path='/admin/edit-category/:id' element={<RouterComponent Component={EditCateAdmin}></RouterComponent>}></Route>
         <Route path='/admin/edit-product/:id' element={<RouterComponent Component={FormEditProduct}></RouterComponent>}></Route>
+        <Route path='/admin/banner' element={<RouterComponent Component={BannerAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/edit-banner/:id' element={<RouterComponent Component={EditBannerAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/add-banner' element={<RouterComponent Component={NewBannerAdmin}></RouterComponent>}></Route>
       </Routes>
     </BrowserRouter>
   );
