@@ -30,5 +30,21 @@ export const cosmeticsServ = {
     },
     updateProduct: (id, data)=>{
         return http.put("/products/"+id, data)
+    },
+    getBanners: ()=>{
+        return http.get("/banners");
+    },
+    getBanner: (id)=>{
+        return http.get("/banner/"+id);
+    },
+    updateBanner: (id, data)=>{
+        return http.put("/banners/"+id, data);
+    },
+    deleteBanner: (id)=>{
+        return http.delete("/banners/"+id);
+    },
+    postBanner: (data)=>{
+        return http.post("/banner", data);
     }
+
 }
