@@ -76,3 +76,41 @@ export const updateProduct = (id, data)=>async (dispatch)=>{
     console.log(err);
   }
 }
+
+export const getBanner = (id) => async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.getBanner(id);
+    dispatch({
+      type: "BANNER_ITEM",
+      payload: res.data
+    })
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const updateBanner =(id, data)=> async (dispatch)=>{
+  try{
+    const res = await cosmeticsServ.updateBanner(id, data);
+    return res.data
+  }catch(err){
+    console.log(err);
+  }
+}
+
+export const deleteBanner =(id)=>async(dispatch)=>{
+  try{
+    const res = await cosmeticsServ.deleteBanner(id);
+  }catch(err){
+    console.log(err);
+  }
+}
+
+export const postBanners =(data)=> async (dispatch)=>{
+  try{
+    const res = await cosmeticsServ.postBanner(data);
+    return res.data
+  }catch(err){
+    console.log(err);
+  }
+}

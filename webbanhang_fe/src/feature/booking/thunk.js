@@ -23,4 +23,16 @@ export const fetchCategories = async (dispatch)=>{
   }catch(err){
     console.log(err);
   }
+};
+
+export const fetBanners = async (dispatch)=>{
+  try{
+    const res = await cosmeticsServ.getBanners();
+    dispatch({
+      type: "SET_BANNER",
+      payload: res.data
+    })
+  }catch(err){
+    console.log(err);
+  }
 }

@@ -19,7 +19,11 @@ public class BannersController {
     @PostMapping("/banner")
     public ResponseEntity<String> createBanner(@RequestBody Banners banners) {
         Banners addedBanner = bannerJpa.save(banners);
-        return ResponseEntity.noContent().build();
+        if (addedBanner != null) {
+            return ResponseEntity.status(HttpStatus.OK).body("Thêm banner mới thành công");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Thêm banner mới thất bại - Lỗi không xác định");
+        }
     }
     @GetMapping("/banners")
     public ResponseEntity<List<Banners>> getAllBanners() {
@@ -52,8 +56,12 @@ public class BannersController {
         existingBanner.setImg(updatedBanner.getImg());
         existingBanner.setContent(updatedBanner.getContent());
 
-        bannerJpa.save(existingBanner);
-        return ResponseEntity.noContent().build();
+        Banners newBanner = bannerJpa.save(existingBanner);
+        if (newBanner != null) {
+            return ResponseEntity.status(HttpStatus.OK).body("Chỉnh sửa thành công");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Chỉnh sửa thất bại - Lỗi không xác định");
+        }
     }
 
     @DeleteMapping("/banners/{id}")
