@@ -12,6 +12,7 @@ import FormEditProduct from './feature/admin/FormEditProduct';
 import BannerAdmin from './feature/admin/BannerAdmin';
 import EditBannerAdmin from './feature/admin/EditBannerAdmin';
 import NewBannerAdmin from './feature/admin/NewBannerAdmin';
+import Login from './feature/auth/Login';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path='/admin/banner' element={<RouterComponent Component={BannerAdmin}></RouterComponent>}></Route>
         <Route path='/admin/edit-banner/:id' element={<RouterComponent Component={EditBannerAdmin}></RouterComponent>}></Route>
         <Route path='/admin/add-banner' element={<RouterComponent Component={NewBannerAdmin}></RouterComponent>}></Route>
+        <Route path='/login' element={<RouterComponent Component={Login}></RouterComponent>}></Route>
       </Routes>
     </BrowserRouter>
   );
