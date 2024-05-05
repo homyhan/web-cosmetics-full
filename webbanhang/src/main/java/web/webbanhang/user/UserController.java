@@ -113,24 +113,34 @@ public class UserController {
 	}
 
 	@PostMapping("/users")
-	public ResponseEntity<User> createUser(@RequestBody User user) {
-		if (user.getRole() == null) {
-			System.out.println("Loi 1");
-			return ResponseEntity.badRequest().build();
+	public ResponseEntity<String> createUser(@RequestBody User user) {
+		User existingUser = userRepository.findByEmail(user.getEmail());
+		if (existingUser != null) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Email đã tồn tại");
+		}else{
+			if (user.getRole() == null) {
+				System.out.println("Loi 1");
+				return ResponseEntity.badRequest().build();
+			}
+
+			Role existingRole = roleRepository.findByRoleCode(user.getRole().getRole());
+
+			if (existingRole == null) {
+				System.out.println("Loi 2");
+				return ResponseEntity.notFound().build();
+			}
+
+			user.setRole(existingRole);
+			User addedUser = userRepository.save(user);
+
+			if (addedUser != null) {
+				return ResponseEntity.status(HttpStatus.OK).body("Đăng kí thành công");
+			} else {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đăng kí thất bại - Lỗi không xác định");
+			}
+
 		}
 
-		Role existingRole = roleRepository.findByRoleCode(user.getRole().getRole());
-
-		if (existingRole == null) {
-			System.out.println("Loi 2");
-			return ResponseEntity.notFound().build();
-		}
-
-		user.setRole(existingRole);
-		User addedUser = userRepository.save(user);
-
-		// Trả về 201 Created và thông tin người dùng đã tạo
-		return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
 	}
 
 
