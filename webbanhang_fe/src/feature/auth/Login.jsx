@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import '../../components/style.css';
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { register } from "./thunk";
+import { forgotPass, generatePass, getUserByEmail, register, updatePass } from "./thunk";
 import Swal from 'sweetalert2'
    
 
 const Login = () => {
-
+    const [state, setState] = useState(true);
+    const [emailChangePass, setEmailChangePass]= useState('');
     const [formData, setFormData] = useState({
         fullName:'',
         email:'',
@@ -26,6 +27,7 @@ const Login = () => {
     const signInBtn = () => {
         const container = document.querySelector(".container");
         container.classList.remove("right-panel-active");
+        setState(true);
     };
     
     const signUpBtn = () => {
@@ -53,7 +55,34 @@ const Login = () => {
             timer: 1500
         });
     }
+
+    const handleChangeState = ()=>{
+        setState(!state);
+    }
     
+    const handleChangePass = async ()=>{
+        
+        const resNewPass = await dispatch(generatePass);
+        const resUser = await dispatch(getUserByEmail(emailChangePass));
+        const dataRes = {
+            "email": emailChangePass,
+            "newPass": resNewPass?.data
+        }
+
+        const newPass = {
+            "password": resNewPass?.data
+        }
+        await dispatch(updatePass(resUser?.data?.id, newPass))
+        
+        const res = await dispatch(forgotPass(dataRes));
+        await Swal.fire({
+            position: "center",
+            icon:  res?.status==200?"success":"error",
+            title: res.data,
+            showConfirmButton: false,
+            timer: 1500
+        });                
+    }
     
     
     return (
@@ -72,15 +101,24 @@ const Login = () => {
                     </form>
                 </div>
                 <div className="container__form container--signin">
-                    <form action="#" className="form" id="form2" onSubmit={preventDefault}>
+                    {state?<form action="#" className="form" id="form2" onSubmit={preventDefault}>
                         <h2 className="form__title">Sign In</h2>
                         <input type="email" placeholder="Email" className="input" />
                         <input type="password" placeholder="Password" className="input" />
-                        <a href="#" className="link">
+                        <a style={{cursor:'pointer'}} onClick={()=>{handleChangeState()}} className="link">
                             Forgot your password?
                         </a>
                         <button className="btn">Sign In</button>
-                    </form>
+                    </form>: <form action="#" className="form" id="form2" onSubmit={preventDefault}>
+                        <h2 className="form__title">Forgot password</h2>
+                        <input type="email" onChange={(e)=>{setEmailChangePass(e.target.value)}} placeholder="Email" className="input" name="email" />
+                        
+                        <a style={{cursor:'pointer'}} onClick={()=>{handleChangeState()}} className="link">
+                            Signin
+                        </a>
+                        <button className="btn" onClick={()=>{handleChangePass()}}>Submit</button>
+                    </form>}                    
+                    
                 </div>
                 {/* Overlay */}
                 <div className="container__overlay">

@@ -49,6 +49,18 @@ export const cosmeticsServ = {
 
     register: (data)=>{
         return http.post("/users", data);
+    },
+    generatePass: ()=>{
+        return http.get("/generatePass");
+    },
+    forgetPass: (data)=>{
+        return http.post("/users/forgot-password", data);
+    },
+    getUserByEmail: (email)=>{
+        return http.get("/user/"+email)
+    },
+    updatePass: (id, data)=>{
+        return http.put("/users/"+id+"/password", data);
     }
 
 }
