@@ -1,5 +1,6 @@
 package web.webbanhang.user;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -8,7 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import web.webbanhang.category.Category;
 import web.webbanhang.jpa.RoleJpa;
@@ -16,11 +19,16 @@ import web.webbanhang.jpa.UserJpa;
 import web.webbanhang.product.Product;
 import web.webbanhang.role.Role;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.util.Properties;
+
 @RestController
 public class UserController {
 	private UserJpa userRepository;	
 	private RoleJpa roleRepository;
-	
+
 	
 	public UserController(UserJpa userRepository, RoleJpa roleRepository) {
 		
@@ -358,6 +366,81 @@ public class UserController {
 			System.err.println("Lỗi khi thay đổi mật khẩu: " + e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
+	}
+
+	private void sendMail(String toEmail, String newPassword){
+		final String fromEmail = "cosmetics.com.vn@gmail.com";
+		final String password = "fnuhsfaqmfongbzm";
+
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+
+		Session session = Session.getInstance(props, new Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(fromEmail, password);
+			}
+		});
+
+		try {
+			String content = "<!DOCTYPE html>\n" +
+					"<html lang=\"en\">\n" +
+					"<head>\n" +
+					"    <meta charset=\"UTF-8\">\n" +
+					"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+					"    <title>Document</title>\n" +
+					"</head>\n" +
+					"<body>\n" +
+					"    <h3>Cosmetics nhận được yêu cầu <span style=\"color: red;\"><b>CẤP LẠI MẬT KHẨU</b></span> từ quý khách</h3>\n" +
+
+					"    <p>Mật khẩu mới được tạo là: "+newPassword+" </p>\n" +
+					"    <p>Cảm ơn quý khách đã tin chọn Cosmetics</p>\n" +
+					"    <p>Mọi thắc mắc xin vui lòng liên hệ:</p>\n" +
+					"    <p>Số điện thoại: 0270399999</p>\n" +
+					"    <p>Email: cosmetics.com.vn@gmail.com</p>\n" +
+					"</body>\n" +
+					"</html>";
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(fromEmail));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+			message.setSubject("THAY ĐỔI MẬT KHẨU");
+			message.setContent(content, "text/html; charset=utf-8");
+			Transport.send(message);
+			System.out.println("Email sent successfully.");
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@PostMapping("/users/forgot-password")
+	public ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> emailObj) {
+		User user = userRepository.findByEmail(emailObj.get("email"));
+		String newPass = emailObj.get("newPass");
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email không tồn tại trong hệ thống");
+		}
+		sendMail(emailObj.get("email"), newPass);
+		return ResponseEntity.status(HttpStatus.OK).body("Vui lòng kiểm tra email để đặt lại mật khẩu");
+	}
+
+	private String generateRandomString(int length) {
+		final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+		SecureRandom random = new SecureRandom();
+		StringBuilder sb = new StringBuilder(length);
+		for (int i = 0; i < length; i++) {
+			int randomIndex = random.nextInt(CHARACTERS.length());
+			sb.append(CHARACTERS.charAt(randomIndex));
+		}
+		return sb.toString();
+	}
+
+	@GetMapping("/generatePass")
+	private ResponseEntity<String> generatePassword(){
+		String res = generateRandomString(8);
+		return  ResponseEntity.status(HttpStatus.OK).body(res);
 	}
 
 }
