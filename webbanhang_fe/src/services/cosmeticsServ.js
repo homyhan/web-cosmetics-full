@@ -49,6 +49,20 @@ export const cosmeticsServ = {
 
     register: (data)=>{
         return http.post("/users", data);
+    },
+    //USER
+    getUsers: ()=>{
+        return http.get("/users")
+    }, 
+    getUser: (id)=>{
+        return http.get("/users/" + id)
+    },
+    updateStatusUser: (id, data)=> {
+        return http.put("/user/" + id, data)
+    },
+    updateUser: (id, data)=> {
+        return http.put("/edituser/" + id, data)
     }
+
 
 }

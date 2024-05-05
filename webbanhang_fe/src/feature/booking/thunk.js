@@ -36,3 +36,16 @@ export const fetBanners = async (dispatch)=>{
     console.log(err);
   }
 }
+
+//USER
+export const fetUsers = async (dispatch)=>{
+  try{
+    const res = await cosmeticsServ.getUsers();
+    dispatch({
+      type: "SET_USER",
+      payload: res.data
+    })
+  }catch(err){
+    console.log(err);
+  }
+}

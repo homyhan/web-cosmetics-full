@@ -90,14 +90,26 @@ const LayoutAdmin = (props) => {
                 Category
               </a>
             </li>
-            <li  onClick={() => {
+            <li
+              onClick={() => {
                 navigate("/admin/banner");
-                handleNavClick("activity");
+                handleNavClick("banner");
               }}
-              className={activeTab === "friends" ? "active" : ""}>
-              <a href="#" onClick={() => handleNavClick("friends")}>
+              className={activeTab === "banner" ? "active" : ""}
+            >
+              <a href="#" onClick={() => handleNavClick("banner")}>
                 <i className="fa fa-brands fa-medium"></i>
                 Banner
+              </a>
+            </li>
+            <li  onClick={() => {
+                navigate("/admin/user");
+                handleNavClick("user");
+              }}
+              className={activeTab === "user" ? "active" : ""}>
+              <a href="#" onClick={() => handleNavClick("user")}>
+                <i className="fa fa-solid fa-user"></i>
+                User
               </a>
             </li>
             <li>
