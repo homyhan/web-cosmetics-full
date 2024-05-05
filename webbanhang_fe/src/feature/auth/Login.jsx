@@ -1,7 +1,27 @@
 import React, { useState } from "react";
 import '../../components/style.css';
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { register } from "./thunk";
+import Swal from 'sweetalert2'
+   
 
 const Login = () => {
+
+    const [formData, setFormData] = useState({
+        fullName:'',
+        email:'',
+        address:'',
+        phone:'',
+        password:'',
+        status:1,
+        role:{
+            role:0,
+            nameRole: "Customer"
+        }
+    })
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     
     const signInBtn = () => {
         const container = document.querySelector(".container");
@@ -16,6 +36,23 @@ const Login = () => {
     const preventDefault = (e) => {
         e.preventDefault();
     };
+    const handleChange = (e)=>{
+        const {name, value} = e.target;
+        setFormData({
+            ...formData,
+            [name]:value
+        })
+    }
+    const handleSignUp = async()=>{        
+        const res = await dispatch(register(formData));        
+        Swal.fire({
+            position: "center",
+            icon: res?.status === 200 ? "success" : "error",
+            title: res.data,
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }
     
     
     
@@ -25,12 +62,13 @@ const Login = () => {
                 <div className="container__form container--signup">
                     <form action="#" className="form" id="form1" onSubmit={preventDefault}>
                         <h2 className="form__title">Sign Up</h2>
-                        <input type="text"  placeholder="Fullname" className="input" name="fullName" />
-                        <input type="email"  placeholder="Email" className="input" name="email"/>
-                        <input type="text" placeholder="Address" className="input" name="address"/>
-                        <input type="text" placeholder="Phone" className="input" name="phone"/>
-                        <input type="password"  placeholder="Password" className="input" name="password"/>
-                        <button className="btn">Sign Up</button>
+                        <input type="text" onChange={(e)=>{handleChange(e)}} placeholder="Fullname" className="input" name="fullName" />
+                        <input type="email" onChange={(e)=>{handleChange(e)}} placeholder="Email" className="input" name="email"/>
+                        <input type="text" onChange={(e)=>{handleChange(e)}} placeholder="Address" className="input" name="address"/>
+                        <input type="text" onChange={(e)=>{handleChange(e)}} placeholder="Phone" className="input" name="phone"/>
+                        <input type="password" onChange={(e)=>{handleChange(e)}} placeholder="Password" className="input" name="password"/>
+                        <button className="btn" onClick={()=>{handleSignUp()}}>Sign Up</button>
+                        
                     </form>
                 </div>
                 <div className="container__form container--signin">

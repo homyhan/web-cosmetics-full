@@ -45,6 +45,10 @@ export const cosmeticsServ = {
     },
     postBanner: (data)=>{
         return http.post("/banner", data);
+    },
+
+    register: (data)=>{
+        return http.post("/users", data);
     }
 
 }

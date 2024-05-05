@@ -2,8 +2,10 @@ import React, { useEffect } from "react";
 import "../../components/style.css";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "./thunk";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate =useNavigate();
   const dispatch = useDispatch();
   const products = useSelector(state=>state.booking.products);
   useEffect(()=>{
@@ -98,6 +100,11 @@ const Home = () => {
                 <a className="nav-link">
                   <i className="fa-solid fa-cart-shopping" />
                   [0]
+                </a>
+              </li>
+              <li className="nav-item cta cta-colored tagLiIconUser">
+                <a onClick={()=>{navigate("/login")}} className="nav-link">
+                  <i class="fa-solid fa-user"></i>
                 </a>
               </li>
             </ul>
