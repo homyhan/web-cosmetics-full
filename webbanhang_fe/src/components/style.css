@@ -31,15 +31,11 @@
     --breakpoint-md: 768px;
     --breakpoint-lg: 992px;
     --breakpoint-xl: 1200px;    			
-
-	/* RADII */
-	--button-radius: 0.7rem;
-
-	/* SIZES */
-	--max-width: 758px;
-	--max-height: 550px;
-
-
+    /* RADII */
+	  --button-radius: 0.7rem;
+    /* SIZES */
+    --max-width: 758px;
+    --max-height: 550px;
     --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
   
@@ -10504,9 +10500,6 @@
 }
 /* END LAYOUT ADMIN  */
 
-
-
-/* LAYOUT FORM LOGIN  */
 .formLogin{
   align-items: center;
 	background-color: white;
@@ -10647,6 +10640,7 @@
 	border: 1px solid var(--blue);
 	color: var(--white);
 	cursor: pointer;
+  cursor: pointer;
 	font-size: 0.8rem;
 	font-weight: bold;
 	letter-spacing: 0.1rem;
@@ -10703,3 +10697,4 @@
 
 
 /* END LAYOUT FORM LOGIN  */
+

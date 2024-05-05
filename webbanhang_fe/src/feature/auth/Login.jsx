@@ -4,8 +4,10 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { register } from "./thunk";
 import Swal from 'sweetalert2'
+   
 
 const Login = () => {
+
     const [formData, setFormData] = useState({
         fullName:'',
         email:'',
@@ -20,6 +22,7 @@ const Login = () => {
     })
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    
     const signInBtn = () => {
         const container = document.querySelector(".container");
         container.classList.remove("right-panel-active");
@@ -51,6 +54,8 @@ const Login = () => {
         });
     }
     
+    
+    
     return (
         <div className="formLogin">
             <div className="container right-panel-active">
@@ -63,6 +68,7 @@ const Login = () => {
                         <input type="text" onChange={(e)=>{handleChange(e)}} placeholder="Phone" className="input" name="phone"/>
                         <input type="password" onChange={(e)=>{handleChange(e)}} placeholder="Password" className="input" name="password"/>
                         <button className="btn" onClick={()=>{handleSignUp()}}>Sign Up</button>
+                        
                     </form>
                 </div>
                 <div className="container__form container--signin">
