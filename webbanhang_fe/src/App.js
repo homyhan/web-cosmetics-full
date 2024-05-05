@@ -13,6 +13,10 @@ import BannerAdmin from './feature/admin/BannerAdmin';
 import EditBannerAdmin from './feature/admin/EditBannerAdmin';
 import NewBannerAdmin from './feature/admin/NewBannerAdmin';
 import Login from './feature/auth/Login';
+import DisplayUserAdmin from './feature/admin/DisplayUserAdmin';
+import EditStatusUserAdmin from './feature/admin/EditStatusUserAdmin';
+import EditInfoUserAdmin from './feature/admin/EditInfoUserAdmin';
+import NewUserForAdmin from './feature/admin/NewUserForAdmin';
 
 function App() {
   return (
@@ -29,6 +33,10 @@ function App() {
         <Route path='/admin/edit-banner/:id' element={<RouterComponent Component={EditBannerAdmin}></RouterComponent>}></Route>
         <Route path='/admin/add-banner' element={<RouterComponent Component={NewBannerAdmin}></RouterComponent>}></Route>
         <Route path='/login' element={<RouterComponent Component={Login}></RouterComponent>}></Route>
+        <Route path='/admin/user' element={<RouterComponent Component={DisplayUserAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/edit-status/:id' element={<RouterComponent Component={EditStatusUserAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/edit-info-user/:id' element={<RouterComponent Component={EditInfoUserAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/add-user' element={<RouterComponent Component={NewUserForAdmin}></RouterComponent>}></Route>
       </Routes>
     </BrowserRouter>
   );
