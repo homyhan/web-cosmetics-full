@@ -7,6 +7,8 @@ const initialState = {
     selectedProd: {},
     banners:[],
     selectedBanner: {},
+    users: [],
+    selectedUser: {}
   };
 
   export const adminReducer = (state = initialState, { type, payload }) => {
@@ -36,6 +38,16 @@ const initialState = {
       
         if (type === "BANNER_ITEM") {          
           draft.selectedBanner = payload;
+        }
+
+        //USER
+        if(type==="SET_USER"){
+          draft.users = payload
+        }
+  
+        if(type==="USER_ITEM"){
+            
+          draft.selectedUser= payload;
         }
     });
   };
