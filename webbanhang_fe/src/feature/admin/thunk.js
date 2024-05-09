@@ -3,7 +3,6 @@ import { cosmeticsServ } from "../../services/cosmeticsServ";
 export const postCategories =(data)=> async (dispatch)=>{
     try{
       const res = await cosmeticsServ.postCategory(data);
-      // console.log("ressss", res);
       return res.data;
     }catch(err){
       console.log(err);
