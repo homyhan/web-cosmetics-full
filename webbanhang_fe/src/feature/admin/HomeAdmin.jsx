@@ -35,8 +35,7 @@ const HomeAdmin = () => {
     });
   };
 
-  const handleEdit = (id) => {
-    console.log(id);
+  const handleEdit = (id) => {    
     navigate("/admin/edit-product/" + id);
   };
   return (

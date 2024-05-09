@@ -12,7 +12,6 @@ const FormCategory = () => {
     setCategoryName(event.target.value);
   };
   const handleSubmit = async () => {
-    console.log(categoryName);
     const res = await dispatch(postCategories({ nameCategory: categoryName }));
     Swal.fire({
       position: "center",

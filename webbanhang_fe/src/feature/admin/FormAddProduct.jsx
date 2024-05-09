@@ -7,7 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../booking/thunk";
 import { addProduct, getCategory } from "./thunk";
 import { cosmeticsServ } from "../../services/cosmeticsServ";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import { storage } from "../../firebase";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 
 const FormAddProduct = () => {
     const [value, setValue] = useState('');
@@ -16,41 +19,88 @@ const FormAddProduct = () => {
     const [img, setImg] = useState('');
     const [quantity, setQuantity] = useState('');
     const [category, setCategory] = useState({});
+    const [imgUrl, setImgUrl] = useState('');
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
     const categories = useSelector(state=>state.admin.categories);
+
+    const toolbarOptions = [
+      ['bold', 'italic', 'underline', 'strike'],        
+      ['blockquote', 'code-block'],
+      ['link', 'image', 'video', 'formula'],
+    
+      [{ 'header': 1 }, { 'header': 2 }],               
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+      [{ 'script': 'sub'}, { 'script': 'super' }],      
+      [{ 'indent': '-1'}, { 'indent': '+1' }],          
+      [{ 'direction': 'rtl' }],                         
+    
+      [{ 'size': ['small', false, 'large', 'huge'] }],  
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    
+      [{ 'color': [] }, { 'background': [] }],          
+      [{ 'font': [] }],
+      [{ 'align': [] }],
+    
+      ['clean']                                         
+    ];
+
+    const module ={
+      toolbar: toolbarOptions
+    }
+
     useEffect(()=>{
         dispatch(fetchCategories);
     },[]);
 
     const handleSelectCate = async (id)=>{
-        console.log(id);
-        // setCategory(id);
         const res = await cosmeticsServ.getCategory(id);
-        console.log(res?.data);
         setCategory({"nameCategory": res?.data?.nameCategory});
     }
+   
+    const handleChangeFile = (e) => {
+      const imageFile = e.target.files[0];
+    
+      const storageRef = ref(storage, `imagesProduct/${imageFile.name}`);
 
-    const handleAdd = async ()=>{
+      uploadBytes(storageRef, imageFile)
+        .then((snapshot) => {
+          getDownloadURL(snapshot.ref)
+            .then((url) => {
+              setImgUrl(url);
+            })
+            .catch((error) => {
+              console.error("Error URL:", error);
+            });
+        })
+        .catch((error) => {
+          console.error("Error upload img:", error);
+        });
+    };
+
+     const handleAdd = async ()=>{
         const newProduct = {
             nameProd,
             price,
-            img,
+            img: imgUrl,
             quantity,
             description: value,
             category,
         };
-        console.log(newProduct);
         const res = await dispatch(addProduct(newProduct))
-        Swal.fire({
+        await Swal.fire({
           position: "center",
           icon: "success",
           title: res,
           showConfirmButton: false,
           timer: 1500
         });
+        navigate("/admin")
+        
     }
+
+    
 
   return (
     <LayoutAdmin>
@@ -65,8 +115,9 @@ const FormAddProduct = () => {
         </div>
         <div className="mb-3">
           <label className="form-label">Hình ảnh</label>
-          <input type="text" className="form-control" value={img} onChange={(e) => setImg(e.target.value)}/>
-          <input type="file" className="form-control" />
+          {/* <input type="text" className="form-control" value={img} onChange={(e) => setImg(e.target.value)}/> */}
+          <input type="file" className="form-control" onChange={(e)=>{handleChangeFile(e)}}/>
+          <img src={imgUrl} alt="" />
         </div>
         <div className="mb-3">
           <label className="form-label">Số lượng</label>
@@ -76,7 +127,7 @@ const FormAddProduct = () => {
 
         <div className="mb-3">
             <label className="form-label">Mô tả</label>
-            <ReactQuill theme="snow" value={value} onChange={setValue}></ReactQuill>
+            <ReactQuill modules={module} theme="snow" value={value} onChange={setValue}></ReactQuill>
         </div>
         <div className="mb-3">
           <label className="form-label">Danh mục</label>

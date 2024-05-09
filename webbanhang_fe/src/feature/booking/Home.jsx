@@ -5,17 +5,16 @@ import { fetchProducts } from "./thunk";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const navigate =useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const products = useSelector(state=>state.booking.products);
-  useEffect(()=>{
+  const products = useSelector((state) => state.booking.products);
+  useEffect(() => {
     dispatch(fetchProducts);
-    
   }, [dispatch]);
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(products);
-  }, [products])
+  }, [products]);
 
   return (
     <div>
@@ -103,7 +102,12 @@ const Home = () => {
                 </a>
               </li>
               <li className="nav-item cta cta-colored tagLiIconUser">
-                <a onClick={()=>{navigate("/login")}} className="nav-link">
+                <a
+                  onClick={() => {
+                    navigate("/login");
+                  }}
+                  className="nav-link"
+                >
                   <i class="fa-solid fa-user"></i>
                 </a>
               </li>
@@ -112,23 +116,24 @@ const Home = () => {
         </div>
       </nav>
 
-      {/* BANNER  */}
+      {/* BANNER  */}     
 
       {/* PRODUCT  */}
       <section className="sectionProduct py-5">
         <h2 className="text-center">OUR PRODUCT</h2>
         <div className="listProductHome">
-          {products?.map((item, key)=>{
+          {products?.map((item, key) => {
             return (
               <div key={item?.id} className="item">
-            <img src={item?.img} alt="" />
-            <h1>{item?.nameProd}</h1>
-            <p className="price">{item?.price}</p>
-            <button><i className="fa-solid fa-cart-shopping"></i></button>
-          </div>
-            )
+                <img src={item?.img} alt="" />
+                <h1>{item?.nameProd}</h1>
+                <p className="price">{item?.price}</p>
+                <button>
+                  <i className="fa-solid fa-cart-shopping"></i>
+                </button>
+              </div>
+            );
           })}
-          
         </div>
       </section>
     </div>

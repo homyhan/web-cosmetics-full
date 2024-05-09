@@ -27,7 +27,6 @@ const initialState = {
             draft.selectedCate= payload;
         }
         if(type==="SET_SELECTED_PROD"){
-          console.log(payload);
           draft.selectedProd = payload;
         }
 

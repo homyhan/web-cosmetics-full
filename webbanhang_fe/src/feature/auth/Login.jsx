@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { forgotPass, generatePass, getUserByEmail, register, updatePass } from "./thunk";
 import Swal from 'sweetalert2'
+import { validation } from "../../services/validation";
    
 
 const Login = () => {
@@ -20,7 +21,14 @@ const Login = () => {
             role:0,
             nameRole: "Customer"
         }
-    })
+    });
+    const [errors, setErrors] = useState({
+        fullName:'',
+        email:'',
+        address:'',
+        phone:'',
+        password:'',
+    });
     const dispatch = useDispatch();
     const navigate = useNavigate();
     
@@ -39,22 +47,62 @@ const Login = () => {
         e.preventDefault();
     };
     const handleChange = (e)=>{
-        const {name, value} = e.target;
+        const {name, value} = e.target;        
         setFormData({
             ...formData,
             [name]:value
         })
     }
-    const handleSignUp = async()=>{        
-        const res = await dispatch(register(formData));        
-        Swal.fire({
-            position: "center",
-            icon: res?.status === 200 ? "success" : "error",
-            title: res.data,
-            showConfirmButton: false,
-            timer: 1500
-        });
+    const handleSignUp = async()=>{   
+        
+
+        // const validationErrors = validation(formData); // Perform input validation
+        // if (Object.keys(validationErrors).length > 0) {
+        //     // There are validation errors, update state to show errors
+        //     setErrors(validationErrors);
+        // } else {
+        //     // No validation errors, proceed with signup
+        //     const res = await dispatch(register(formData));
+        //     Swal.fire({
+        //         position: "center",
+        //         icon: res?.status === 200 ? "success" : "error",
+        //         title: res.data,
+        //         showConfirmButton: false,
+        //         timer: 1500
+        //     });
+        // }
+        const formErrors = validation(formData); // Perform input validation for all fields
+        setErrors(formErrors); // Update error state for all fields
+
+        if (Object.keys(formErrors).length === 0) {
+            // No validation errors, proceed with signup
+            const res = await dispatch(register(formData));
+            Swal.fire({
+                position: "center",
+                icon: res?.status === 200 ? "success" : "error",
+                title: res.data,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+       
     }
+    function isObjectEmpty(obj) {
+        return Object.entries(obj).length === 0;
+      }
+
+    // const handleValidation = (data)=>{
+    //     setErr(validation(data));
+    // }
+
+    const handleBlur = (e) => {
+        const { name } = e.target;
+        const fieldErrors = validation({ [name]: formData[name] }); // Perform validation for the specific field
+        setErrors(prevErrors => ({
+            ...prevErrors,
+            [name]: fieldErrors[name] || '' // Update error state for the specific field
+        }));
+    };
 
     const handleChangeState = ()=>{
         setState(!state);
@@ -91,11 +139,16 @@ const Login = () => {
                 <div className="container__form container--signup">
                     <form action="#" className="form" id="form1" onSubmit={preventDefault}>
                         <h2 className="form__title">Sign Up</h2>
-                        <input type="text" onChange={(e)=>{handleChange(e)}} placeholder="Fullname" className="input" name="fullName" />
-                        <input type="email" onChange={(e)=>{handleChange(e)}} placeholder="Email" className="input" name="email"/>
-                        <input type="text" onChange={(e)=>{handleChange(e)}} placeholder="Address" className="input" name="address"/>
-                        <input type="text" onChange={(e)=>{handleChange(e)}} placeholder="Phone" className="input" name="phone"/>
-                        <input type="password" onChange={(e)=>{handleChange(e)}} placeholder="Password" className="input" name="password"/>
+                        <input type="text" onBlur={handleBlur} onChange={(e)=>{handleChange(e)}} placeholder="Fullname" className="input" name="fullName" />
+                        {errors.fullName&& <span style={{color:'red', fontSize:'13px'}}>{errors.fullName}</span> }
+                        <input type="email" onBlur={handleBlur} onChange={(e)=>{handleChange(e)}} placeholder="Email" className="input" name="email"/>
+                        {errors.email&& <span style={{color:'red', fontSize:'13px'}}>{errors.email}</span> }
+                        <input type="text" onBlur={handleBlur} onChange={(e)=>{handleChange(e)}} placeholder="Address" className="input" name="address"/>
+                        {errors.address&& <span style={{color:'red', fontSize:'13px'}}>{errors.address}</span> }
+                        <input type="text" onBlur={handleBlur} onChange={(e)=>{handleChange(e)}} placeholder="Phone" className="input" name="phone"/>
+                        {errors.phone&& <span style={{color:'red', fontSize:'13px'}}>{errors.phone}</span> }
+                        <input type="password" onBlur={handleBlur} onChange={(e)=>{handleChange(e)}} placeholder="Password" className="input" name="password"/>
+                        {errors.password&& <span style={{color:'red', fontSize:'13px'}}>{errors.password}</span> }
                         <button className="btn" onClick={()=>{handleSignUp()}}>Sign Up</button>
                         
                     </form>
