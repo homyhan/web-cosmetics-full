@@ -82,4 +82,23 @@ export const cosmeticsServ = {
     login: (data)=>{
         return http.post("/login", data);
     },
+
+    addToCart: (data)=>{
+        return http.post("/carts", data)
+    },
+
+    getCartById: (id)=>{
+        return http.get("/carts/"+id);
+    },
+    updateQuantityProdCart: (id, quantity)=>{
+        return http.put("/carts/"+id+"?quantity="+quantity)
+    },
+
+    removeProdInCart: (userId, idCart)=>{
+        return http.delete("/carts?userId="+userId+"&id="+idCart);
+    },
+
+    clearCart: (idUser)=>{
+        return http.delete("/allCarts?userId="+idUser);
+    }
 }

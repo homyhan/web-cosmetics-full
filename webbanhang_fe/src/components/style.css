@@ -8928,7 +8928,8 @@
     color: #000000; }
   
   .cart-list {
-    overflow-x: scroll; }
+    /* overflow-x: scroll;  */
+  }
   
   .table {
     min-width: 1000px !important;
@@ -8948,6 +8949,9 @@
       padding: 40px 10px;
       border: 1px solid transparent !important;
       border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important; }
+      .table tbody tr td.titleProdInCart {
+        text-align: center !important;
+      }
       .table tbody tr td.product-remove a {
         bordeR: 1px solid rgba(0, 0, 0, 0.1);
         padding: 4px 10px;

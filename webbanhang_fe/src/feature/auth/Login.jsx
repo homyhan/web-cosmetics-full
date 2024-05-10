@@ -170,7 +170,7 @@ const Login = () => {
         // Nếu cả email và password đều được điền, tiếp tục quá trình đăng nhập
         const res = await dispatch(login({ email, password }));
         
-        console.log(res);
+        console.log("user", res);
 
         if (res?.status === 200) {
             if (res.data.role.nameRole === "Admin") {
@@ -180,6 +180,8 @@ const Login = () => {
                 // Nếu là user, chuyển hướng đến trang user
                 navigate('/');
             }
+            localStorage.setItem("emailCosmetics", email);
+            localStorage.setItem("passcosmetics", password);
         } else {
             Swal.fire({
                 position: "center",

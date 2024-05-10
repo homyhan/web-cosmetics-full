@@ -1,20 +1,57 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "../../components/style.css";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts } from "./thunk";
+import { fetchProducts, addToCart, fetchCartById } from "./thunk";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const products = useSelector((state) => state.booking.products);
+  const {user} = useSelector(state=>state.auth);
+  const [quantityProdCart, setQuantityProdCart] = useState(0);
   useEffect(() => {
     dispatch(fetchProducts);
+    getQuantityProdInCart();
   }, [dispatch]);
 
-  useEffect(() => {
-    console.log(products);
-  }, [products]);
+
+  const getQuantityProdInCart = async () => {
+    const idUser = user?.id;
+    if (idUser) {
+      const res = await dispatch(fetchCartById(idUser));   
+      setQuantityProdCart(res?.data?.length);
+    }
+  };
+
+  const handleAddToCart=async(id)=>{
+    const userId = user?.id;
+    const productId = id;
+    const res = await dispatch(addToCart({userId, productId}));
+    getQuantityProdInCart();
+    if(res.status=="200"){
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.data,
+        showConfirmButton: false,
+        timer: 1500
+    });
+    }else{
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: res.data,
+        showConfirmButton: false,
+        timer: 1500
+    });
+    }
+  }
+
+  const handleToCartPage=async()=>{
+    navigate("/cart");
+  }
 
   return (
     <div>
@@ -51,7 +88,7 @@ const Home = () => {
         id="ftco-navbar"
       >
         <div className="container">
-        <a className="navbar-brand" onClick={() => {
+        <a className="navbar-brand" style={{cursor:'pointer'}} onClick={() => {
                     navigate("/");
                   }}>
               COSMETICS
@@ -70,7 +107,7 @@ const Home = () => {
           <div className="collapse navbar-collapse" id="ftco-nav">
             <ul className="navbar-nav ml-auto">
               <li className="nav-item active">
-                <a className="nav-link">Home</a>
+                <a className="nav-link" style={{cursor:'pointer'}} onClick={()=>{navigate("/")}}>Home</a>
               </li>
               <li className="nav-item dropdown">
                 <a
@@ -100,11 +137,13 @@ const Home = () => {
                 <a className="nav-link">Contact</a>
               </li>
               <li className="nav-item cta cta-colored">
-                <a onClick={() => {
-                    navigate("/cart");
+                <a
+                  style={{cursor:'pointer'}}
+                onClick={() => {
+                    handleToCartPage();
                   }} className="nav-link">
                   <i className="fa-solid fa-cart-shopping" />
-                  [0]
+                  [{quantityProdCart}]
                 </a>
               </li>
               <li className="nav-item cta cta-colored tagLiIconUser">
@@ -134,7 +173,7 @@ const Home = () => {
                 <img src={item?.img} alt="" />
                 <h1>{item?.nameProd}</h1>
                 <p className="price">{item?.price}</p>
-                <button>
+                <button onClick={()=>{handleAddToCart(item?.id)}}>
                   <i className="fa-solid fa-cart-shopping"></i>
                 </button>
               </div>
