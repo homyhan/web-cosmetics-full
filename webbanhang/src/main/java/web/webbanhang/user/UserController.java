@@ -152,6 +152,9 @@ public class UserController {
 
 	}
 
+
+
+
 	// Hien thi thong tin user thông qua e mail
 	@GetMapping("/user/{email}")
 	public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
@@ -172,20 +175,16 @@ public class UserController {
 		}
 	}
 	@PostMapping("/login")
-	public ResponseEntity<String> login(@Validated @RequestBody LoginRequest userLoginRequest) {
+	public ResponseEntity<?> login(@Validated @RequestBody LoginRequest userLoginRequest) {
 		String email = userLoginRequest.getEmail();
 		String password = userLoginRequest.getPassword();
 
 		User user = userRepository.findByEmail(email);
 		if (user != null && user.getPassword().equals(password)) {
-			String nameRole = user.getRole().getNameRole();
-			if (nameRole.equals("Admin")) {
-				return ResponseEntity.ok("admin");
-			} else if (nameRole.equals("Customer")) {
-				return ResponseEntity.ok("user");
-			}
+			return ResponseEntity.ok(user);
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email hoặc mật khẩu không chính xác");
 		}
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email hoặc mật khẩu không chính xác");
 	}
 
 //	@PostMapping("/login")
@@ -195,18 +194,16 @@ public class UserController {
 //
 //		User user = userRepository.findByEmail(email);
 //		if (user != null && user.getPassword().equals(password)) {
-//			// Kiểm tra role_id của người dùng
-//			int roleId = user.getRole().getId();
-//			if (roleId == 1) {
-//				// Nếu role_id là 1 (admin), trả về chuỗi "admin"
+//			String nameRole = user.getRole().getNameRole();
+//			if (nameRole.equals("Admin")) {
 //				return ResponseEntity.ok("admin");
-//			} else if (roleId == 2) {
-//				// Nếu role_id là 2 (user), trả về chuỗi "user"
+//			} else if (nameRole.equals("Customer")) {
 //				return ResponseEntity.ok("user");
 //			}
 //		}
 //		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email hoặc mật khẩu không chính xác");
 //	}
+
 
 //	@GetMapping("/users/search/{keyword}")
 //	public ResponseEntity<List<User>> searchUsersByName(@PathVariable String keyword) {
