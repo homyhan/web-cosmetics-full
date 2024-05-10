@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import '../../components/style.css';
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { forgotPass, generatePass, getUserByEmail, register, updatePass } from "./thunk";
+import { forgotPass, generatePass, getUserByEmail, register, updatePass, login } from "./thunk";
 import Swal from 'sweetalert2'
 import { validation } from "../../services/validation";
    
@@ -131,7 +131,65 @@ const Login = () => {
             timer: 1500
         });                
     }
+
+    const [errorMessages, setErrorMessages] = useState({
+        email: '',
+        password: ''
+    });
+    const handleSignIn = async () => {
+        const email = document.querySelector("#email").value;
+        const password = document.querySelector("#password").value;
     
+        setErrorMessages({
+            email: '',
+            password: ''
+        });
+        if (!email.trim() && !password.trim()) {
+            // Nếu cả email và password đều trống, hiển thị thông báo lỗi cho cả hai trường
+            setErrorMessages({
+                email: 'Vui lòng nhập email',
+                password: 'Vui lòng nhập mật khẩu'
+            });
+            return;
+        } else if (!email.trim()) {
+            // Nếu trường email trống, hiển thị thông báo lỗi cho trường email
+            setErrorMessages({
+                email: 'Vui lòng nhập email',
+                password: ''
+            });
+            return;
+        } else if (!password.trim()) {
+            // Nếu trường password trống, hiển thị thông báo lỗi cho trường password
+            setErrorMessages({
+                email: '',
+                password: 'Vui lòng nhập mật khẩu'
+            });
+            return;
+        }
+    
+        // Nếu cả email và password đều được điền, tiếp tục quá trình đăng nhập
+        const res = await dispatch(login({ email, password }));
+    
+        if (res?.status === 200) {
+            // Xử lý phản hồi từ máy chủ
+            if (res.data === "admin") {
+                // Nếu là admin, chuyển hướng đến trang admin
+                navigate('/admin');
+            } else if (res.data === "user") {
+                // Nếu là user, chuyển hướng đến trang user
+                navigate('/');
+            }
+        } else {
+            // Hiển thị thông báo lỗi nếu đăng nhập không thành công
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: res.data,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    };
     
     return (
         <div className="formLogin">
@@ -156,12 +214,14 @@ const Login = () => {
                 <div className="container__form container--signin">
                     {state?<form action="#" className="form" id="form2" onSubmit={preventDefault}>
                         <h2 className="form__title">Sign In</h2>
-                        <input type="email" placeholder="Email" className="input" />
-                        <input type="password" placeholder="Password" className="input" />
+                        <input type="email" id="email" placeholder="Email" className="input" />
+                        <span style={{ color: 'red', fontSize: '13px' }}>{errorMessages.email}</span>
+                        <input type="password" id="password" placeholder="Password" className="input" />
+                        <span style={{ color: 'red', fontSize: '13px' }}>{errorMessages.password}</span>
                         <a style={{cursor:'pointer'}} onClick={()=>{handleChangeState()}} className="link">
                             Forgot your password?
                         </a>
-                        <button className="btn">Sign In</button>
+                        <button className="btn" onClick={handleSignIn}>Sign In</button>
                     </form>: <form action="#" className="form" id="form2" onSubmit={preventDefault}>
                         <h2 className="form__title">Forgot password</h2>
                         <input type="email" onChange={(e)=>{setEmailChangePass(e.target.value)}} placeholder="Email" className="input" name="email" />
