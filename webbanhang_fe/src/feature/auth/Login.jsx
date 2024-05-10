@@ -173,16 +173,14 @@ const Login = () => {
         console.log(res);
 
         if (res?.status === 200) {
-            // Xử lý phản hồi từ máy chủ
-            if (res.data === "admin") {
+            if (res.data.role.nameRole === "Admin") {
                 // Nếu là admin, chuyển hướng đến trang admin
                 navigate('/admin');
-            } else if (res.data === "user") {
+            } else if (res.data.role.nameRole === "Customer") {
                 // Nếu là user, chuyển hướng đến trang user
                 navigate('/');
             }
         } else {
-            // Hiển thị thông báo lỗi nếu đăng nhập không thành công
             Swal.fire({
                 position: "center",
                 icon: "error",
@@ -192,6 +190,7 @@ const Login = () => {
             });
         }
     };
+    
     
     return (
         <div className="formLogin">
