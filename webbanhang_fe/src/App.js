@@ -17,6 +17,7 @@ import DisplayUserAdmin from './feature/admin/DisplayUserAdmin';
 import EditStatusUserAdmin from './feature/admin/EditStatusUserAdmin';
 import EditInfoUserAdmin from './feature/admin/EditInfoUserAdmin';
 import NewUserForAdmin from './feature/admin/NewUserForAdmin';
+import Cart from './feature/booking/Cart';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path='/admin/edit-status/:id' element={<RouterComponent Component={EditStatusUserAdmin}></RouterComponent>}></Route>
         <Route path='/admin/edit-info-user/:id' element={<RouterComponent Component={EditInfoUserAdmin}></RouterComponent>}></Route>
         <Route path='/admin/add-user' element={<RouterComponent Component={NewUserForAdmin}></RouterComponent>}></Route>
+        <Route path='/cart' element={<RouterComponent Component={Cart}></RouterComponent>}></Route>
       </Routes>
     </BrowserRouter>
   );

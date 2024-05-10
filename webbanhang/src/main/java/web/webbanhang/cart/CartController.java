@@ -69,12 +69,44 @@ public class CartController {
         }
     }
 
+    @PutMapping("/carts/{cartId}")
+    public ResponseEntity<String> updateCartItemQuantity(@PathVariable int cartId, @RequestParam int quantity) {
+        try {
+            Optional<Cart> optionalCart = cartRepository.findById(cartId);
+
+            if (!optionalCart.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Cart cart = optionalCart.get();
+            cart.setQuantity(quantity);
+            cartRepository.save(cart);
+
+            return ResponseEntity.ok("Cart item quantity updated successfully");
+        } catch (Exception e) {
+            System.err.println("Error updating cart item quantity: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating cart item quantity");
+        }
+    }
+
     @Transactional
     @DeleteMapping("/carts")
-    public ResponseEntity<String> removeFromCart(@RequestParam int userId, @RequestParam int productId) {
+    public ResponseEntity<String> removeFromCart(@RequestParam int userId, @RequestParam int id) {
         try {
-            cartRepository.deleteByUserIdAndProductId(userId, productId);
+            cartRepository.deleteByUserIdAndId(userId, id);
             return ResponseEntity.ok("Removed from cart successfully");
+        } catch (Exception e) {
+            System.err.println("Error removing from cart: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error removing from cart");
+        }
+    }
+
+    @Transactional
+    @DeleteMapping("/allCarts")
+    public ResponseEntity<String> removeAllCartByUser(@RequestParam int userId) {
+        try {
+            cartRepository.deleteAllByUserId(userId);
+            return ResponseEntity.ok("Removed all cart successfully");
         } catch (Exception e) {
             System.err.println("Error removing from cart: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error removing from cart");

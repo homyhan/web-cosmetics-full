@@ -20,7 +20,9 @@ public class CategoryController {
 
     @PostMapping("/category")
     public ResponseEntity<String> createCategory(@RequestBody Category category){
-
+        if (categoryRepository.existsByNameCategory(category.getNameCategory())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Danh mục đã tồn tại");
+        }
        Category cateSaved= categoryRepository.save(category);
         if (cateSaved != null) {
             return ResponseEntity.status(HttpStatus.OK).body("Thêm danh mục thành công");
@@ -51,6 +53,10 @@ public class CategoryController {
         }
 
         Category existingCategory = optionalCategory.get();
+
+//        if(categoryRepository.existsByNameCategory(updatedCategory.getNameCategory())){
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Danh mục đã tồn tại");
+//        }
 
         existingCategory.setNameCategory(updatedCategory.getNameCategory());
 
