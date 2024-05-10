@@ -64,7 +64,7 @@ export const cosmeticsServ = {
     },
 
      //USER
-     getUsers: ()=>{
+    getUsers: ()=>{
         return http.get("/users")
     }, 
     getUser: (id)=>{
@@ -75,6 +75,11 @@ export const cosmeticsServ = {
     },
     updateUser: (id, data)=> {
         return http.put("/edituser/" + id, data)
-    }
+    },
     //END
+
+    //LOGIN
+    login: (data)=>{
+        return http.post("/login", data);
+    },
 }

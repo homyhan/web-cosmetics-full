@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -173,27 +174,48 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
-
 	@PostMapping("/login")
-	public ResponseEntity<User> loginUser(@RequestParam String email, @RequestParam String password) {
-		try {
-			User user = userRepository.findByEmail(email);
+	public ResponseEntity<String> login(@Validated @RequestBody LoginRequest userLoginRequest) {
+		String email = userLoginRequest.getEmail();
+		String password = userLoginRequest.getPassword();
 
-			//Check user co ton tai hay ko
-			if (user == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+		// Thực hiện logic xác thực ở đây, ví dụ:
+		User user = userRepository.findByEmail(email);
+		if (user != null && user.getPassword().equals(password)) {
+			// Kiểm tra role_id của người dùng
+			int roleId = user.getRole().getId();
+			if (roleId == 1) {
+				// Nếu role_id là 1 (admin), trả về chuỗi "admin"
+				return ResponseEntity.ok("admin");
+			} else if (roleId == 2) {
+				// Nếu role_id là 2 (user), trả về chuỗi "user"
+				return ResponseEntity.ok("user");
 			}
-
-			if (!user.getPassword().equals(password)) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-			}
-
-			return ResponseEntity.ok(user);
-		} catch (Exception e) {
-			System.err.println("Lỗi khi đăng nhập: " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
+		// Nếu không tìm thấy người dùng hoặc mật khẩu không chính xác, trả về mã lỗi 401
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email hoặc mật khẩu không chính xác");
 	}
+
+//	@PostMapping("/login")
+//	public ResponseEntity<User> loginUser(@RequestParam String email, @RequestParam String password) {
+//		try {
+//			User user = userRepository.findByEmail(email);
+//
+//			//Check user co ton tai hay ko
+//			if (user == null) {
+//				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+//			}
+//
+//			if (!user.getPassword().equals(password)) {
+//				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+//			}
+//
+//			return ResponseEntity.ok(user);
+//		} catch (Exception e) {
+//			System.err.println("Lỗi khi đăng nhập: " + e.getMessage());
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//		}
+//	}
 //	@GetMapping("/users/search/{keyword}")
 //	public ResponseEntity<List<User>> searchUsersByName(@PathVariable String keyword) {
 //		try {
