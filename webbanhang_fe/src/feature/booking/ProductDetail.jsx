@@ -55,7 +55,7 @@ const ProductDetail = () => {
     const userId = user?.id;
     if(userId){
       const productId = id;
-    const res = await dispatch(addToCart({userId, productId,}));
+    const res = await dispatch(addToCart({userId, productId, quantity}));
     getQuantityProdInCart();
     if(res.status=="200"){
       Swal.fire({
