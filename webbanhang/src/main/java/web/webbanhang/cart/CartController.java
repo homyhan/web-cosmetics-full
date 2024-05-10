@@ -55,7 +55,7 @@ public class CartController {
                 cart.setQuantity(cart.getQuantity() + 1);
                 cartRepository.save(cart);
             } else {
-                Cart newCart = new Cart(user, product, 1, new Date());
+                Cart newCart = new Cart(user, product, quantity, new Date());
                 cartRepository.save(newCart);
             }
 
