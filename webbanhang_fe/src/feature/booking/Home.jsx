@@ -27,7 +27,8 @@ const Home = () => {
 
   const handleAddToCart=async(id)=>{
     const userId = user?.id;
-    const productId = id;
+    if(userId){
+      const productId = id;
     const res = await dispatch(addToCart({userId, productId}));
     getQuantityProdInCart();
     if(res.status=="200"){
@@ -47,6 +48,10 @@ const Home = () => {
         timer: 1500
     });
     }
+    }else{
+      navigate("/login")
+    }
+    
   }
 
   const handleToCartPage=async()=>{
