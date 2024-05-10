@@ -92,3 +92,14 @@ export const clearCart = (userId)=>async(dispatch)=>{
     console.log(error);
   }
 }
+export const getProduct =(id)=> async (dispatch)=>{
+  try{
+    const res = await cosmeticsServ.getProduct(id);
+    dispatch({
+      type:"PRO_ITEM",
+      payload: res.data
+    })
+  }catch(err){
+    console.log(err);
+  }
+}

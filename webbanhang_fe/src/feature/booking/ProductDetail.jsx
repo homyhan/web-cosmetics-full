@@ -1,15 +1,41 @@
-import React, { useEffect, useState } from "react";
-import "../../components/style.css";
+
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts, addToCart, fetchCartById } from "./thunk";
+import "../../components/style.css";
 import { useNavigate } from "react-router-dom";
+import { getProduct } from "./thunk";
+import { useParams } from 'react-router-dom';
+import { fetchProducts, addToCart, fetchCartById } from "./thunk";
 import Swal from "sweetalert2";
 
-const Home = () => {
-  const navigate = useNavigate();
+const ProductDetail = () => {
   const dispatch = useDispatch();
-  const products = useSelector((state) => state.booking.products);
+  const navigate = useNavigate();
+  const params = useParams();
+  const productId = params?.id;
+  const selectedPro = useSelector((state) => state.booking.selectedPro);
   const {user} = useSelector(state=>state.auth);
+ // Lấy thông tin sản phẩm từ store
+
+  useEffect(() => {
+    dispatch(getProduct(productId)); // Dispatch action để lấy thông tin sản phẩm khi component được render
+  }, [dispatch, productId]);
+
+  // State để lưu trữ số lượng sản phẩm
+  const [quantity, setQuantity] = useState(1);
+
+  // Hàm xử lý sự kiện khi nhấn nút tăng số lượng
+  const increaseQuantity = () => {
+    setQuantity(quantity + 1);
+  };
+
+  // Hàm xử lý sự kiện khi nhấn nút giảm số lượng
+  const decreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
   const [quantityProdCart, setQuantityProdCart] = useState(0);
   useEffect(() => {
     dispatch(fetchProducts);
@@ -29,7 +55,7 @@ const Home = () => {
     const userId = user?.id;
     if(userId){
       const productId = id;
-    const res = await dispatch(addToCart({userId, productId}));
+    const res = await dispatch(addToCart({userId, productId,}));
     getQuantityProdInCart();
     if(res.status=="200"){
       Swal.fire({
@@ -93,11 +119,7 @@ const Home = () => {
         id="ftco-navbar"
       >
         <div className="container">
-        <a className="navbar-brand" style={{cursor:'pointer'}} onClick={() => {
-                    navigate("/");
-                  }}>
-              COSMETICS
-            </a>
+          <a className="navbar-brand">COSMETICS</a>
           <button
             className="navbar-toggler"
             type="button"
@@ -112,7 +134,7 @@ const Home = () => {
           <div className="collapse navbar-collapse" id="ftco-nav">
             <ul className="navbar-nav ml-auto">
               <li className="nav-item active">
-                <a className="nav-link" style={{cursor:'pointer'}} onClick={()=>{navigate("/")}}>Home</a>
+                <a className="nav-link">Home</a>
               </li>
               <li className="nav-item dropdown">
                 <a
@@ -142,7 +164,7 @@ const Home = () => {
                 <a className="nav-link">Contact</a>
               </li>
               <li className="nav-item cta cta-colored">
-                <a
+              <a
                   style={{cursor:'pointer'}}
                 onClick={() => {
                     handleToCartPage();
@@ -166,28 +188,67 @@ const Home = () => {
         </div>
       </nav>
 
-      {/* BANNER  */}     
-
-      {/* PRODUCT  */}
-      <section className="sectionProduct py-5">
-        <h2 className="text-center">OUR PRODUCT</h2>
-        <div className="listProductHome">
-          {products?.map((item, key) => {
-            return (
-              <div key={item?.id} className="item">
-                <img src={item?.img} onClick={()=>{navigate("/product-detail/"+item?.id)}} alt="" />
-                <h1>{item?.nameProd}</h1>
-                <p className="price">{item?.price}</p>
-                <button onClick={()=>{handleAddToCart(item?.id)}}>
-                  <i className="fa-solid fa-cart-shopping"></i>
+      <div className="product">
+      <div className="container mt-4">
+        <h2 className="title">Product Detail</h2>
+        <div className="row">
+          <div className="img col-md-6">
+            <img
+              src={selectedPro?.img}
+              alt="Product"
+              className="img-fluid"
+            />
+          </div>
+          <div className="col-md-6">
+            <h2 className="namePro">{selectedPro.nameProd}</h2>
+            <div className="rating mb-3">
+              <span className="star">&#9733;</span>
+              <span className="star">&#9733;</span>
+              <span className="star">&#9733;</span>
+              <span className="star">&#9733;</span>
+              <span className="star">&#9734;</span>
+            </div>
+            <p className="price mb-3">{selectedPro.price} VNĐ</p>
+            <p className="description mb-3">
+              {selectedPro.description}
+            </p>
+            <div className="input-group mb-3" style={{ maxWidth: "120px" }}>
+              <div className="input-group-prepend">
+                <button
+                  className="btn btn-outline-secondary"
+                  type="button"
+                  id="button-minus"
+                  onClick={decreaseQuantity}
+                >
+                  -
                 </button>
               </div>
-            );
-          })}
+              <input
+                type="text"
+                className="form-control text-center"
+                value={quantity}
+                placeholder=""
+                aria-label="Example text with button addon"
+                aria-describedby="button-addon1"
+              />
+              <div className="input-group-append">
+                <button
+                  className="btn btn-outline-secondary"
+                  type="button"
+                  id="button-plus"
+                  onClick={increaseQuantity}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <button onClick={()=>{handleAddToCart(selectedPro.id)}} className="btn btn-primary btn-lg">Add to Cart</button>
+          </div>
         </div>
-      </section>
+      </div>
+      </div>
     </div>
   );
 };
 
-export default Home;
+export default ProductDetail;
