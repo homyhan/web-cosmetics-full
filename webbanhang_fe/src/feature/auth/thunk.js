@@ -41,3 +41,13 @@ export const updatePass = (id, data)=>async(dispatch)=>{
         console.log(error);
     }
 }
+
+//LOGIN
+export const login = (data)=>async (dispatch)=>{
+    try {
+        const res = await cosmeticsServ.login(data);
+        return res;
+    } catch (error) {
+        return error.response
+    }
+}
