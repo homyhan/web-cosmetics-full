@@ -51,7 +51,11 @@ const Home = () => {
         id="ftco-navbar"
       >
         <div className="container">
-          <a className="navbar-brand">COSMETICS</a>
+        <a className="navbar-brand" onClick={() => {
+                    navigate("/");
+                  }}>
+              COSMETICS
+            </a>
           <button
             className="navbar-toggler"
             type="button"
@@ -96,7 +100,9 @@ const Home = () => {
                 <a className="nav-link">Contact</a>
               </li>
               <li className="nav-item cta cta-colored">
-                <a className="nav-link">
+                <a onClick={() => {
+                    navigate("/cart");
+                  }} className="nav-link">
                   <i className="fa-solid fa-cart-shopping" />
                   [0]
                 </a>
@@ -108,7 +114,7 @@ const Home = () => {
                   }}
                   className="nav-link"
                 >
-                  <i class="fa-solid fa-user"></i>
+                  <i className="fa-solid fa-user"></i>
                 </a>
               </li>
             </ul>

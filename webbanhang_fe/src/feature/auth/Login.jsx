@@ -169,7 +169,9 @@ const Login = () => {
     
         // Nếu cả email và password đều được điền, tiếp tục quá trình đăng nhập
         const res = await dispatch(login({ email, password }));
-    
+        
+        console.log(res);
+
         if (res?.status === 200) {
             // Xử lý phản hồi từ máy chủ
             if (res.data === "admin") {
