@@ -46,6 +46,10 @@ export const updatePass = (id, data)=>async(dispatch)=>{
 export const login = (data)=>async (dispatch)=>{
     try {
         const res = await cosmeticsServ.login(data);
+        dispatch({
+            type: "USER_LOGIN",
+            payload: res.data
+        })
         return res;
     } catch (error) {
         return error.response

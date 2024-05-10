@@ -48,3 +48,47 @@ export const fetUsers = async (dispatch)=>{
     console.log(err);
   }
 }
+
+export const addToCart = (data) => async(dispatch)=>{
+  try {
+    const res = await cosmeticsServ.addToCart(data);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const fetchCartById = id => async (dispatch)=>{
+  try {
+    const res = await cosmeticsServ.getCartById(id);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const changeQuantityProdCart = (id, quantity)=>async(dispatch)=>{
+  try {
+    const res = await cosmeticsServ.updateQuantityProdCart(id, quantity);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const removeProdInCart = (userId, idCart)=>async(dispatch)=>{
+  try {
+    const res = await cosmeticsServ.removeProdInCart(userId, idCart);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const clearCart = (userId)=>async(dispatch)=>{
+  try {
+    const res = await cosmeticsServ.clearCart(userId);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+}

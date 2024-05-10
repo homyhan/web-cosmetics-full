@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, json } from 'react-router-dom';
 import RouterComponent from './HOCs/RouterComponent';
 import Home from './feature/booking/Home';
 import HomeAdmin from './feature/admin/HomeAdmin';
@@ -18,8 +18,21 @@ import EditStatusUserAdmin from './feature/admin/EditStatusUserAdmin';
 import EditInfoUserAdmin from './feature/admin/EditInfoUserAdmin';
 import NewUserForAdmin from './feature/admin/NewUserForAdmin';
 import Cart from './feature/booking/Cart';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { login } from './feature/auth/thunk';
 
 function App() {
+ 
+    const dispatch = useDispatch();
+  useEffect(()=>{
+     const email=localStorage?.getItem("emailCosmetics");
+    const password=localStorage?.getItem("passcosmetics");
+    if(email&&password){
+      dispatch(login({email, password}))
+    }
+
+  },[dispatch])
   return (
     <BrowserRouter>
       <Routes>
