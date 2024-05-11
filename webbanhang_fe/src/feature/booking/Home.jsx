@@ -11,6 +11,9 @@ const Home = () => {
   const products = useSelector((state) => state.booking.products);
   const {user} = useSelector(state=>state.auth);
   const [quantityProdCart, setQuantityProdCart] = useState(0);
+
+  const isLoggedIn = localStorage.getItem("emailCosmetics") && localStorage.getItem("passcosmetics");
+
   useEffect(() => {
     dispatch(fetchProducts);
     getQuantityProdInCart();
@@ -57,7 +60,14 @@ const Home = () => {
   const handleToCartPage=async()=>{
     navigate("/cart");
   }
+  
+  const handleLogout = () => {
+      localStorage.removeItem("emailCosmetics");
+      localStorage.removeItem("passcosmetics");
+      navigate('/login');
+  };
 
+  
   return (
     <div>
       <div className="py-1 bg-primary">
@@ -75,7 +85,7 @@ const Home = () => {
                   <div className="icon mr-2 d-flex justify-content-center align-items-center">
                     <span className="icon-paper-plane" />
                   </div>
-                  <span className="text">youremail@email.com</span>
+                  <span className="text">{isLoggedIn ? user.email : "youremail@email.com"}</span>
                 </div>
                 <div className="col-md-5 pr-4 d-flex topper align-items-center text-lg-right">
                   <span className="text">
@@ -151,16 +161,33 @@ const Home = () => {
                   [{quantityProdCart}]
                 </a>
               </li>
-              <li className="nav-item cta cta-colored tagLiIconUser">
+              {isLoggedIn ? (
+                <>
+                  <li className="nav-item cta cta-colored tagLiIconUser">
                 <a
                   onClick={() => {
-                    navigate("/login");
+                    navigate("/");
                   }}
                   className="nav-link"
                 >
                   <i className="fa-solid fa-user"></i>
                 </a>
               </li>
+                  <li className="nav-item cta cta-colored tagLiIconUser">
+                    <a className="nav-link" onClick={handleLogout}>
+                      <i className="fa-solid fa-power-off"></i>
+                    </a>
+                  </li>
+                </>
+              ) : (
+                <li className="nav-item cta cta-colored tagLiIconUser">
+                  <a onClick={() => { navigate("/login"); }} className="nav-link">
+                    <i className="fa-solid fa-right-to-bracket"></i>
+                  </a>
+                </li>
+              )}
+              
+              {/* <li className="nav-item cta cta-colored tagLiIconUser"><a className="nav-link" onClick={handleLogout}><i class="fa-solid fa-power-off"></i></a></li> */}
             </ul>
           </div>
         </div>

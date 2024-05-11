@@ -15,21 +15,17 @@ const ProductDetail = () => {
   const productId = params?.id;
   const selectedPro = useSelector((state) => state.booking.selectedPro);
   const {user} = useSelector(state=>state.auth);
- // Lấy thông tin sản phẩm từ store
+  const isLoggedIn = localStorage.getItem("emailCosmetics") && localStorage.getItem("passcosmetics");
 
   useEffect(() => {
-    dispatch(getProduct(productId)); // Dispatch action để lấy thông tin sản phẩm khi component được render
+    dispatch(getProduct(productId));
   }, [dispatch, productId]);
 
-  // State để lưu trữ số lượng sản phẩm
   const [quantity, setQuantity] = useState(1);
-
-  // Hàm xử lý sự kiện khi nhấn nút tăng số lượng
   const increaseQuantity = () => {
     setQuantity(quantity + 1);
   };
 
-  // Hàm xử lý sự kiện khi nhấn nút giảm số lượng
   const decreaseQuantity = () => {
     if (quantity > 1) {
       setQuantity(quantity - 1);
@@ -83,6 +79,11 @@ const ProductDetail = () => {
   const handleToCartPage=async()=>{
     navigate("/cart");
   }
+  const handleLogout = () => {
+    localStorage.removeItem("emailCosmetics");
+    localStorage.removeItem("passcosmetics");
+    navigate('/login');
+};
 
   return (
     <div>
@@ -101,7 +102,7 @@ const ProductDetail = () => {
                   <div className="icon mr-2 d-flex justify-content-center align-items-center">
                     <span className="icon-paper-plane" />
                   </div>
-                  <span className="text">youremail@email.com</span>
+                  <span className="text">{isLoggedIn ? user.email : "youremail@email.com"}</span>
                 </div>
                 <div className="col-md-5 pr-4 d-flex topper align-items-center text-lg-right">
                   <span className="text">
@@ -173,16 +174,31 @@ const ProductDetail = () => {
                   [{quantityProdCart}]
                 </a>
               </li>
-              <li className="nav-item cta cta-colored tagLiIconUser">
+              {isLoggedIn ? (
+                <>
+                  <li className="nav-item cta cta-colored tagLiIconUser">
                 <a
                   onClick={() => {
-                    navigate("/login");
+                    navigate("/");
                   }}
                   className="nav-link"
                 >
                   <i className="fa-solid fa-user"></i>
                 </a>
               </li>
+                  <li className="nav-item cta cta-colored tagLiIconUser">
+                    <a className="nav-link" onClick={handleLogout}>
+                      <i className="fa-solid fa-power-off"></i>
+                    </a>
+                  </li>
+                </>
+              ) : (
+                <li className="nav-item cta cta-colored tagLiIconUser">
+                  <a onClick={() => { navigate("/login"); }} className="nav-link">
+                    <i className="fa-solid fa-right-to-bracket"></i>
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
