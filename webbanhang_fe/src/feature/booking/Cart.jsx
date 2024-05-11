@@ -15,6 +15,7 @@ const Cart = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [listItemProd, setListItemProd] = useState([]);
+  const isLoggedIn = localStorage.getItem("emailCosmetics") && localStorage.getItem("passcosmetics");
 
   const formatCurrencyVND = (number) => {
     var formattedAmount = number?.toLocaleString("vi-VN", {
@@ -105,6 +106,11 @@ const Cart = () => {
       }
     });
   }
+  const handleLogout = () => {
+      localStorage.removeItem("emailCosmetics");
+      localStorage.removeItem("passcosmetics");
+      navigate('/login'); 
+  };
 
   return (
     <div>
@@ -123,7 +129,7 @@ const Cart = () => {
                   <div className="icon mr-2 d-flex justify-content-center align-items-center">
                     <span className="icon-paper-plane" />
                   </div>
-                  <span className="text">youremail@email.com</span>
+                  <span className="text">{isLoggedIn ? user.email : "youremail@email.com"}</span>
                 </div>
                 <div className="col-md-5 pr-4 d-flex topper align-items-center text-lg-right">
                   <span className="text">
@@ -229,16 +235,31 @@ const Cart = () => {
                   {listItemProd?.length}]
                 </a>
               </li>
-              <li className="nav-item cta cta-colored tagLiIconUser">
+              {isLoggedIn ? (
+                <>
+                  <li className="nav-item cta cta-colored tagLiIconUser">
                 <a
                   onClick={() => {
-                    navigate("/login");
+                    navigate("/");
                   }}
                   className="nav-link"
                 >
                   <i className="fa-solid fa-user"></i>
                 </a>
               </li>
+                  <li className="nav-item cta cta-colored tagLiIconUser">
+                    <a className="nav-link" onClick={handleLogout}>
+                      <i className="fa-solid fa-power-off"></i>
+                    </a>
+                  </li>
+                </>
+              ) : (
+                <li className="nav-item cta cta-colored tagLiIconUser">
+                  <a onClick={() => { navigate("/login"); }} className="nav-link">
+                    <i className="fa-solid fa-right-to-bracket"></i>
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
