@@ -22,6 +22,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { login } from './feature/auth/thunk';
 import ProductDetail from './feature/booking/ProductDetail';
+import ProfileUser from './feature/booking/ProfileUser';
 
 function App() {
  
@@ -54,6 +55,7 @@ function App() {
         <Route path='/admin/add-user' element={<RouterComponent Component={NewUserForAdmin}></RouterComponent>}></Route>
         <Route path='/cart' element={<RouterComponent Component={Cart}></RouterComponent>}></Route>
         <Route path='/product-detail/:id' element={<RouterComponent Component={ProductDetail}></RouterComponent>}></Route>
+        <Route path='/user/profile' element={<RouterComponent Component={ProfileUser}></RouterComponent>}></Route>
       </Routes>
     </BrowserRouter>
   );
