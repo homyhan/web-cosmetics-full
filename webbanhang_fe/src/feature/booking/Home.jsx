@@ -166,7 +166,7 @@ const Home = () => {
                   <li className="nav-item cta cta-colored tagLiIconUser">
                 <a
                   onClick={() => {
-                    navigate("/");
+                    navigate("/user/profile");
                   }}
                   className="nav-link"
                 >

@@ -103,3 +103,13 @@ export const getProduct =(id)=> async (dispatch)=>{
     console.log(err);
   }
 }
+
+//EditInfor
+export const updateInforUser =(id, data)=> async (dispatch)=>{
+  try{
+    const res = await cosmeticsServ.updateUser(id, data);
+    return res.data
+  }catch(err){
+    console.log(err);
+  }
+}
