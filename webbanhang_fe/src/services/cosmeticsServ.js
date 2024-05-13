@@ -100,5 +100,9 @@ export const cosmeticsServ = {
 
     clearCart: (idUser)=>{
         return http.delete("/allCarts?userId="+idUser);
+    },
+    //USER
+    changePass: (idUser, data) => {
+        return http.put("/users/" + idUser + "/password", data);
     }
 }

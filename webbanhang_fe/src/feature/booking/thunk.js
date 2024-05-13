@@ -113,3 +113,12 @@ export const updateInforUser =(id, data)=> async (dispatch)=>{
     console.log(err);
   }
 }
+
+export const changePassword =(idUser, data)=> async (dispatch)=>{
+  try{
+    const res = await cosmeticsServ.changePass(idUser, data);
+    return res.data
+  }catch(err){
+    console.log(err);
+  }
+}

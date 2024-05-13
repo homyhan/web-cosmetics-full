@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "../../components/style.css";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts, addToCart, fetchCartById } from "./thunk";
+import { fetchProducts, addToCart, fetchCartById, changePassword } from "./thunk";
 import { useNavigate } from "react-router-dom";
 import { updateInforUser } from './thunk';
+import { validationPass } from "../../services/validationPass";
+import { validationInfor } from "../../services/validationInfor";
 import Swal from "sweetalert2";
 
 const ProfileUser = () => {
@@ -17,6 +19,7 @@ const ProfileUser = () => {
     const [editProfile, setEditProfile] = useState(false);
     const [showPurchaseHistory, setShowPurchaseHistory] = useState(false);
 
+    const [errors, setErrors] = useState({});
     const isLoggedIn = localStorage.getItem("emailCosmetics") && localStorage.getItem("passcosmetics");
   
     useEffect(() => {
@@ -32,35 +35,6 @@ const ProfileUser = () => {
         setQuantityProdCart(res?.data?.length);
       }
     };
-  
-    // const handleAddToCart=async(id)=>{
-    //   const userId = user?.id;
-    //   if(userId){
-    //     const productId = id;
-    //   const res = await dispatch(addToCart({userId, productId, quantity: 1}));
-    //   getQuantityProdInCart();
-    //   if(res.status=="200"){
-    //     Swal.fire({
-    //       position: "center",
-    //       icon: "success",
-    //       title: res.data,
-    //       showConfirmButton: false,
-    //       timer: 1500
-    //   });
-    //   }else{
-    //     Swal.fire({
-    //       position: "center",
-    //       icon: "error",
-    //       title: res.data,
-    //       showConfirmButton: false,
-    //       timer: 1500
-    //   });
-    //   }
-    //   }else{
-    //     navigate("/login")
-    //   }
-      
-    // }
   
     const handleToCartPage=async()=>{
       navigate("/cart");
@@ -90,11 +64,6 @@ const ProfileUser = () => {
         setEditProfile(false);
     };
 
-    const handleSavePassword = () => {
-      // Viết logic để lưu mật khẩu mới ở đây
-      // Sau khi lưu, bạn có thể đặt lại trạng thái `showChangePassword` thành `false`
-    };
-
     //EDIT INFOR USER
     useEffect(() => {
       setFormData({
@@ -104,8 +73,7 @@ const ProfileUser = () => {
           address: user.address
       });
   }, [user]);
-  
-  // Định nghĩa trạng thái mới cho dữ liệu của các trường nhập liệu
+
   const [formData, setFormData] = useState({
       fullName: "",
       email: "",
@@ -113,42 +81,101 @@ const ProfileUser = () => {
       address: ""
   });
   
-  // Xử lý sự kiện onChange để cập nhật trạng thái của các trường nhập liệu
-  // Trong hàm handleInputChange
-const handleInputChange = (e) => {
-  setFormData({
+  const handleInputChange = (e) => {
+    setFormData({
       ...formData,
       [e.target.name]: e.target.value
-  });
-};
+    });
+  };
 
-// Trong hàm handleSaveChanges
-const handleSaveChanges = async () => {
-  try {
-      // Thu thập thông tin mới từ trạng thái formData
-      const newData = {
-          fullName: formData.fullName,
-          email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
-      };
+  const handleSaveChanges = async () => {
+    try {
+        // Kiểm tra tính hợp lệ của dữ liệu nhập vào
+        const errors = validationInfor(formData);
+        if (Object.keys(errors).length !== 0) {
+          setErrors(errors);
+          return;
+        }
+  
+        // Thu thập thông tin mới từ trạng thái formData
+        const newData = {
+            fullName: formData.fullName,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+        };
+  
+        // Gọi action hoặc hàm dispatch để cập nhật thông tin người dùng
+        const res = await dispatch(updateInforUser(user.id, newData));
+  
+        // Xử lý kết quả trả về từ action hoặc yêu cầu server
+        if (res) {
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Thông tin đã được cập nhật",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            // Cập nhật trạng thái của component
+            setEditProfile(false); // Đóng chế độ chỉnh sửa sau khi cập nhật thành công
+        }
+    } catch (error) {
+        console.log(error);
+        Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Đã xảy ra lỗi",
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }
+  };
+//ChangePass
+  const handleSavePassword = async () => {
+    try {
+      const oldPassword = document.getElementById("oldPassword").value;
+      const newPassword = document.getElementById("newPassword").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
 
-      // Gọi action hoặc hàm dispatch để cập nhật thông tin người dùng
-      const res = await dispatch(updateInforUser(user.id, newData));
+      const errors = validationPass({ password: newPassword });
 
-      // Xử lý kết quả trả về từ action hoặc yêu cầu server
+      if (Object.keys(errors).length > 0) {
+          Object.values(errors).forEach(error => {
+              Swal.fire({
+                  position: "center",
+                  icon: "error",
+                  title: error,
+                  showConfirmButton: false,
+                  timer: 1500
+              });
+          });
+          return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "Mật khẩu mới không trùng khớp",
+          showConfirmButton: false,
+          timer: 1500
+        });
+        return;
+      }
+      const res = await dispatch(changePassword(user.id, { password: newPassword }));
+
       if (res) {
           Swal.fire({
               position: "center",
               icon: "success",
-              title: "Thông tin đã được cập nhật",
+              title: "Mật khẩu đã được thay đổi",
               showConfirmButton: false,
               timer: 1500
           });
-          // Cập nhật trạng thái của component
-          setEditProfile(false); // Đóng chế độ chỉnh sửa sau khi cập nhật thành công
+          setShowChangePassword(false); 
       }
-  } catch (error) {
+    } catch (error) {
       console.log(error);
       Swal.fire({
           position: "center",
@@ -157,10 +184,8 @@ const handleSaveChanges = async () => {
           showConfirmButton: false,
           timer: 1500
       });
-  }
-};
-
-  
+   }
+  };
   return (
     <div>
       <div className="py-1 bg-primary">
@@ -309,17 +334,17 @@ const handleSaveChanges = async () => {
             <div className="profile-info">
             <div className="profile-section">
               <label>Mật khẩu cũ:</label>
-              <input type="password" />
+              <input id="oldPassword" type="password" />
             </div>
 
             <div className="profile-section">
               <label>Mật khẩu mới:</label>
-              <input type="password" />
+              <input id="newPassword" type="password" />
             </div>
 
             <div className="profile-section">
               <label>Nhập lại mật khẩu mới:</label>
-              <input type="password" />
+              <input id="confirmPassword" type="password" />
             </div>
             <button className="btn btn-primary" onClick={handleSavePassword}>Lưu mật khẩu</button>
           </div>
@@ -334,6 +359,7 @@ const handleSaveChanges = async () => {
               value={formData.fullName}
               onChange={handleInputChange}
               />
+              {errors.fullName && <span className="text-danger">{errors.fullName}</span>}
             </div>
 
             <div className="profile-section">
@@ -345,6 +371,7 @@ const handleSaveChanges = async () => {
               value={formData.email}
               onChange={handleInputChange}
               />
+              {errors.email && <span className="text-danger">{errors.email}</span>}
             </div>
 
             <div className="profile-section">
@@ -356,6 +383,7 @@ const handleSaveChanges = async () => {
               value={formData.phone}
               onChange={handleInputChange}
               />
+              {errors.phone && <span className="text-danger">{errors.phone}</span>}
             </div>
 
             <div className="profile-section">
@@ -367,6 +395,7 @@ const handleSaveChanges = async () => {
               value={formData.address}
               onChange={handleInputChange}
               />
+              {errors.address && <span className="text-danger">{errors.address}</span>}
             </div>
             <div className="edit-infor">
               <button className="btn btn-primary" onClick={handleSaveChanges} >Lưu thay đổi</button>
