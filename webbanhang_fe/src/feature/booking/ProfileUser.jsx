@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../components/style.css";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts, addToCart, fetchCartById, changePassword } from "./thunk";
+import { fetchProducts, addToCart, fetchCartById, changePassword, fetchOrders } from "./thunk";
 import { useNavigate } from "react-router-dom";
 import { updateInforUser } from './thunk';
 import { validationPass } from "../../services/validationPass";
@@ -13,19 +13,19 @@ const ProfileUser = () => {
     const dispatch = useDispatch();
     const products = useSelector((state) => state.booking.products);
     const {user} = useSelector(state=>state.auth);
+    const orders = useSelector((state) => state.booking.orders);
     const [quantityProdCart, setQuantityProdCart] = useState(0);
-    const [showChangePassword, setShowChangePassword] = useState(false); // State để xác định xem có hiển thị giao diện đổi mật khẩu hay không
-  
+    const [showChangePassword, setShowChangePassword] = useState(false);
     const [editProfile, setEditProfile] = useState(false);
     const [showPurchaseHistory, setShowPurchaseHistory] = useState(false);
-
     const [errors, setErrors] = useState({});
     const isLoggedIn = localStorage.getItem("emailCosmetics") && localStorage.getItem("passcosmetics");
   
     useEffect(() => {
       dispatch(fetchProducts);
       getQuantityProdInCart();
-    }, [dispatch]);
+      dispatch(fetchOrders(user.id)); // Gọi action fetchOrders khi component được render và user đăng nhập thành công
+    }, [dispatch, user.id]);
   
   
     const getQuantityProdInCart = async () => {
@@ -90,7 +90,6 @@ const ProfileUser = () => {
 
   const handleSaveChanges = async () => {
     try {
-        // Kiểm tra tính hợp lệ của dữ liệu nhập vào
         const errors = validationInfor(formData);
         if (Object.keys(errors).length !== 0) {
           setErrors(errors);
@@ -105,10 +104,8 @@ const ProfileUser = () => {
             address: formData.address,
         };
   
-        // Gọi action hoặc hàm dispatch để cập nhật thông tin người dùng
         const res = await dispatch(updateInforUser(user.id, newData));
-  
-        // Xử lý kết quả trả về từ action hoặc yêu cầu server
+
         if (res) {
             Swal.fire({
                 position: "center",
@@ -117,8 +114,8 @@ const ProfileUser = () => {
                 showConfirmButton: false,
                 timer: 1500
             });
-            // Cập nhật trạng thái của component
-            setEditProfile(false); // Đóng chế độ chỉnh sửa sau khi cập nhật thành công
+
+            setEditProfile(false);
         }
     } catch (error) {
         console.log(error);
@@ -203,7 +200,7 @@ const ProfileUser = () => {
                   <div className="icon mr-2 d-flex justify-content-center align-items-center">
                     <span className="icon-paper-plane" />
                   </div>
-                  <span className="text">{isLoggedIn ? user.email : "youremail@email.com"}</span>
+                  <span className="text">youremail@email.com</span>
                 </div>
                 <div className="col-md-5 pr-4 d-flex topper align-items-center text-lg-right">
                   <span className="text">
@@ -284,11 +281,12 @@ const ProfileUser = () => {
                   <li className="nav-item cta cta-colored tagLiIconUser">
                 <a
                   onClick={() => {
-                    navigate("/");
+                    navigate("/user/profile");
                   }}
                   className="nav-link"
                 >
                   <i className="fa-solid fa-user"></i>
+                  <span className="text-email">{isLoggedIn ? user.email : null}</span>
                 </a>
               </li>
                   <li className="nav-item cta cta-colored tagLiIconUser">
@@ -415,18 +413,29 @@ const ProfileUser = () => {
                         <th scope="col">Địa chỉ</th>
                         <th scope="col">Tổng tiền</th>
                         <th scope="col">Trạng thái</th>
+                        <th scope="col">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Nguyễn Văn Dẫn</td>
-                        <td>nvd@gmail.com</td>
-                        <td>0358896525</td>
-                        <td>Bến Tre</td>
-                        <td>850000</td>
-                        <td>Đang chờ xác nhận</td>
-                    </tr>
+                {orders.map((order, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{order.user.fullName}</td>
+                    <td>{order.user.email}</td>
+                    <td>{order.phoneNumber}</td>
+                    <td>{order.address}</td>
+                    <td>{order.totalPrice}</td>
+                    <td>{order.stateOrder.state_name}</td>
+                    <td>
+                        <button onClick={()=>{navigate("/user/detail-order/"+order?.id)}}>
+                          <i className="fa-solid fa-eye"></i>
+                        </button>
+                        <button >
+                          <i className="fa-solid fa-xmark"></i>
+                        </button>
+                    </td>
+                  </tr>
+                ))}
                 </tbody>
             </table>
           </div>

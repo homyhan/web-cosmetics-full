@@ -122,3 +122,28 @@ export const changePassword =(idUser, data)=> async (dispatch)=>{
     console.log(err);
   }
 }
+
+//order
+export const fetchOrders = (userId) => async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.getOrder(userId);
+    dispatch({
+      type: "SET_ORDERS",
+      payload: res.data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const fetchDetailOrder = (orderId) => async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.getDetailOrder(orderId);
+    dispatch({
+      type: "SET_DETAIL",
+      payload: res.data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};

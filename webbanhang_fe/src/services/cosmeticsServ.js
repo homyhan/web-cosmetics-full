@@ -104,5 +104,13 @@ export const cosmeticsServ = {
     //USER
     changePass: (idUser, data) => {
         return http.put("/users/" + idUser + "/password", data);
+    },
+    //ORDER
+    getOrder: (userId) => {
+        return http.get("/orders/" + userId);
+    },
+    getDetailOrder: (orderId)=>{
+        return http.get("/order-details/" + orderId)
     }
+    
 }
