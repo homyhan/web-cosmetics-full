@@ -85,7 +85,7 @@ const Home = () => {
                   <div className="icon mr-2 d-flex justify-content-center align-items-center">
                     <span className="icon-paper-plane" />
                   </div>
-                  <span className="text">{isLoggedIn ? user.email : "youremail@email.com"}</span>
+                  <span className="text">youremail@email.com</span>
                 </div>
                 <div className="col-md-5 pr-4 d-flex topper align-items-center text-lg-right">
                   <span className="text">
@@ -171,6 +171,7 @@ const Home = () => {
                   className="nav-link"
                 >
                   <i className="fa-solid fa-user"></i>
+                  <span className="text-email">{isLoggedIn ? user.email : null}</span>
                 </a>
               </li>
                   <li className="nav-item cta cta-colored tagLiIconUser">
