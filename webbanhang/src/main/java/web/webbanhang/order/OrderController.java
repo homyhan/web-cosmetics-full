@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import web.webbanhang.jpa.OrderDetailJpa;
 import web.webbanhang.jpa.OrderJpa;
 import web.webbanhang.jpa.StateOrderJpa;
 import web.webbanhang.jpa.UserJpa;
@@ -20,11 +21,13 @@ public class OrderController {
     private OrderJpa orderJpa;
 
     private StateOrderJpa stateOrderJpa;
+    private OrderDetailJpa orderDetailJpa;
 
-    public OrderController(UserJpa userJpa, OrderJpa orderJpa, StateOrderJpa stateOrderJpa) {
+    public OrderController(UserJpa userJpa, OrderJpa orderJpa, StateOrderJpa stateOrderJpa, OrderDetailJpa orderDetailJpa) {
         this.userJpa = userJpa;
         this.orderJpa = orderJpa;
         this.stateOrderJpa = stateOrderJpa;
+        this.orderDetailJpa = orderDetailJpa;
     }
 
     @GetMapping("/orders/{userId}")
@@ -84,6 +87,11 @@ public class OrderController {
             System.err.println("Error updating order state: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating order state");
         }
+    }
+
+    @GetMapping("/order-details/{orderId}")
+    public List<OrderDetail> getOrderDetailsByOrderId(@PathVariable int orderId) {
+        return orderDetailJpa.findByOrdersId(orderId);
     }
 
 }
