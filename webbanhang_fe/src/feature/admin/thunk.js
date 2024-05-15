@@ -154,3 +154,51 @@ export const registerForAdmin = (data)=>async (dispatch)=>{
   }
 }
 //END
+
+
+export const getRoles = ()=>async (dispatch)=>{
+  try {
+      const res = await cosmeticsServ.getRole();
+      dispatch({
+        type: "SET_ROLES",
+        payload: res.data
+      })
+  } catch (error) {
+      console.log(error);
+  }
+}
+export const addRoles = (data)=>async (dispatch)=>{
+  try {
+      const res = await cosmeticsServ.addRole(data);
+      return res;
+  } catch (error) {
+      return error?.response;
+  }
+}
+export const getRoleById = (id)=>async (dispatch)=>{
+  try {
+      const res = await cosmeticsServ.getRoleById(id);
+      dispatch({
+        type:"SELECTED_ROLE",
+        payload: res.data
+      })
+  } catch (error) {
+      console.log(error);
+  }
+}
+export const deleteRoleById = (id)=>async (dispatch)=>{
+  try {
+      const res = await cosmeticsServ.deleteRoleById(id);
+      return res;
+  } catch (error) {
+      return error.response;
+  }
+}
+export const updateRoleById = (id, data)=>async (dispatch)=>{
+  try {
+      const res = await cosmeticsServ.updateRoleById(id, data);
+      return res;
+  } catch (error) {
+      return error.response;
+  }
+}

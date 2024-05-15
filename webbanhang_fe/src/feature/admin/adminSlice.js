@@ -3,12 +3,14 @@ import { produce } from "immer";
 const initialState = {
     products:[],
     categories:[],
+    roles:[],
     selectedCate: {},
     selectedProd: {},
     banners:[],
     selectedBanner: {},
     users: [],
-    selectedUser: {}
+    selectedUser: {},
+    selectedRole:{}
   };
 
   export const adminReducer = (state = initialState, { type, payload }) => {
@@ -47,6 +49,13 @@ const initialState = {
         if(type==="USER_ITEM"){
             
           draft.selectedUser= payload;
+        }
+
+        if(type==="SET_ROLES"){
+          draft.roles=payload;
+        }
+        if(type=="SELECTED_ROLE"){
+          draft.selectedRole= payload;
         }
     });
   };

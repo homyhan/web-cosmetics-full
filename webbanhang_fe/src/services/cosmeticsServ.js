@@ -111,6 +111,23 @@ export const cosmeticsServ = {
     },
     getDetailOrder: (orderId)=>{
         return http.get("/order-details/" + orderId)
+    },
+
+
+    getRole: ()=>{
+        return http.get("/roles");
+    },
+    addRole: (data)=>{
+        return http.post("/roles", data);
+    },
+    getRoleById: (id)=>{
+        return http.get("/roles/"+id);
+    },
+    deleteRoleById: (id)=>{
+        return http.delete("/roles/"+id);
+    },
+    updateRoleById: (id, data)=>{
+        return http.put("/roles/"+id, data);
     }
     
 }

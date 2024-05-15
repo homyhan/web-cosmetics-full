@@ -112,10 +112,10 @@ const LayoutAdmin = (props) => {
                 User
               </a>
             </li>
-            <li>
-              <a href="#">
+            <li onClick={() => navigate("/admin/role")}>
+              <a >
                 <i className="fa fa-calendar"></i>
-                Calendar
+                Role
               </a>
             </li>
             <li>

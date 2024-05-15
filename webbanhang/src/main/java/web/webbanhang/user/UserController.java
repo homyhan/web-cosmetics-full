@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -41,63 +42,6 @@ public class UserController {
 	public List<User> getListUser(){
 		return userRepository.findAll();
 	}
-//	public ResponseEntity<List<User>> retrieveAllUser() {
-//	    try {
-//	        List<User> users = userRepository.findAll();
-//	        return ResponseEntity.ok(users);
-//	    } catch (Exception e) {
-//	        System.err.println("Error retrieving users: " + e.getMessage());
-//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//	    }
-//	}
-
-
-	
-//	@PostMapping("/users")
-//	public ResponseEntity<User> createUser(@RequestBody User user) {
-//        if (user.getRole() == null) {
-//            System.out.println("Loi 1");
-//        }
-//
-//
-//        Optional<Role> existingRole = roleRepository.findById(user.getRole().getRole()+1);
-//        Role role = existingRole.get();
-//
-//        if (role == null) {
-//
-//        	System.out.println("Loi 2");
-//        }
-//        user.setRole(role);
-//		User addedUser = userRepository.save(user);
-//
-//		return ResponseEntity.noContent().build();
-//	}
-//
-
-
-//	@PostMapping("/users")
-//	public ResponseEntity<User> createUser(@RequestBody User user) {
-//		if (user.getRole() == null) {
-//			System.out.println("Loi 1");
-//			return ResponseEntity.badRequest().build();
-//		}
-//
-//		System.out.println(roleRepository.findByRoleCode(user.getRole().getRole()) );
-//
-//		Optional<Role> existingRole = roleRepository.findByRoleCode(user.getRole().getRole());
-//
-//		if (existingRole.isEmpty()) {
-//			System.out.println("Loi 2");
-//			return ResponseEntity.notFound().build();
-//		}
-//
-//		user.setRole(existingRole.get());
-//		User addedUser = userRepository.save(user);
-//
-//		// Trả về 201 Created và thông tin người dùng đã tạo
-//		return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
-////		return null;
-//	}
 
 	@GetMapping("/users/{id}")
 	public User getUserById(@PathVariable int id){
@@ -152,9 +96,6 @@ public class UserController {
 
 	}
 
-
-
-
 	// Hien thi thong tin user thông qua e mail
 	@GetMapping("/user/{email}")
 	public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
@@ -174,6 +115,7 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
+
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@Validated @RequestBody LoginRequest userLoginRequest) {
 		String email = userLoginRequest.getEmail();
@@ -186,63 +128,6 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email hoặc mật khẩu không chính xác");
 		}
 	}
-
-//	@PostMapping("/login")
-//	public ResponseEntity<String> login(@Validated @RequestBody LoginRequest userLoginRequest) {
-//		String email = userLoginRequest.getEmail();
-//		String password = userLoginRequest.getPassword();
-//
-//		User user = userRepository.findByEmail(email);
-//		if (user != null && user.getPassword().equals(password)) {
-//			String nameRole = user.getRole().getNameRole();
-//			if (nameRole.equals("Admin")) {
-//				return ResponseEntity.ok("admin");
-//			} else if (nameRole.equals("Customer")) {
-//				return ResponseEntity.ok("user");
-//			}
-//		}
-//		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email hoặc mật khẩu không chính xác");
-//	}
-
-
-//	@GetMapping("/users/search/{keyword}")
-//	public ResponseEntity<List<User>> searchUsersByName(@PathVariable String keyword) {
-//		try {
-//			System.out.println("Searching users by keyword: " + keyword);
-//			List<User> users = userRepository.findByFullNameContainingIgnoreCase(keyword);
-//
-//			if (users.isEmpty()) {
-//				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//			}
-//
-//			return ResponseEntity.ok(users);
-//		} catch (Exception e) {
-//			System.err.println("Lỗi khi tìm kiếm user theo tên: " + e.getMessage());
-//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-//		}
-//	}
-
-//	@GetMapping("/users/search/{keyword}")
-//	public ResponseEntity<List<User>> searchUsersByName(@PathVariable String keyword) {
-//		try {
-//			// Xử lý chuỗi keyword
-//			keyword = keyword.toLowerCase().replaceAll("\\s+", ""); // Chuyển thành chữ thường và loại bỏ khoảng trắng
-//			keyword = java.text.Normalizer.normalize(keyword, java.text.Normalizer.Form.NFD)
-//					.replaceAll("\\p{M}", ""); // Loại bỏ dấu
-//
-//			List<User> users = userRepository.findByFullNameContainingIgnoreCase(keyword);
-//
-//			if (users.isEmpty()) {
-//				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//			}
-//
-//			return ResponseEntity.ok(users);
-//		} catch (Exception e) {
-//			System.err.println("Lỗi khi tìm kiếm user theo tên: " + e.getMessage());
-//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-//		}
-//	}
-
 
 	@GetMapping("/users/search/{keyword}")
 	public ResponseEntity<List<User>> searchUsersByName(@PathVariable String keyword) {
@@ -284,21 +169,19 @@ public class UserController {
 			// Tìm người dùng cần cập nhật trong cơ sở dữ liệu
 			Optional<User> optionalUser = userRepository.findById(id);
 
-			// Kiểm tra xem người dùng có tồn tại không
 			if (!optionalUser.isPresent()) {
 				return ResponseEntity.notFound().build();
 			}
 
 			User existingUser = optionalUser.get();
 
-			// Cập nhật thông tin người dùng với dữ liệu mới
 			existingUser.setFullName(updatedUser.getFullName());
 			existingUser.setEmail(updatedUser.getEmail());
 			existingUser.setAddress(updatedUser.getAddress());
 			existingUser.setPhone(updatedUser.getPhone());
 			existingUser.setPassword(updatedUser.getPassword());
 
-			// Lưu thông tin người dùng đã cập nhật vào cơ sở dữ liệu
+
 			User update = userRepository.save(existingUser);
 
 			if (update != null) {
