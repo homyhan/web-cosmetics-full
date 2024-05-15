@@ -24,6 +24,9 @@ import { login } from './feature/auth/thunk';
 import ProductDetail from './feature/booking/ProductDetail';
 import ProfileUser from './feature/booking/ProfileUser';
 import DetailOrder from './feature/booking/DetailOrder';
+import Role from './feature/admin/Role';
+import FormAddRole from './feature/admin/FormAddRole';
+import FormEditRole from './feature/admin/FormEditRole';
 
 function App() {
  
@@ -58,6 +61,9 @@ function App() {
         <Route path='/product-detail/:id' element={<RouterComponent Component={ProductDetail}></RouterComponent>}></Route>
         <Route path='/user/profile' element={<RouterComponent Component={ProfileUser}></RouterComponent>}></Route>
         <Route path='/user/detail-order/:id' element={<RouterComponent Component={DetailOrder}></RouterComponent>}></Route>
+        <Route path='/admin/role' element={<RouterComponent Component={Role}></RouterComponent>}></Route>
+        <Route path='/admin/add-role' element={<RouterComponent Component={FormAddRole}></RouterComponent>}></Route>
+        <Route path='/admin/edit-role/:id' element={<RouterComponent Component={FormEditRole}></RouterComponent>}></Route>
       </Routes>
     </BrowserRouter>
   );
