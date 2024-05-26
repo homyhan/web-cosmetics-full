@@ -4,7 +4,8 @@ const initialState = {
     products:[],
     selectedPro: {},
     orders:[],
-    details: []
+    details: [],
+    banners: []
   };
 
   export const bookingReducer = (state = initialState, { type, payload }) => {
@@ -20,6 +21,10 @@ const initialState = {
         }
         if (type === "SET_DETAIL") {
           draft.details = payload;
+        }
+        if(type==="SET_BANNER"){
+          
+          draft.banners = payload
         }
         
     });
