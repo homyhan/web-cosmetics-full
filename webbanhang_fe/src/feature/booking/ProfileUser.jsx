@@ -19,6 +19,10 @@ const ProfileUser = () => {
     const [editProfile, setEditProfile] = useState(false);
     const [showPurchaseHistory, setShowPurchaseHistory] = useState(false);
     const [errors, setErrors] = useState({});
+    const [oldPasswordError, setOldPasswordError] = useState("");
+    const [newPasswordError, setNewPasswordError] = useState("");
+    const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
     const isLoggedIn = localStorage.getItem("emailCosmetics") && localStorage.getItem("passcosmetics");
   
     useEffect(() => {
@@ -80,55 +84,78 @@ const ProfileUser = () => {
       phone: "",
       address: ""
   });
-  
+  //VALIDATION
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    const updatedFormData = { ...formData, [name]: value };
+    setFormData(updatedFormData);
+
+    const newErrors = validationInfor(updatedFormData);
+    setErrors(newErrors);
   };
 
   const handleSaveChanges = async () => {
     try {
-        const errors = validationInfor(formData);
-        if (Object.keys(errors).length !== 0) {
-          setErrors(errors);
-          return;
-        }
-  
-        // Thu thập thông tin mới từ trạng thái formData
-        const newData = {
-            fullName: formData.fullName,
-            email: formData.email,
-            phone: formData.phone,
-            address: formData.address,
-        };
-  
-        const res = await dispatch(updateInforUser(user.id, newData));
+      const newErrors = validationInfor(formData);
+      if (Object.keys(newErrors).length !== 0) {
+        setErrors(newErrors);
+        return;
+      }
 
-        if (res) {
-            Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "Thông tin đã được cập nhật",
-                showConfirmButton: false,
-                timer: 1500
-            });
+      const newData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+      };
 
-            setEditProfile(false);
-        }
-    } catch (error) {
-        console.log(error);
+      const res = await dispatch(updateInforUser(user.id, newData));
+
+      if (res) {
         Swal.fire({
-            position: "center",
-            icon: "error",
-            title: "Đã xảy ra lỗi",
-            showConfirmButton: false,
-            timer: 1500
+          position: "center",
+          icon: "success",
+          title: "Thông tin đã được cập nhật",
+          showConfirmButton: false,
+          timer: 1500
         });
+
+        setEditProfile(false);
+      }
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Đã xảy ra lỗi",
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
   };
 //ChangePass
+  const handleOldPasswordInputChange = (e) => {
+    const oldPassword = e.target.value;
+    // Kiểm tra và validate oldPassword
+    const errors = validationPass({ password: oldPassword });
+    setOldPasswordError(errors.password || "");
+  };
+
+  const handleNewPasswordInputChange = (e) => {
+    const newPassword = e.target.value;
+    // Kiểm tra và validate newPassword
+    const errors = validationPass({ password: newPassword });
+    setNewPasswordError(errors.password || "");
+  };
+
+  const handleConfirmPasswordInputChange = (e) => {
+    const confirmPassword = e.target.value;
+    // Kiểm tra và validate confirmPassword
+    const errors = validationPass({ password: confirmPassword });
+    setConfirmPasswordError(errors.password || "");
+  };
+
+
   const handleSavePassword = async () => {
     try {
       const oldPassword = document.getElementById("oldPassword").value;
@@ -332,17 +359,20 @@ const ProfileUser = () => {
             <div className="profile-info">
             <div className="profile-section">
               <label>Mật khẩu cũ:</label>
-              <input id="oldPassword" type="password" />
+              <input id="oldPassword" type="password" onChange={handleOldPasswordInputChange} />
+              <span className="text-danger">{oldPasswordError}</span>
             </div>
 
             <div className="profile-section">
               <label>Mật khẩu mới:</label>
-              <input id="newPassword" type="password" />
+              <input id="newPassword" type="password" onChange={handleNewPasswordInputChange} />
+              <span className="text-danger">{newPasswordError}</span>
             </div>
 
             <div className="profile-section">
               <label>Nhập lại mật khẩu mới:</label>
-              <input id="confirmPassword" type="password" />
+              <input id="confirmPassword" type="password" onChange={handleConfirmPasswordInputChange} />
+              <span className="text-danger">{confirmPasswordError}</span>
             </div>
             <button className="btn btn-primary" onClick={handleSavePassword}>Lưu mật khẩu</button>
           </div>
@@ -357,7 +387,7 @@ const ProfileUser = () => {
               value={formData.fullName}
               onChange={handleInputChange}
               />
-              {errors.fullName && <span className="text-danger">{errors.fullName}</span>}
+              <span className={`text-danger ${errors.fullName ? 'is-invalid' : ''}`}>{errors.fullName}</span>
             </div>
 
             <div className="profile-section">
@@ -369,7 +399,7 @@ const ProfileUser = () => {
               value={formData.email}
               onChange={handleInputChange}
               />
-              {errors.email && <span className="text-danger">{errors.email}</span>}
+              <span className={`text-danger ${errors.email ? 'is-invalid' : ''}`}>{errors.email}</span>
             </div>
 
             <div className="profile-section">
@@ -381,7 +411,7 @@ const ProfileUser = () => {
               value={formData.phone}
               onChange={handleInputChange}
               />
-              {errors.phone && <span className="text-danger">{errors.phone}</span>}
+             <span className={`text-danger ${errors.phone ? 'is-invalid' : ''}`}>{errors.phone}</span>
             </div>
 
             <div className="profile-section">
@@ -393,7 +423,7 @@ const ProfileUser = () => {
               value={formData.address}
               onChange={handleInputChange}
               />
-              {errors.address && <span className="text-danger">{errors.address}</span>}
+              <span className={`text-danger ${errors.address ? 'is-invalid' : ''}`}>{errors.address}</span>
             </div>
             <div className="edit-infor">
               <button className="btn btn-primary" onClick={handleSaveChanges} >Lưu thay đổi</button>
