@@ -1,10 +1,8 @@
 package web.webbanhang.category;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import web.webbanhang.product.Product;
 import web.webbanhang.user.User;
 
@@ -18,8 +16,9 @@ public class Category {
 
     private String nameCategory;
 
-    @OneToMany(mappedBy="category")
-    @JsonIgnore
+    @OneToMany(mappedBy="category", fetch = FetchType.EAGER)
+//    @JsonIgnore
+    @JsonManagedReference
     private List<Product> product;
 
     public Category(int id, String nameCategory) {

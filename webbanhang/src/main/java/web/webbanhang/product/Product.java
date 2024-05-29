@@ -27,6 +27,7 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
+    @JsonBackReference
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
@@ -110,6 +111,8 @@ public class Product {
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
+
+
 
     @Override
     public String toString() {
