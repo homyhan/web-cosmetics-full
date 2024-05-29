@@ -10042,29 +10042,101 @@
 .sectionProduct .listProductHome .item{
   width: 100%;
 }
-.sectionProduct .listProductHome .item img{
+.sectionProduct .listProductHome .item img, .sectionProduct .listProductCateHome .item img{
   width: 100%;
   cursor: pointer;
 }
-.sectionProduct .listProductHome .item h1{
+.sectionProduct .listProductHome .item h1, .sectionProduct .listProductCateHome .item h1{
   font-size: 14px;
   cursor: pointer;
   transition: 0.4s all;
 }
-.sectionProduct .listProductHome .item h1:hover{
+.sectionProduct .listProductHome .item h1:hover, .sectionProduct .listProductCateHome .item h1:hover{
   color: #82ae46;
 }
-.sectionProduct .listProductHome .item button{
+.sectionProduct .listProductHome .item button, .sectionProduct .listProductCateHome .item button{
   background-color: #82ae46;
   border: none;
-  width: 40px;
+  width: 49%;
   height: 40px;
-  border-radius: 50%;
+  cursor: pointer;
+  /* border-radius: 50%; */
+  margin: auto;
 }
-.sectionProduct .listProductHome .item button i{
+.sectionProduct .listProductHome .item button i, .sectionProduct .listProductCateHome .item button i{
   color: white;
 }
 
+.ant-tabs-content-holder #rc-tabs-1-panel-2{
+  /* display: grid; */
+  grid-template-columns: repeat(4, 1fr);
+}
+.listProductCateHome1{
+  width: 90%;
+  margin: auto;
+}
+.listProductHome3{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.listProductHome3 .item img{
+  width: 100%;
+  cursor: pointer;
+}
+.listProductHome3 .item h1{
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.4s all;
+  margin-top: 12px;
+}
+.item h1{
+  height: 42px;
+  overflow-y: hidden;
+}
+.listProductHome3 .item h1:hover{
+  color: #82ae46;
+}
+.listProductHome3 .item button{
+  background-color: #82ae46;
+  border: none;
+  width: 49%;
+  height: 40px;
+  cursor: pointer;
+  /* border-radius: 50%; */
+  margin: auto;
+}
+.listProductHome3 .item button i{
+  color: white;
+}
+.sectionProductCate{
+  background-color: #eeeeee;
+}
+
+.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{
+  color: #82ae46;
+}
+.ant-tabs .ant-tabs-tab:hover{
+  color: #82ae46;
+}
+
+.ant-tabs .ant-tabs-ink-bar{
+  background: #82ae46;
+}
+
+.ant-pagination .ant-pagination-item-active a{
+  color: #82ae46;
+}
+.ant-pagination .ant-pagination-item-active{
+  border-color: #82ae46;
+}
+.ant-pagination .ant-pagination-item-active:hover{
+  border-color: #82ae46;
+}
+.ant-pagination .ant-pagination-item-active:hover a{
+  color: #82ae46;
+}
 /* LAYOUT ADMIN  */
 
 #main-header {
@@ -10698,6 +10770,16 @@
 	}
 }
 
+.truncate-multiline {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5; /* Số dòng bạn muốn hiển thị */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; /* Đảm bảo nội dung xuống dòng */
+  /* height: calc(1.2em * 5); Điều chỉnh chiều cao để khớp với số dòng */
+}
+
 
 
 /* END LAYOUT FORM LOGIN  */
@@ -10923,4 +11005,10 @@ body {
 }
 .text-email{
   padding-left: 10px;
+}
+
+.listProductCateHome .ant-tabs .ant-tabs-tabpane{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 }

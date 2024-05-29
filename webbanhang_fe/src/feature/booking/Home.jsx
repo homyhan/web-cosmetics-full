@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from "react";
 import "../../components/style.css";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts, addToCart, fetchCartById } from "./thunk";
-import { useNavigate } from "react-router-dom";
+import { fetchProducts, addToCart, fetchCartById, fetchCategories } from "./thunk";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { Pagination, Tabs } from "antd";
 
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const products = useSelector((state) => state.booking.products);
+  const {products, listCategory} = useSelector((state) => state.booking);
   const {user} = useSelector(state=>state.auth);
+  const [searchParam, setSearchParam] = useSearchParams();
   const [quantityProdCart, setQuantityProdCart] = useState(0);
 
   const isLoggedIn = localStorage.getItem("emailCosmetics") && localStorage.getItem("passcosmetics");
 
   useEffect(() => {
-    dispatch(fetchProducts);
+    const page = searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1;
+    dispatch(fetchProducts(page-1, 8));
+    dispatch(fetchCategories)
     getQuantityProdInCart();
-  }, [dispatch]);
+  }, [dispatch, searchParam]);
 
 
   const getQuantityProdInCart = async () => {
@@ -65,6 +69,72 @@ const Home = () => {
       localStorage.removeItem("emailCosmetics");
       localStorage.removeItem("passcosmetics");
       navigate('/login');
+  };
+
+  const onChange = (key) => {
+    console.log(key);
+  };  
+
+  const formatCurrencyVND = (number) => {
+    var formattedAmount = number?.toLocaleString("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    });
+    formattedAmount = formattedAmount?.replace("₫", "");
+    return formattedAmount;
+  };
+
+  let renderTabCate = () => {
+    return listCategory?.map((item) => {
+      return {
+        label: item?.nameCategory,
+        key: item?.id,
+        children: (
+          <>
+          {item?.product?.length==0? <p style={{padding:'12px', backgroundColor:'#82ae4663'}}>Sản phẩm sẽ sớm được cập nhật</p>: <div className="listProductHome3">
+              {item?.product?.map((item, key)=>{
+                return (
+                  <div key={item?.id} className="item">
+                    <img src={item?.img} onClick={()=>{navigate("/product-detail/"+item?.id)}} alt="" />
+                    <h1>{item?.nameProd}</h1>
+                    <p className="price">{formatCurrencyVND(item?.price)} vnd</p>
+                    <button onClick={()=>{handleAddToCart(item?.id)}}>
+                      <i className="fa-solid fa-cart-shopping"></i>
+                    </button>
+                  </div>
+                    )
+                  })}
+                </div>}
+            
+            {/* {item?.listItemProduct?.length == 0 ? (
+              <p
+                style={{ backgroundColor: "#fff3cd", color: "#856404" }}
+                className="p-4 rounded-lg text-center"
+              >
+                Danh mục sản phẩm trống
+              </p>
+            ) : (
+              <>
+                <div className={`${styles.listItem } grid grid-cols-4 bg-white`}>
+                  {item.listItemProduct.map((prod) => {
+                    return (
+                      <ItemProduct key={prod.uuid} prod={prod}></ItemProduct>
+                    );
+                  })}
+                </div>
+                {item?.listItemProduct?.length<8?"": (
+                  <div className="text-center">
+                  <Pagination defaultCurrent={1} total={50} />
+                </div>
+                )}
+                
+              </>
+              
+            )} */}
+          </>
+        ),
+      };
+    });
   };
 
   
@@ -196,23 +266,44 @@ const Home = () => {
 
       {/* BANNER  */}     
 
+      {/* CATE  */}
+      <section className="sectionProduct sectionProductCate py-5">
+        <h2 className="text-center">OUR CATEGORY</h2>
+        <div className="listProductCateHome1">
+          <Tabs defaultActiveKey="1" items={renderTabCate()} onChange={onChange} />
+        </div>
+        
+      </section>
+
       {/* PRODUCT  */}
       <section className="sectionProduct py-5">
         <h2 className="text-center">OUR PRODUCT</h2>
         <div className="listProductHome">
-          {products?.map((item, key) => {
+          {products?.content?.map((item, key) => {
             return (
               <div key={item?.id} className="item">
                 <img src={item?.img} onClick={()=>{navigate("/product-detail/"+item?.id)}} alt="" />
                 <h1>{item?.nameProd}</h1>
-                <p className="price">{item?.price}</p>
+                <p className="price">{formatCurrencyVND(item?.price)} vnd</p>
                 <button onClick={()=>{handleAddToCart(item?.id)}}>
                   <i className="fa-solid fa-cart-shopping"></i>
+                </button>
+                <button onClick={()=>{}}>
+                  <i className="fa-solid fa-credit-card"></i>
                 </button>
               </div>
             );
           })}
         </div>
+        <Pagination
+        className="text-center my-4"
+        current={searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1}
+        pageSize={8}
+        total={products?.totalElements}
+        onChange={(page) => {
+          setSearchParam({ page: page.toString() });
+        }}
+      />
       </section>
     </div>
   );

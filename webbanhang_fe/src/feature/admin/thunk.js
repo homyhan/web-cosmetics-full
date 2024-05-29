@@ -202,3 +202,17 @@ export const updateRoleById = (id, data)=>async (dispatch)=>{
       return error.response;
   }
 }
+
+
+export const fetchProdsList =(page, size)=> async (dispatch) => {
+  try {
+    
+    const res = await cosmeticsServ.getProductsList(page, size);
+    dispatch({
+        type: "SET_PRODS_ADMIN",
+        payload: res.data,
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};  

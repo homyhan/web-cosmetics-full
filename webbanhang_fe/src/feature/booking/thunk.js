@@ -1,10 +1,10 @@
 import { cosmeticsServ } from "../../services/cosmeticsServ";
 
-export const fetchProducts = async (dispatch) => {
+export const fetchProducts =(page, size)=> async (dispatch) => {
     try {
       
-      const res = await cosmeticsServ.getProducts();
-      dispatch({
+      const res = await cosmeticsServ.getProductsList(page, size);
+    dispatch({
         type: "SET_PRODUCTS",
         payload: res.data,
       });
