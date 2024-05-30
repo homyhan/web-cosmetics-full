@@ -123,7 +123,7 @@ public class Product {
 
 
 
-<<<<<<< HEAD
+
 
 
     //    @Override
@@ -140,8 +140,6 @@ public class Product {
 //    }
 
 
-=======
->>>>>>> 1ac4bacba73e3fec550d428005e27ad4844071ef
     @Override
     public String toString() {
         return "Product{" +
