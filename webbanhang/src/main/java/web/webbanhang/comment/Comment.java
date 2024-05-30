@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import web.webbanhang.product.Product;
 import web.webbanhang.user.User;
 
+import java.time.LocalDateTime;
+
 @Entity
 public class Comment {
     @Id
@@ -24,11 +26,14 @@ public class Comment {
 
     private int quantityStart;
 
-    public Comment( User user, Product product, String contentComment, int quantityStart) {
+    private LocalDateTime dateTime;
+
+    public Comment( User user, Product product, String contentComment, int quantityStart, LocalDateTime dateTime) {
         this.user = user;
         this.product = product;
         this.contentComment = contentComment;
         this.quantityStart = quantityStart;
+        this.dateTime = dateTime;
     }
 
     public Comment() {
@@ -75,6 +80,14 @@ public class Comment {
         this.quantityStart = quantityStart;
     }
 
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
     @Override
     public String toString() {
         return "Comment{" +
@@ -83,6 +96,7 @@ public class Comment {
                 ", product=" + product +
                 ", contentComment='" + contentComment + '\'' +
                 ", quantityStart=" + quantityStart +
+                ", dateTime=" + dateTime +
                 '}';
     }
 }

@@ -66,7 +66,7 @@ public class RoleController {
 		}
 
 		existingRole.setNameRole(updatedRole.getNameRole());
-		existingRole.setRole(updatedRole.getRole());
+//		existingRole.setRole(updatedRole.getRole());
 		roleRepository.save(existingRole);
 
 		return ResponseEntity.status(HttpStatus.OK).body("Cập nhật role thành công");

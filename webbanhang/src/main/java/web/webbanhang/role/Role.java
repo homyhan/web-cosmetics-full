@@ -15,7 +15,7 @@ public class Role {
 	@Id
 	@GeneratedValue
 	private int id;
-	private int role;
+//	private int role;
 	private String nameRole;
 	
 //	 @OneToMany(mappedBy = "role")
@@ -23,10 +23,10 @@ public class Role {
 	@JsonIgnore
 	    private List<User> users;
 	
-	public Role(int id, int role, String nameRole) {
+	public Role(int id, String nameRole) {
 		super();
 		this.id = id;
-		this.role = role;
+//		this.role = role;
 		this.nameRole = nameRole;
 	}
 	public int getId() {
@@ -35,12 +35,12 @@ public class Role {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int getRole() {
-		return role;
-	}
-	public void setRole(int role) {
-		this.role = role;
-	}
+//	public int getRole() {
+//		return role;
+//	}
+//	public void setRole(int role) {
+//		this.role = role;
+//	}
 	public String getNameRole() {
 		return nameRole;
 	}
@@ -57,7 +57,7 @@ public class Role {
     }
 	@Override
 	public String toString() {
-		return "Role [id=" + id + ", role=" + role + ", nameRole=" + nameRole + "]";
+		return "Role [id=" + id  + ", nameRole=" + nameRole + "]";
 	}
 	
 }

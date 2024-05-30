@@ -1,5 +1,6 @@
 package web.webbanhang.product;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ public class ProductController {
 
             System.out.println("Loi 2");
         }
+
         product.setCategory(cate);
         Product addedProd = productRepositoty.save(product);
         if (addedProd != null) {
@@ -51,6 +53,38 @@ public class ProductController {
         }
     }
 
+//    @GetMapping("/productsPage")
+//    public ResponseEntity<Page<Product>> retrieveAllProduct(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size
+//    ) {
+//        try {
+//            PageRequest pageRequest = PageRequest.of(page, size);
+//            Page<Product> products = productRepositoty.findAll(pageRequest);
+//            return ResponseEntity.ok(products);
+//        } catch (Exception e) {
+//            System.err.println("Error retrieving products: " + e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
+//@GetMapping("/productsPage")
+//public ResponseEntity<Page<Product>> retrieveAllProduct(
+//        @RequestParam(defaultValue = "0") int page,
+//        @RequestParam(defaultValue = "10") int size
+//) {
+//    try {
+//        PageRequest pageRequest = PageRequest.of(page, size);
+//        Page<Product> products = productRepositoty.findAll(pageRequest);
+//        products.forEach(product -> System.out.println(product)); // In từng sản phẩm ra log
+//        System.out.println("------------");
+//        System.out.println(products.stream().toList());
+//        return ResponseEntity.ok(products);
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//    }
+//}
+
     @GetMapping("/productsPage")
     public ResponseEntity<Page<Product>> retrieveAllProduct(
             @RequestParam(defaultValue = "0") int page,
@@ -59,11 +93,41 @@ public class ProductController {
         try {
             PageRequest pageRequest = PageRequest.of(page, size);
             Page<Product> products = productRepositoty.findAll(pageRequest);
+            System.out.println("Number of products: " + products.getTotalElements());
             return ResponseEntity.ok(products);
         } catch (Exception e) {
-            System.err.println("Error retrieving products: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GetMapping("/searchProducts")
+    public ResponseEntity<Page<Product>> searchProductsByName(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Product> products = productRepositoty.findByNameProdContainingIgnoreCase(name, pageable);
+            return ResponseEntity.ok(products);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    @GetMapping("/products1")
+    public Page<Product> getProducts(@RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
+        // Tạo đối tượng PageRequest để phân trang và sắp xếp
+        PageRequest pageable = PageRequest.of(page, size);
+
+        // Gọi phương thức findAll() của repository để lấy dữ liệu theo trang và kích thước trang
+        Page<Product> products = productRepositoty.findAll(pageable);
+        products.forEach(product -> System.out.println(product));
+        return products;
     }
 
 //    @GetMapping("/products")
@@ -106,6 +170,7 @@ public class ProductController {
         existingProduct.setPrice(updatedProduct.getPrice());
         existingProduct.setImg(updatedProduct.getImg());
         existingProduct.setQuantity(updatedProduct.getQuantity());
+
         existingProduct.setDescription(updatedProduct.getDescription());
         existingProduct.setCategory(updatedProduct.getCategory());
 

@@ -11,6 +11,7 @@ import web.webbanhang.jpa.UserJpa;
 import web.webbanhang.product.Product;
 import web.webbanhang.user.User;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -54,6 +55,62 @@ public class CommentController {
 //        }
 //    }
 
+    @GetMapping("/commentsByProduct")
+    public ResponseEntity<Page<Comment>> retrieveCommentsByProduct(
+            @RequestParam int productId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        try {
+            // Kiểm tra xem product có tồn tại không
+            Optional<Product> optionalProduct = productRepository.findById(productId);
+            if (!optionalProduct.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Tạo PageRequest để phân trang
+            PageRequest pageRequest = PageRequest.of(page, size);
+            System.out.println(productId);
+
+            // Lấy danh sách comment của product theo trang
+            Page<Comment> comments = commentRepository.findByProductId(productId, pageRequest);
+
+            return ResponseEntity.ok(comments);
+        } catch (Exception e) {
+            System.err.println("Error retrieving comments by product: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+
+//    @PostMapping("/comments")
+//    public ResponseEntity<String> addComment(@RequestBody CommentRequest commentRequest) {
+//        try {
+//            int userId = commentRequest.getUserId();
+//            int productId = commentRequest.getProductId();
+//            String contentComment = commentRequest.getContentComment();
+//            int quantityStart = commentRequest.getQuantityStart();
+//
+//            Optional<User> optionalUser = userRepository.findById(userId);
+//            Optional<Product> optionalProduct = productRepository.findById(productId);
+//
+//            if (!optionalUser.isPresent() || !optionalProduct.isPresent()) {
+//                return ResponseEntity.notFound().build();
+//            }
+//
+//            User user = optionalUser.get();
+//            Product product = optionalProduct.get();
+//
+//            Comment newComment = new Comment(user, product, contentComment, quantityStart);
+//            commentRepository.save(newComment);
+//
+//            return ResponseEntity.ok("Comment added successfully");
+//        } catch (Exception e) {
+//            System.err.println("Error adding comment: " + e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding comment");
+//        }
+//    }
 
     @PostMapping("/comments")
     public ResponseEntity<String> addComment(@RequestBody CommentRequest commentRequest) {
@@ -62,6 +119,7 @@ public class CommentController {
             int productId = commentRequest.getProductId();
             String contentComment = commentRequest.getContentComment();
             int quantityStart = commentRequest.getQuantityStart();
+            LocalDateTime dateTime = commentRequest.getDateTime();
 
             Optional<User> optionalUser = userRepository.findById(userId);
             Optional<Product> optionalProduct = productRepository.findById(productId);
@@ -73,7 +131,8 @@ public class CommentController {
             User user = optionalUser.get();
             Product product = optionalProduct.get();
 
-            Comment newComment = new Comment(user, product, contentComment, quantityStart);
+            // Assuming the Comment class has a constructor that takes LocalDateTime
+            Comment newComment = new Comment(user, product, contentComment, quantityStart, dateTime);
             commentRepository.save(newComment);
 
             return ResponseEntity.ok("Comment added successfully");
@@ -82,6 +141,7 @@ public class CommentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding comment");
         }
     }
+
 
     @GetMapping("/commentsPage")
     public ResponseEntity<Page<Comment>> retrieveAllProduct(
@@ -124,7 +184,7 @@ public class CommentController {
     @PutMapping("/comments/{commentId}")
     public ResponseEntity<String> updateComment(
             @PathVariable int commentId,
-            @RequestParam int userId,
+//            @RequestParam int userId,
             @RequestBody CommentRequest commentRequest) {
         try {
             Optional<Comment> optionalComment = commentRepository.findById(commentId);
@@ -133,9 +193,9 @@ public class CommentController {
             }
 
             Comment comment = optionalComment.get();
-            if (comment.getUser().getId() != userId) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not allowed to update this comment.");
-            }
+//            if (comment.getUser().getId() != userId) {
+//                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not allowed to update this comment.");
+//            }
 
             comment.setContentComment(commentRequest.getContentComment());
             comment.setQuantityStart(commentRequest.getQuantityStart());
@@ -147,6 +207,23 @@ public class CommentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating comment");
         }
     }
+
+    @GetMapping("/comment/{commentId}")
+    public ResponseEntity<Comment> retrieveCommentById(@PathVariable int commentId) {
+        try {
+            Optional<Comment> optionalComment = commentRepository.findById(commentId);
+            if (!optionalComment.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Comment comment = optionalComment.get();
+            return ResponseEntity.ok(comment);
+        } catch (Exception e) {
+            System.err.println("Error retrieving comment: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
 
 }

@@ -1,16 +1,18 @@
 package web.webbanhang.category;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
 import web.webbanhang.product.Product;
 import web.webbanhang.user.User;
 
 import java.util.List;
 
 @Entity
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+
 public class Category {
     @Id
     @GeneratedValue
@@ -18,8 +20,9 @@ public class Category {
 
     private String nameCategory;
 
-    @OneToMany(mappedBy="category")
-    @JsonIgnore
+    @OneToMany(mappedBy="category", fetch = FetchType.EAGER)
+//    @JsonIgnore
+    @JsonManagedReference
     private List<Product> product;
 
     public Category(int id, String nameCategory) {
