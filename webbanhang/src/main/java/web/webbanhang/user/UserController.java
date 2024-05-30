@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -76,7 +77,7 @@ public class UserController {
 				return ResponseEntity.badRequest().build();
 			}
 
-			Role existingRole = roleRepository.findByRoleCode(user.getRole().getRole());
+			Role existingRole = roleRepository.findByNameRole(user.getRole().getNameRole());
 
 			if (existingRole == null) {
 				System.out.println("Loi 2");
@@ -84,6 +85,9 @@ public class UserController {
 			}
 
 			user.setRole(existingRole);
+			// Mã hóa mật khẩu bằng MD5
+			String hashedPassword = DigestUtils.md5Hex(user.getPassword());
+			user.setPassword(hashedPassword);
 			User addedUser = userRepository.save(user);
 
 			if (addedUser != null) {
@@ -122,6 +126,25 @@ public class UserController {
 		String password = userLoginRequest.getPassword();
 
 		User user = userRepository.findByEmail(email);
+
+		// Mã hóa mật khẩu bằng MD5
+		String hashedPassword = DigestUtils.md5Hex(password);
+
+		if (user != null && user.getPassword().equals(hashedPassword)) {
+			return ResponseEntity.ok(user);
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email hoặc mật khẩu không chính xác");
+		}
+	}
+
+	@PostMapping("/profile")
+	public ResponseEntity<?> fetchProfile(@Validated @RequestBody LoginRequest userLoginRequest) {
+		String email = userLoginRequest.getEmail();
+		String password = userLoginRequest.getPassword();
+
+		User user = userRepository.findByEmail(email);
+
+
 		if (user != null && user.getPassword().equals(password)) {
 			return ResponseEntity.ok(user);
 		} else {

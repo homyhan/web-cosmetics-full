@@ -1,7 +1,12 @@
 package web.webbanhang.category;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+<<<<<<< HEAD
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+=======
+>>>>>>> 1ac4bacba73e3fec550d428005e27ad4844071ef
 import jakarta.persistence.*;
 import web.webbanhang.product.Product;
 import web.webbanhang.user.User;
@@ -9,6 +14,8 @@ import web.webbanhang.user.User;
 import java.util.List;
 
 @Entity
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+
 public class Category {
     @Id
     @GeneratedValue

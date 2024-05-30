@@ -1,7 +1,9 @@
 package web.webbanhang.product;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import web.webbanhang.category.Category;
 import web.webbanhang.comment.Comment;
@@ -10,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+
 public class Product {
     @Id
     @GeneratedValue
@@ -25,6 +29,8 @@ public class Product {
 
     private String description;
 
+
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     @JsonBackReference
@@ -34,14 +40,17 @@ public class Product {
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
 
-    public Product(int id, String nameProd, double price, String img, int quantity, String description, Category category) {
+
+    public Product(int id, String nameProd, double price, String img, int quantity, String description, Category category, List<Comment> comments) {
         this.id = id;
         this.nameProd = nameProd;
         this.price = price;
         this.img = img;
         this.quantity = quantity;
         this.description = description;
+
         this.category = category;
+        this.comments = comments;
     }
 
     public Product() {
@@ -114,6 +123,25 @@ public class Product {
 
 
 
+<<<<<<< HEAD
+
+
+    //    @Override
+//    public String toString() {
+//        return "Product{" +
+//                "id=" + id +
+//                ", nameProd='" + nameProd + '\'' +
+//                ", price=" + price +
+//                ", img='" + img + '\'' +
+//                ", quantity=" + quantity +
+//                ", description='" + description + '\'' +
+//                ", category=" + (category != null ? category.getNameCategory() : "null") +
+//                '}';
+//    }
+
+
+=======
+>>>>>>> 1ac4bacba73e3fec550d428005e27ad4844071ef
     @Override
     public String toString() {
         return "Product{" +
@@ -123,8 +151,11 @@ public class Product {
                 ", img='" + img + '\'' +
                 ", quantity=" + quantity +
                 ", description='" + description + '\'' +
+
                 ", category=" + (category != null ? category.getNameCategory() : "null") +
+                ", comments=" + comments +
                 '}';
     }
+
 
 }
