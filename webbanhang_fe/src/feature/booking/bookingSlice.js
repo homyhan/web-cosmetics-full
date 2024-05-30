@@ -1,10 +1,13 @@
 import { produce } from "immer";
 
 const initialState = {
-    products:[],
+    products:{},
     selectedPro: {},
+    listCategory:[],
     orders:[],
-    details: []
+    details: [],
+    banners: [],
+    comments:{}
   };
 
   export const bookingReducer = (state = initialState, { type, payload }) => {
@@ -21,6 +24,17 @@ const initialState = {
         if (type === "SET_DETAIL") {
           draft.details = payload;
         }
+
+        if(type==="SET_CATEGORY"){
+          draft.listCategory = payload;
+        }
+        if(type==="SET_BANNER"){
+          
+          draft.banners = payload
+        }
+        if(type==="SET_COMMENTS"){
+          draft.comments=payload
+        }
         
-    });
+    })
   };

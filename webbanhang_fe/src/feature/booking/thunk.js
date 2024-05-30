@@ -1,10 +1,10 @@
 import { cosmeticsServ } from "../../services/cosmeticsServ";
 
-export const fetchProducts = async (dispatch) => {
+export const fetchProducts =(page, size)=> async (dispatch) => {
     try {
       
-      const res = await cosmeticsServ.getProducts();
-      dispatch({
+      const res = await cosmeticsServ.getProductsList(page, size);
+    dispatch({
         type: "SET_PRODUCTS",
         payload: res.data,
       });
@@ -147,3 +147,41 @@ export const fetchDetailOrder = (orderId) => async (dispatch) => {
     console.log(error);
   }
 };
+
+export const fetchProdsByName = (name, page, size) => async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.searchProductsByName(name, page, size);
+    dispatch({
+      type: "SET_PRODUCTS",
+      payload: res.data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const fetchCommentsProd = (id, page, size) => async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.getCommentsProd(id, page, size);
+    dispatch({
+      type: "SET_COMMENTS",
+      payload: res.data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const commentsProd = (data)=>async (dispatch)=>{
+  try {
+    const res = await cosmeticsServ.commentsProd(data);
+  } catch (error) {
+    console.log(error);
+  }
+}
+export const updateCommentsProd = (id, data)=>async (dispatch)=>{
+  try {
+    const res = await cosmeticsServ.updateComment(id, data);
+  } catch (error) {
+    console.log(error);
+  }
+}

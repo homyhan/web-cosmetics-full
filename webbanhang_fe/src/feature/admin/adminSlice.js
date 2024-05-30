@@ -2,8 +2,10 @@ import { produce } from "immer";
 
 const initialState = {
     products:[],
-    categories:[],
+    categories:{},
+    listCate:[],
     roles:[],
+    listProdsPage: {},
     selectedCate: {},
     selectedProd: {},
     banners:[],
@@ -19,7 +21,7 @@ const initialState = {
          
             draft.products = payload;
         }
-        if(type==="SET_CATEGORY"){
+        if(type==="SET_CATE_ADMIN"){
           
           draft.categories = payload;
         }
@@ -56,6 +58,13 @@ const initialState = {
         }
         if(type=="SELECTED_ROLE"){
           draft.selectedRole= payload;
+        }
+
+        if(type=="SET_PRODS_ADMIN"){
+          draft.listProdsPage = payload;
+        }
+        if(type==="SET_CATEGORY_ADMIN"){
+          draft.listCate = payload;
         }
     });
   };

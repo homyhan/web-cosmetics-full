@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import LayoutAdmin from "../../HOCs/LayoutAdmin";
 import { useDispatch, useSelector } from "react-redux";
 import { getCategory, postCategories, updateCategory } from "./thunk";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from 'sweetalert2'
 
 const FormCategory = () => {
+  const navigate = useNavigate();
   const [categoryName, setCategoryName] = useState("");
   const dispatch = useDispatch();
   const handleInputChange = (event) => {
@@ -13,13 +14,14 @@ const FormCategory = () => {
   };
   const handleSubmit = async () => {
     const res = await dispatch(postCategories({ nameCategory: categoryName }));
-    Swal.fire({
+   await Swal.fire({
       position: "center",
       icon: "success",
       title: res,
       showConfirmButton: false,
       timer: 1500
     });
+    navigate(-1);
   };
 
 

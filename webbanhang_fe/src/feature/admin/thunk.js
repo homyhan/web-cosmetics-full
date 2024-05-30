@@ -202,3 +202,65 @@ export const updateRoleById = (id, data)=>async (dispatch)=>{
       return error.response;
   }
 }
+
+
+export const fetchProdsList =(page, size)=> async (dispatch) => {
+  try {
+    
+    const res = await cosmeticsServ.getProductsList(page, size);
+    dispatch({
+        type: "SET_PRODS_ADMIN",
+        payload: res.data,
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};  
+
+export const fetchProdsByName = (name, page, size) => async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.searchProductsByName(name, page, size);
+    dispatch({
+      type: "SET_PRODS_ADMIN",
+      payload: res.data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchCatePagiList =(page, size)=> async (dispatch) => {
+  try {
+    
+    const res = await cosmeticsServ.fetchCategoryPagi(page, size);
+    dispatch({
+        type: "SET_CATE_ADMIN",
+        payload: res.data,
+      });
+  } catch (error) {
+    console.log(error);
+  }
+}; 
+export const fetchCatesByName = (name, page, size) => async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.searchCateByName(name, page, size);
+    dispatch({
+      type: "SET_CATE_ADMIN",
+      payload: res.data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchCategories = async (dispatch)=>{
+  try{
+    const res = await cosmeticsServ.getCategories();
+    dispatch({
+      type: "SET_CATEGORY_ADMIN",
+      payload: res.data
+    })
+  }catch(err){
+    console.log(err);
+  }
+};

@@ -4,7 +4,7 @@ import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCategories } from "../booking/thunk";
+import { fetchCategories } from "../admin/thunk";
 import { addProduct, getCategory } from "./thunk";
 import { cosmeticsServ } from "../../services/cosmeticsServ";
 import Swal from 'sweetalert2';
@@ -21,9 +21,11 @@ const FormAddProduct = () => {
     const [category, setCategory] = useState({});
     const [imgUrl, setImgUrl] = useState('');
     const navigate = useNavigate();
+    
+
 
     const dispatch = useDispatch();
-    const categories = useSelector(state=>state.admin.categories);
+    const categories = useSelector(state=>state.admin.listCate);
 
     const toolbarOptions = [
       ['bold', 'italic', 'underline', 'strike'],        
@@ -96,7 +98,7 @@ const FormAddProduct = () => {
           showConfirmButton: false,
           timer: 1500
         });
-        navigate("/admin")
+        navigate(-1)
         
     }
 
@@ -138,7 +140,7 @@ const FormAddProduct = () => {
             })}
             
           </select>
-        </div>
+        </div>        
 
         <div className="mb-3">
           <button onClick={()=>{handleAdd()}}>Add</button>
