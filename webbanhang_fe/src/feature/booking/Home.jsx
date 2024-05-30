@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import "../../components/style.css";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts, addToCart, fetchCartById, fetchCategories, fetBanners, fetchProdsByName } from "./thunk";
+
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import _ from 'lodash';
 import { Pagination, Tabs } from "antd";
-
 import { Carousel } from "react-bootstrap";
 
 const Home = () => {
