@@ -58,8 +58,7 @@ const Role = () => {
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Name Role</th>            
-            <th scope="col">Role</th>            
+            <th scope="col">Name Role</th>                     
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -67,9 +66,7 @@ const Role = () => {
           {roles?.map((item, key)=>{
             return <tr key={item?.id}>
              <td >{key+1}</td>
-             <td >{item.nameRole}</td>
-             <td >{item?.role}</td>
-             
+             <td >{item.nameRole}</td>             
              <td >
                <button onClick={()=>{handleEdit(item?.id)}}>
                  <i className="fa-solid fa-pen-to-square"></i>

@@ -11049,3 +11049,12 @@ body {
 .banner-section .carousel-caption p {
   font-size: 16px;
 }
+.btnCmt{
+  transition: 0.4s;
+  border-color: #82ae46;
+  color: #82ae46;
+}
+.btnCmt:hover{
+  background-color: #82ae46;
+  color: white;
+}

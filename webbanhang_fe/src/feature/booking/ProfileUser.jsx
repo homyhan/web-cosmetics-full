@@ -227,7 +227,7 @@ const ProfileUser = () => {
                   <div className="icon mr-2 d-flex justify-content-center align-items-center">
                     <span className="icon-paper-plane" />
                   </div>
-                  <span className="text">youremail@email.com</span>
+                  <span className="text">cosmeticsvn@gmail.com</span>
                 </div>
                 <div className="col-md-5 pr-4 d-flex topper align-items-center text-lg-right">
                   <span className="text">

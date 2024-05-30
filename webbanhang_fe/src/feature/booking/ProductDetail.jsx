@@ -1,27 +1,49 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "../../components/style.css";
-import { useNavigate } from "react-router-dom";
-import { getProduct } from "./thunk";
-import { useParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  commentsProd,
+  fetchCommentsProd,
+  getProduct,
+  updateCommentsProd,
+} from "./thunk";
+import { useParams } from "react-router-dom";
 import { fetchProducts, addToCart, fetchCartById } from "./thunk";
 import Swal from "sweetalert2";
+import { Pagination } from "antd";
 
 const ProductDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const params = useParams();
   const productId = params?.id;
+  const [searchParam, setSearchParam] = useSearchParams();
   const selectedPro = useSelector((state) => state.booking.selectedPro);
-  const {user} = useSelector(state=>state.auth);
-  const isLoggedIn = localStorage.getItem("emailCosmetics") && localStorage.getItem("passcosmetics");
+  const { comments } = useSelector((state) => state.booking);
+  const { user } = useSelector((state) => state.auth);
+  const isLoggedIn =
+    localStorage.getItem("emailCosmetics") &&
+    localStorage.getItem("passcosmetics");
 
   useEffect(() => {
+    const page = searchParam.get("page")
+      ? parseInt(searchParam.get("page"), 10)
+      : 1;
     dispatch(getProduct(productId));
-  }, [dispatch, productId]);
+    dispatch(fetchCommentsProd(productId, page - 1, 8));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [dispatch, productId, searchParam]);
 
   const [quantity, setQuantity] = useState(1);
+  const [rating, setRating] = useState(0);
+  const [contentComment, setContentComment] = useState("");
+  const [editComment, setEditComment] = useState("");
+  const [editRating, setEditRating] = useState(0);
+  const [idCmt, setIdCmt] = useState(0);
+  const [updateButtonText, setUpdateButtonText] = useState("Comment"); 
+
+
   const increaseQuantity = () => {
     setQuantity(quantity + 1);
   };
@@ -38,52 +60,122 @@ const ProductDetail = () => {
     getQuantityProdInCart();
   }, [dispatch]);
 
-
   const getQuantityProdInCart = async () => {
     const idUser = user?.id;
     if (idUser) {
-      const res = await dispatch(fetchCartById(idUser));   
+      const res = await dispatch(fetchCartById(idUser));
       setQuantityProdCart(res?.data?.length);
     }
   };
 
-  const handleAddToCart=async(id)=>{
+  const handleAddToCart = async (id) => {
     const userId = user?.id;
-    if(userId){
+    if (userId) {
       const productId = id;
-    const res = await dispatch(addToCart({userId, productId, quantity}));
-    getQuantityProdInCart();
-    if(res.status=="200"){
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: res.data,
-        showConfirmButton: false,
-        timer: 1500
-    });
-    }else{
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: res.data,
-        showConfirmButton: false,
-        timer: 1500
-    });
+      const res = await dispatch(addToCart({ userId, productId, quantity }));
+      getQuantityProdInCart();
+      if (res.status == "200") {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: res.data,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: res.data,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    } else {
+      navigate("/login");
     }
-    }else{
-      navigate("/login")
-    }
-    
-  }
+  };
 
-  const handleToCartPage=async()=>{
+  const handleToCartPage = async () => {
     navigate("/cart");
-  }
+  };
   const handleLogout = () => {
     localStorage.removeItem("emailCosmetics");
     localStorage.removeItem("passcosmetics");
-    navigate('/login');
-};
+    navigate("/login");
+  };
+
+  const handleStarClick = (index) => {
+    setRating(index);
+    setEditRating(index);
+  };
+  const handleChangeContent = (evt) => {
+    setContentComment(evt.target.value);
+    setEditComment(evt.target.value);
+  };
+
+  const handleSubmitComment = async () => {
+    const userId = user?.id;
+    const dateTime = new Date().toISOString();
+
+    if (editButtonClicked) {
+      const updatedComment = {
+        ...editComment,
+        contentComment: editComment,
+        quantityStart: editRating,
+      };
+      setEditButtonClicked(true);
+      await dispatch(updateCommentsProd(idCmt, updatedComment));
+      const page = searchParam.get("page")
+        ? parseInt(searchParam.get("page"), 10)
+        : 1;
+      await dispatch(fetchCommentsProd(productId, page - 1, 8));
+      setEditRating(0);
+      setEditComment('');
+      setRating(0);
+    setContentComment("");
+    setUpdateButtonText("Comment"); 
+    } else {
+      const data = {
+        userId,
+        productId,
+        contentComment,
+        quantityStart: rating,
+        dateTime,
+      };
+      await dispatch(commentsProd(data));
+      const page = searchParam.get("page")
+        ? parseInt(searchParam.get("page"), 10)
+        : 1;
+      await dispatch(fetchCommentsProd(productId, page - 1, 8));
+      setRating(0);
+      setContentComment("");
+      setEditRating(0);
+      setEditComment('');
+      setEditButtonClicked(false);
+    }
+
+    
+  };
+
+  const [editButtonClicked, setEditButtonClicked] = useState(false);
+
+  const handleEdit = (comment) => {
+    setEditComment(comment.contentComment);
+    setEditRating(comment.quantityStart);
+    setIdCmt(comment?.id);
+    setEditButtonClicked(true);
+    setUpdateButtonText("Update"); 
+  };
+
+  const commentsRef = useRef(null);
+
+  useEffect(() => {
+    if (editButtonClicked && commentsRef.current) {
+      const yOffset = commentsRef.current.offsetTop;
+      window.scrollTo({ top: yOffset, behavior: "smooth" });
+    }
+  }, [editButtonClicked]);
 
   return (
     <div>
@@ -102,7 +194,7 @@ const ProductDetail = () => {
                   <div className="icon mr-2 d-flex justify-content-center align-items-center">
                     <span className="icon-paper-plane" />
                   </div>
-                  <span className="text">youremail@email.com</span>
+                  <span className="text">cosmeticsvn@gmail.com</span>
                 </div>
                 <div className="col-md-5 pr-4 d-flex topper align-items-center text-lg-right">
                   <span className="text">
@@ -165,28 +257,32 @@ const ProductDetail = () => {
                 <a className="nav-link">Contact</a>
               </li>
               <li className="nav-item cta cta-colored">
-              <a
-                  style={{cursor:'pointer'}}
-                onClick={() => {
+                <a
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
                     handleToCartPage();
-                  }} className="nav-link">
-                  <i className="fa-solid fa-cart-shopping" />
-                  [{quantityProdCart}]
+                  }}
+                  className="nav-link"
+                >
+                  <i className="fa-solid fa-cart-shopping" />[{quantityProdCart}
+                  ]
                 </a>
               </li>
               {isLoggedIn ? (
                 <>
                   <li className="nav-item cta cta-colored tagLiIconUser">
-                <a
-                  onClick={() => {
-                    navigate("/user/profile");
-                  }}
-                  className="nav-link"
-                >
-                  <i className="fa-solid fa-user"></i>
-                  <span className="text-email">{isLoggedIn ? user.email : null}</span>
-                </a>
-              </li>
+                    <a
+                      onClick={() => {
+                        navigate("/user/profile");
+                      }}
+                      className="nav-link"
+                    >
+                      <i className="fa-solid fa-user"></i>
+                      <span className="text-email">
+                        {isLoggedIn ? user.email : null}
+                      </span>
+                    </a>
+                  </li>
                   <li className="nav-item cta cta-colored tagLiIconUser">
                     <a className="nav-link" onClick={handleLogout}>
                       <i className="fa-solid fa-power-off"></i>
@@ -195,7 +291,12 @@ const ProductDetail = () => {
                 </>
               ) : (
                 <li className="nav-item cta cta-colored tagLiIconUser">
-                  <a onClick={() => { navigate("/login"); }} className="nav-link">
+                  <a
+                    onClick={() => {
+                      navigate("/login");
+                    }}
+                    className="nav-link"
+                  >
                     <i className="fa-solid fa-right-to-bracket"></i>
                   </a>
                 </li>
@@ -206,63 +307,173 @@ const ProductDetail = () => {
       </nav>
 
       <div className="product">
-      <div className="container mt-4">
-        <h2 className="title">Product Detail</h2>
-        <div className="row">
-          <div className="img col-md-6">
-            <img
-              src={selectedPro?.img}
-              alt="Product"
-              className="img-fluid"
-            />
-          </div>
-          <div className="col-md-6">
-            <h2 className="namePro">{selectedPro.nameProd}</h2>
-            <div className="rating mb-3">
-              <span className="star">&#9733;</span>
-              <span className="star">&#9733;</span>
-              <span className="star">&#9733;</span>
-              <span className="star">&#9733;</span>
-              <span className="star">&#9734;</span>
+        <div className="container mt-4">
+          <h2 className="title">Product Detail</h2>
+          <div className="row">
+            <div className="img col-md-6">
+              <img src={selectedPro?.img} alt="Product" className="img-fluid" />
             </div>
-            <p className="price mb-3">{selectedPro.price} VNĐ</p>
-            <p className="description mb-3">
-              {selectedPro.description}
-            </p>
-            <div className="input-group mb-3" style={{ maxWidth: "120px" }}>
-              <div className="input-group-prepend">
-                <button
-                  className="btn btn-outline-secondary"
-                  type="button"
-                  id="button-minus"
-                  onClick={decreaseQuantity}
-                >
-                  -
-                </button>
+            <div className="col-md-6">
+              <h2 className="namePro">{selectedPro.nameProd}</h2>
+              <div className="rating mb-3">
+                <span className="star">&#9733;</span>
+                <span className="star">&#9733;</span>
+                <span className="star">&#9733;</span>
+                <span className="star">&#9733;</span>
+                <span className="star">&#9734;</span>
               </div>
-              <input
-                type="text"
-                className="form-control text-center"
-                value={quantity}
-                placeholder=""
-                aria-label="Example text with button addon"
-                aria-describedby="button-addon1"
-              />
-              <div className="input-group-append">
-                <button
-                  className="btn btn-outline-secondary"
-                  type="button"
-                  id="button-plus"
-                  onClick={increaseQuantity}
-                >
-                  +
-                </button>
+              <p className="price mb-3">{selectedPro.price} VNĐ</p>
+              <p
+                className="description mb-3"
+                dangerouslySetInnerHTML={{ __html: selectedPro?.description }}
+              >
+                {/* {selectedPro.description} */}
+              </p>
+              <div className="input-group mb-3" style={{ maxWidth: "120px" }}>
+                <div className="input-group-prepend">
+                  <button
+                    className="btn btn-outline-secondary"
+                    type="button"
+                    id="button-minus"
+                    onClick={decreaseQuantity}
+                  >
+                    -
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  className="form-control text-center"
+                  value={quantity}
+                  placeholder=""
+                  aria-label="Example text with button addon"
+                  aria-describedby="button-addon1" 
+                  readOnly                
+                />
+                <div className="input-group-append">
+                  <button
+                    className="btn btn-outline-secondary"
+                    type="button"
+                    id="button-plus"
+                    onClick={increaseQuantity}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
+              <button
+                onClick={() => {
+                  handleAddToCart(selectedPro.id);
+                }}
+                className="btn btn-primary btn-lg"
+              >
+                Add to Cart
+              </button>
             </div>
-            <button onClick={()=>{handleAddToCart(selectedPro.id)}} className="btn btn-primary btn-lg">Add to Cart</button>
           </div>
         </div>
       </div>
+
+      <div ref={commentsRef} className="page-width container pt-3">
+        <div>
+          <h3>Comments</h3>
+          <hr />
+          <div className="card mb-3">
+            <div className="card-body">
+              <h5 className="card-title">Leave a comment</h5>
+              <hr />
+              <div className="form-group">
+                {[1, 2, 3, 4, 5].map((star, index) => (
+                  <i
+                    key={index}
+                    className={
+                      index < rating ? "fa-solid fa-star" : "fa-regular fa-star"
+                    }
+                    onClick={() => handleStarClick(index + 1)}
+                  ></i>
+                ))}
+                <textarea
+                  rows={3}
+                  className="form-control bg-light"
+                  placeholder="Enter your comment here..."
+                  style={{ resize: "none" }}
+                  defaultValue={contentComment || editComment || ""}
+                  onChange={handleChangeContent}
+                />
+              </div>
+              <button
+                className="btn btn-block btnCmt"
+                onClick={() => {
+                  handleSubmitComment();
+                }}
+              >
+                {updateButtonText}
+              </button>
+            </div>
+          </div>
+          {comments?.content &&
+            [...comments.content].reverse().map((item, key) => {              
+              const stars = [];              
+              for (let i = 0; i < 5; i++) {                
+                if (i < item?.quantityStart) {
+                  stars.push(
+                    <i
+                      key={i}
+                      style={{ color: "#82ae46" }}
+                      className="fa-solid fa-star"
+                    ></i>
+                  );
+                } else {
+                  stars.push(<i key={i} className="fa-regular fa-star"></i>);
+                }
+              }
+              return (
+                <div key={key} className="card mb-3">
+                  <div className="card-body">
+                    <h5 className="card-title">{item?.user?.fullName}</h5>
+                    <p className="card-text">{item?.contentComment}</p>
+                    <hr />
+                    <ul className="card-text list-inline">
+                      <li className="list-inline-item">
+                        {stars} - {item?.dateTime?.replace("T", " ")}
+                      </li>
+                      {item?.user?.id == user?.id ? (
+                        <li
+                          id="editButton"
+                          onClick={() => {
+                            handleEdit(item);
+                          }}
+                          style={{ cursor: "pointer" }}
+                          className="list-inline-item"
+                        >
+                          Edit
+                        </li>
+                      ) : (
+                        ""
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+
+        {comments?.totalElements > 8 ? (
+          <Pagination
+            className="text-center my-4"
+            current={
+              searchParam.get("page")
+                ? parseInt(searchParam.get("page"), 10)
+                : 1
+            }
+            pageSize={8}
+            total={comments?.totalElements}
+            onChange={(page) => {
+              setSearchParam({ page: page.toString() });
+            }}
+          />
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );

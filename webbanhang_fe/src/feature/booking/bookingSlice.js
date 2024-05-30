@@ -6,7 +6,8 @@ const initialState = {
     listCategory:[],
     orders:[],
     details: [],
-    banners: []
+    banners: [],
+    comments:{}
   };
 
   export const bookingReducer = (state = initialState, { type, payload }) => {
@@ -26,8 +27,14 @@ const initialState = {
 
         if(type==="SET_CATEGORY"){
           draft.listCategory = payload;
-
+        }
+        if(type==="SET_BANNER"){
+          
+          draft.banners = payload
+        }
+        if(type==="SET_COMMENTS"){
+          draft.comments=payload
         }
         
-    });
+    })
   };
