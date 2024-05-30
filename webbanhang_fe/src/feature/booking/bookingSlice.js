@@ -5,7 +5,8 @@ const initialState = {
     selectedPro: {},
     listCategory:[],
     orders:[],
-    details: []
+    details: [],
+    banners: []
   };
 
   export const bookingReducer = (state = initialState, { type, payload }) => {
@@ -25,6 +26,7 @@ const initialState = {
 
         if(type==="SET_CATEGORY"){
           draft.listCategory = payload;
+
         }
         
     });

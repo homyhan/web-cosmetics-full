@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "../../components/style.css";
 import { useDispatch, useSelector } from "react-redux";
+
 import { fetchProducts, addToCart, fetchCartById, fetchCategories } from "./thunk";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { Pagination, Tabs } from "antd";
+
 
 const Home = () => {
   const navigate = useNavigate();
@@ -16,10 +18,14 @@ const Home = () => {
 
   const isLoggedIn = localStorage.getItem("emailCosmetics") && localStorage.getItem("passcosmetics");
 
+  const banners = useSelector(state => state.booking.banners);
+
+
   useEffect(() => {
     const page = searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1;
     dispatch(fetchProducts(page-1, 8));
     dispatch(fetchCategories)
+
     getQuantityProdInCart();
   }, [dispatch, searchParam]);
 
@@ -265,6 +271,19 @@ const Home = () => {
       </nav>
 
       {/* BANNER  */}     
+      <section className="banner-section">
+        <Carousel>
+          {banners.map((banner, index) => (
+            <Carousel.Item key={index}>
+              <img className="d-block w-100" src={banner.img} />
+              <Carousel.Caption>
+                <h3>{banner.name_banner}</h3>
+                <p>{banner.content}</p>
+              </Carousel.Caption>
+            </Carousel.Item>
+          ))}
+        </Carousel>
+      </section>
 
       {/* CATE  */}
       <section className="sectionProduct sectionProductCate py-5">
