@@ -4,6 +4,7 @@ const initialState = {
     products:[],
     categories:[],
     roles:[],
+    listProdsPage: {},
     selectedCate: {},
     selectedProd: {},
     banners:[],
@@ -56,6 +57,10 @@ const initialState = {
         }
         if(type=="SELECTED_ROLE"){
           draft.selectedRole= payload;
+        }
+
+        if(type=="SET_PRODS_ADMIN"){
+          draft.listProdsPage = payload;
         }
     });
   };

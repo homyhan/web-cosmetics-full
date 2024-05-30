@@ -21,6 +21,8 @@ const FormAddProduct = () => {
     const [category, setCategory] = useState({});
     const [imgUrl, setImgUrl] = useState('');
     const navigate = useNavigate();
+    
+
 
     const dispatch = useDispatch();
     const categories = useSelector(state=>state.admin.categories);
@@ -96,7 +98,7 @@ const FormAddProduct = () => {
           showConfirmButton: false,
           timer: 1500
         });
-        navigate("/admin")
+        navigate(-1)
         
     }
 
@@ -138,7 +140,7 @@ const FormAddProduct = () => {
             })}
             
           </select>
-        </div>
+        </div>        
 
         <div className="mb-3">
           <button onClick={()=>{handleAdd()}}>Add</button>

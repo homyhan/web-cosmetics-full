@@ -2,18 +2,23 @@ import React, { useEffect, useState } from "react";
 import LayoutAdmin from "../../HOCs/LayoutAdmin";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../booking/thunk";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { deleteProduct } from "./thunk";
+import { deleteProduct, fetchProdsList } from "./thunk";
+import { Pagination } from "antd";
 
 const HomeAdmin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const products = useSelector((state) => state.booking.products);
+  const {listProdsPage} = useSelector(state=>state.admin);
+  const [searchParam, setSearchParam] = useSearchParams();
   const [keySearch, setKeySearch] = useState("");
   useEffect(() => {
-    dispatch(fetchProducts);
-  }, []);
+    // dispatch(fetchProducts);
+    const page = searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1;
+    dispatch(fetchProdsList(page-1, 8));
+  }, [dispatch, searchParam]);
   const handleDeleteProduct = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -72,7 +77,7 @@ const HomeAdmin = () => {
           </tr>
         </thead>
         <tbody>
-          {products
+          {listProdsPage?.content
             ?.filter((item) => {
               return keySearch.toLowerCase()===''?item: item?.nameProd?.toLowerCase().includes(keySearch);
             })
@@ -85,7 +90,7 @@ const HomeAdmin = () => {
                     <img style={{ width: "100px" }} src={item?.img} alt="" />
                   </td>
                   <td>{item?.price}</td>
-                  <td dangerouslySetInnerHTML={{ __html: item?.description }} />
+                  <td className="truncate-multiline" dangerouslySetInnerHTML={{ __html: item?.description }} />
                   <td>{item?.quantity}</td>
                   <td>
                     <button
@@ -108,6 +113,18 @@ const HomeAdmin = () => {
             })}
         </tbody>
       </table>
+
+      <Pagination
+        className="text-center my-4"
+        current={searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1}
+        pageSize={8}
+        total={listProdsPage?.totalElements}
+        onChange={(page) => {
+          setSearchParam({ page: page.toString() });
+        }}
+      />
+
+         
     </LayoutAdmin>
   );
 };

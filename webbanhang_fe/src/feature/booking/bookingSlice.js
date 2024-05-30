@@ -1,8 +1,9 @@
 import { produce } from "immer";
 
 const initialState = {
-    products:[],
+    products:{},
     selectedPro: {},
+    listCategory:[],
     orders:[],
     details: [],
     banners: []
@@ -22,9 +23,10 @@ const initialState = {
         if (type === "SET_DETAIL") {
           draft.details = payload;
         }
-        if(type==="SET_BANNER"){
-          
-          draft.banners = payload
+
+        if(type==="SET_CATEGORY"){
+          draft.listCategory = payload;
+
         }
         
     });

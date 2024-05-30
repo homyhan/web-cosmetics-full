@@ -128,6 +128,15 @@ export const cosmeticsServ = {
     },
     updateRoleById: (id, data)=>{
         return http.put("/roles/"+id, data);
+    },
+
+    getProductsList: (page, size)=>{
+        return http.get("/productsPage",{
+            params:{
+                page,
+                size
+            }
+        })
     }
     
 }

@@ -127,7 +127,7 @@ const FormEditProduct = () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      navigate("/admin");
+      navigate(-1)
     } else {
       const updatedData = { ...formData, category: categoryObject };
       const res = await dispatch(updateProduct(idProd, updatedData));
@@ -138,7 +138,7 @@ const FormEditProduct = () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      navigate("/admin");
+      navigate(-1)
     }
   };
 
