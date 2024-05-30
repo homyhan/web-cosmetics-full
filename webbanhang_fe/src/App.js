@@ -18,9 +18,9 @@ import EditStatusUserAdmin from './feature/admin/EditStatusUserAdmin';
 import EditInfoUserAdmin from './feature/admin/EditInfoUserAdmin';
 import NewUserForAdmin from './feature/admin/NewUserForAdmin';
 import Cart from './feature/booking/Cart';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { login } from './feature/auth/thunk';
+import { fetchProfile, getUserByEmail, login } from './feature/auth/thunk';
 import ProductDetail from './feature/booking/ProductDetail';
 import ProfileUser from './feature/booking/ProfileUser';
 import DetailOrder from './feature/booking/DetailOrder';
@@ -30,40 +30,59 @@ import FormEditRole from './feature/admin/FormEditRole';
 
 function App() {
  
-    const dispatch = useDispatch();
-  useEffect(()=>{
-     const email=localStorage?.getItem("emailCosmetics");
-    const password=localStorage?.getItem("passcosmetics");
-    if(email&&password){
-      dispatch(login({email, password}))
+    const dispatch = useDispatch();    
+    const [password, setPassword] = useState('');
+    const [email, setEmail]= useState('');
+      
+    const fetchUser = async(email)=>{
+      if(email){
+        const res = await dispatch(getUserByEmail(email));
+        return res?.data;
+      }
+      return null
     }
 
-  },[dispatch])
+  const getPass =async()=>{
+    const email=localStorage?.getItem("emailCosmetics");
+    const user = await fetchUser(email);
+    const pass = user?.password;
+    setPassword(pass);
+    setEmail(email);
+  }
+
+  useEffect(()=>{
+   getPass();
+   if(email){
+     dispatch(fetchProfile({email, password}));
+   }
+ },[dispatch, password])
+
+  
   return (
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<RouterComponent Component={Home}></RouterComponent>}></Route>
-        <Route path='/admin' element={<RouterComponent Component={HomeAdmin}></RouterComponent>}></Route>
-        <Route path='/admin/category' element={<RouterComponent Component={CategoryAdmin}></RouterComponent>}></Route>
-        <Route path='/admin/add-category' element={<RouterComponent Component={FormCategory}></RouterComponent>}></Route>
-        <Route path='/admin/add-product' element={<RouterComponent Component={FormAddProduct}></RouterComponent>}></Route>
-        <Route path='/admin/edit-category/:id' element={<RouterComponent Component={EditCateAdmin}></RouterComponent>}></Route>
-        <Route path='/admin/edit-product/:id' element={<RouterComponent Component={FormEditProduct}></RouterComponent>}></Route>
-        <Route path='/admin/banner' element={<RouterComponent Component={BannerAdmin}></RouterComponent>}></Route>
-        <Route path='/admin/edit-banner/:id' element={<RouterComponent Component={EditBannerAdmin}></RouterComponent>}></Route>
-        <Route path='/admin/add-banner' element={<RouterComponent Component={NewBannerAdmin}></RouterComponent>}></Route>
+        <Route path='/admin' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={HomeAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/category' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={CategoryAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/add-category' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={FormCategory}></RouterComponent>}></Route>
+        <Route path='/admin/add-product' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={FormAddProduct}></RouterComponent>}></Route>
+        <Route path='/admin/edit-category/:id' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={EditCateAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/edit-product/:id' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={FormEditProduct}></RouterComponent>}></Route>
+        <Route path='/admin/banner' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={BannerAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/edit-banner/:id' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={EditBannerAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/add-banner' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={NewBannerAdmin}></RouterComponent>}></Route>
         <Route path='/login' element={<RouterComponent Component={Login}></RouterComponent>}></Route>
-        <Route path='/admin/user' element={<RouterComponent Component={DisplayUserAdmin}></RouterComponent>}></Route>
-        <Route path='/admin/edit-status/:id' element={<RouterComponent Component={EditStatusUserAdmin}></RouterComponent>}></Route>
-        <Route path='/admin/edit-info-user/:id' element={<RouterComponent Component={EditInfoUserAdmin}></RouterComponent>}></Route>
-        <Route path='/admin/add-user' element={<RouterComponent Component={NewUserForAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/user' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={DisplayUserAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/edit-status/:id' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={EditStatusUserAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/edit-info-user/:id' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={EditInfoUserAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/add-user' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={NewUserForAdmin}></RouterComponent>}></Route>
         <Route path='/cart' element={<RouterComponent Component={Cart}></RouterComponent>}></Route>
         <Route path='/product-detail/:id' element={<RouterComponent Component={ProductDetail}></RouterComponent>}></Route>
         <Route path='/user/profile' element={<RouterComponent Component={ProfileUser}></RouterComponent>}></Route>
         <Route path='/user/detail-order/:id' element={<RouterComponent Component={DetailOrder}></RouterComponent>}></Route>
-        <Route path='/admin/role' element={<RouterComponent Component={Role}></RouterComponent>}></Route>
-        <Route path='/admin/add-role' element={<RouterComponent Component={FormAddRole}></RouterComponent>}></Route>
-        <Route path='/admin/edit-role/:id' element={<RouterComponent Component={FormEditRole}></RouterComponent>}></Route>
+        <Route path='/admin/role' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={Role}></RouterComponent>}></Route>
+        <Route path='/admin/add-role' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={FormAddRole}></RouterComponent>}></Route>
+        <Route path='/admin/edit-role/:id' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={FormEditRole}></RouterComponent>}></Route>
       </Routes>
     </BrowserRouter>
   );

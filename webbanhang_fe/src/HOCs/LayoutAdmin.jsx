@@ -38,15 +38,16 @@ const LayoutAdmin = (props) => {
       </div>
       <header id="main-header">
         <nav id="sidenav">
-          <div id="sidenav-header">
+          <div style={{cursor:'pointer'}} onClick={()=>{navigate("/")}} id="sidenav-header">
             <div id="profile-picture">
               <img
-                src="http://www.gravatar.com/avatar/fa4df8540bab3cb38f7dfa60c6e0522c.png"
+                // src="http://www.gravatar.com/avatar/fa4df8540bab3cb38f7dfa60c6e0522c.png"
+                src="https://cdn.dribbble.com/users/2978235/screenshots/16124112/media/414dc110d9bb00e814fb966c6d7d3027.jpg?resize=400x0"
                 alt="profile"
               />
             </div>
-            <a href="#" id="profile-link">
-              Admin
+            <a id="profile-link">
+              Cosmetics
             </a>
           </div>
           <div id="account-actions">

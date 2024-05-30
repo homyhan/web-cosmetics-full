@@ -11012,3 +11012,49 @@ body {
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
+.banner-section {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-section .carousel {
+  width: 100%;
+}
+
+.banner-section .carousel-item {
+  position: relative;
+}
+
+.banner-section .carousel-item img {
+  width: 100%;
+  height: 500px;
+}
+
+.banner-section .carousel-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.banner-section .carousel-caption h3,
+.banner-section .carousel-caption p {
+  color: #fff;
+  margin: 0;
+}
+
+.banner-section .carousel-caption p {
+  font-size: 16px;
+}
+.btnCmt{
+  transition: 0.4s;
+  border-color: #82ae46;
+  color: #82ae46;
+}
+.btnCmt:hover{
+  background-color: #82ae46;
+  color: white;
+}

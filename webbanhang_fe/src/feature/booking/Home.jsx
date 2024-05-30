@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "../../components/style.css";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts, addToCart, fetchCartById, fetchCategories } from "./thunk";
+import { fetchProducts, addToCart, fetchCartById, fetchCategories, fetBanners, fetchProdsByName } from "./thunk";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import _ from 'lodash';
 import { Pagination, Tabs } from "antd";
+
+import { Carousel } from "react-bootstrap";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -13,13 +16,19 @@ const Home = () => {
   const {user} = useSelector(state=>state.auth);
   const [searchParam, setSearchParam] = useSearchParams();
   const [quantityProdCart, setQuantityProdCart] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const isLoggedIn = localStorage.getItem("emailCosmetics") && localStorage.getItem("passcosmetics");
+  const isLoggedIn = localStorage.getItem("emailCosmetics");
+
+  const banners = useSelector(state => state.booking.banners);
+
 
   useEffect(() => {
     const page = searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1;
     dispatch(fetchProducts(page-1, 8));
     dispatch(fetchCategories)
+    dispatch(fetBanners);
+    // dispatch(fetchProducts);
     getQuantityProdInCart();
   }, [dispatch, searchParam]);
 
@@ -74,6 +83,32 @@ const Home = () => {
   const onChange = (key) => {
     console.log(key);
   };  
+
+  // const handleInputChange = (e) => {
+  //   setSearchTerm(e.target.value);
+  // };
+  // const handleSearch = () => {
+  //   dispatch(fetchProdsByName(searchTerm, 0, 10)); // Bắt đầu từ trang 0 và kích thước trang là 10
+  // };
+
+  // const handleKeyPress = (e) => {
+  //   if (e.key === 'Enter') {
+  //     handleSearch();
+  //   }
+  // };
+
+  const debouncedSearch = useCallback(
+    _.debounce((term) => {
+      dispatch(fetchProdsByName(term, 0, 8));
+    }, 500), // 500ms debounce time
+    [dispatch]
+  );
+
+  const handleChange = (event) => {
+    const term = event.target.value;
+    setSearchTerm(term);
+    debouncedSearch(term);
+  };
 
   const formatCurrencyVND = (number) => {
     var formattedAmount = number?.toLocaleString("vi-VN", {
@@ -155,7 +190,7 @@ const Home = () => {
                   <div className="icon mr-2 d-flex justify-content-center align-items-center">
                     <span className="icon-paper-plane" />
                   </div>
-                  <span className="text">youremail@email.com</span>
+                  <span className="text">cosmeticsvn@gmail.com</span>
                 </div>
                 <div className="col-md-5 pr-4 d-flex topper align-items-center text-lg-right">
                   <span className="text">
@@ -265,6 +300,19 @@ const Home = () => {
       </nav>
 
       {/* BANNER  */}     
+      <section className="banner-section">
+        <Carousel>
+          {banners.map((banner, index) => (
+            <Carousel.Item key={index}>
+              <img className="d-block w-100" src={banner.img} />
+              <Carousel.Caption>
+                <h3>{banner.name_banner}</h3>
+                <p>{banner.content}</p>
+              </Carousel.Caption>
+            </Carousel.Item>
+          ))}
+        </Carousel>
+      </section>
 
       {/* CATE  */}
       <section className="sectionProduct sectionProductCate py-5">
@@ -278,6 +326,28 @@ const Home = () => {
       {/* PRODUCT  */}
       <section className="sectionProduct py-5">
         <h2 className="text-center">OUR PRODUCT</h2>
+        <div className="container my-3">
+
+          
+       {/*   <input
+        type="text"
+        className="form-control"
+        placeholder="search by name"
+        value={searchTerm}
+        onChange={handleInputChange}
+        onKeyPress={handleKeyPress}
+      />
+       <button onClick={handleSearch} className="btn btn-primary">
+        Search
+      </button> */}
+      <input
+        type="text"
+        className="form-control"
+        placeholder="search by name"
+        value={searchTerm}
+        onChange={handleChange}
+      />
+        </div>
         <div className="listProductHome">
           {products?.content?.map((item, key) => {
             return (
@@ -305,6 +375,100 @@ const Home = () => {
         }}
       />
       </section>
+
+     <section className="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
+  <div className="container py-4">
+    <div className="row d-flex justify-content-center py-5">
+      <div className="col-md-6">
+        <h2 style={{fontSize: 22}} className="mb-0">Subcribe to our Newsletter</h2>
+        <span>Get e-mail updates about our latest shops and special offers</span>
+      </div>
+      <div className="col-md-6 d-flex align-items-center">
+        <form action="#" className="subscribe-form">
+          <div className="form-group d-flex">
+            <input type="text" className="form-control" placeholder="Enter email address" />
+            <input type="submit" defaultValue="Subscribe" className="submit px-3" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+     <footer className="ftco-footer ftco-section">
+  <div className="container">
+    <div className="row">
+      <div className="mouse">
+        <a href="#" className="mouse-icon">
+          <div className="mouse-wheel"><i className="fa-solid fa-chevron-up"></i></div>
+        </a>
+      </div>
+    </div>
+    <div className="row mb-5">
+      <div className="col-md">
+        <div className="ftco-footer-widget mb-4">
+          <h2 className="ftco-heading-2">Vegefoods</h2>
+          <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia.</p>
+          <ul className="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
+            <li className="ftco-animate"><a href="#"><span className="icon-twitter" /></a></li>
+            <li className="ftco-animate"><a href="#"><span className="icon-facebook" /></a></li>
+            <li className="ftco-animate"><a href="#"><span className="icon-instagram" /></a></li>
+          </ul>
+        </div>
+      </div>
+      <div className="col-md">
+        <div className="ftco-footer-widget mb-4 ml-md-5">
+          <h2 className="ftco-heading-2">Menu</h2>
+          <ul className="list-unstyled">
+            <li><a href="#" className="py-2 d-block">Shop</a></li>
+            <li><a href="#" className="py-2 d-block">About</a></li>
+            <li><a href="#" className="py-2 d-block">Journal</a></li>
+            <li><a href="#" className="py-2 d-block">Contact Us</a></li>
+          </ul>
+        </div>
+      </div>
+      <div className="col-md-4">
+        <div className="ftco-footer-widget mb-4">
+          <h2 className="ftco-heading-2">Help</h2>
+          <div className="d-flex">
+            <ul className="list-unstyled mr-l-5 pr-l-3 mr-4">
+              <li><a href="#" className="py-2 d-block">Shipping Information</a></li>
+              <li><a href="#" className="py-2 d-block">Returns &amp; Exchange</a></li>
+              <li><a href="#" className="py-2 d-block">Terms &amp; Conditions</a></li>
+              <li><a href="#" className="py-2 d-block">Privacy Policy</a></li>
+            </ul>
+            <ul className="list-unstyled">
+              <li><a href="#" className="py-2 d-block">FAQs</a></li>
+              <li><a href="#" className="py-2 d-block">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className="col-md">
+        <div className="ftco-footer-widget mb-4">
+          <h2 className="ftco-heading-2">Have a Questions?</h2>
+          <div className="block-23 mb-3">
+            <ul>
+              <li><span className="icon icon-map-marker" /><span className="text">203 Fake St. Mountain View, San Francisco, California, USA</span></li>
+              <li><a href="#"><span className="icon icon-phone" /><span className="text">+2 392 3929 210</span></a></li>
+              <li><a href="#"><span className="icon icon-envelope" /><span className="text">info@yourdomain.com</span></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-md-12 text-center">
+        <p>{/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
+          Copyright © All rights reserved | This template is made with <i className="icon-heart color-danger" aria-hidden="true" /> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+          {/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
     </div>
   );
 };

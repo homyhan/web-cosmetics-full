@@ -4,7 +4,7 @@ import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCategories } from "../booking/thunk";
+import { fetchCategories } from "../admin/thunk";
 import { addProduct, getCategory } from "./thunk";
 import { cosmeticsServ } from "../../services/cosmeticsServ";
 import Swal from 'sweetalert2';
@@ -25,7 +25,7 @@ const FormAddProduct = () => {
 
 
     const dispatch = useDispatch();
-    const categories = useSelector(state=>state.admin.categories);
+    const categories = useSelector(state=>state.admin.listCate);
 
     const toolbarOptions = [
       ['bold', 'italic', 'underline', 'strike'],        

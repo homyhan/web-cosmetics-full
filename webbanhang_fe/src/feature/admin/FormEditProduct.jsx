@@ -5,7 +5,7 @@ import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct, updateCategory, updateProduct } from "./thunk";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchCategories } from "../booking/thunk";
+import { fetchCategories } from "../admin/thunk";
 import { cosmeticsServ } from "../../services/cosmeticsServ";
 import Swal from "sweetalert2";
 import { storage } from "../../firebase";
@@ -16,7 +16,7 @@ const FormEditProduct = () => {
   const navigate = useNavigate();
   const params = useParams();
   const idProd = params?.id;
-  const { selectedProd, categories } = useSelector((state) => state.admin);
+  const { selectedProd, listCate } = useSelector((state) => state.admin);
   const [cate, setCate] = useState(0);
 
   const [formData, setFormData] = useState({
@@ -63,7 +63,7 @@ const FormEditProduct = () => {
   };
 
   const mapCategoryIdToCategoryObject = (categoryId) => {
-    const selectedCategory = categories.find((cat) => cat.id === categoryId);
+    const selectedCategory = listCate.find((cat) => cat.id === categoryId);
     return { nameCategory: selectedCategory?.nameCategory };
   };
 
@@ -204,7 +204,7 @@ const FormEditProduct = () => {
             value={formData?.category?.id}
             onChange={handleChangeSelect}
           >
-            {categories?.map((item, key) => {
+            {listCate?.map((item, key) => {
               return (
                 <option value={item?.id} key={item?.id}>
                   {item?.nameCategory}

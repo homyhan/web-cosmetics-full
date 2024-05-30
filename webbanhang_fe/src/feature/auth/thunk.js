@@ -55,3 +55,15 @@ export const login = (data)=>async (dispatch)=>{
         return error.response
     }
 }
+export const fetchProfile = (data)=>async (dispatch)=>{
+    try {
+        const res = await cosmeticsServ.fetchProfile(data);
+        dispatch({
+            type: "USER_LOGIN",
+            payload: res.data
+        })        
+        return res;
+    } catch (error) {
+        return error.response
+    }
+}
