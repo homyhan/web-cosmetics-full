@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import web.webbanhang.dto.CartDTO;
+import web.webbanhang.dto.ProductDTO;
 import web.webbanhang.jpa.*;
 import web.webbanhang.order.CheckoutRequest;
 import web.webbanhang.order.OrderDetail;
@@ -13,6 +15,7 @@ import web.webbanhang.stateOrder.StateOrder;
 import web.webbanhang.user.User;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class CartController {
@@ -113,22 +116,61 @@ public class CartController {
         }
     }
 
-    @GetMapping("/carts/{userId}")
-    public ResponseEntity<List<Cart>> getUserCarts(@PathVariable int userId) {
-        try {
-            Optional<User> optionalUser = userRepository.findById(userId);
-            if (!optionalUser.isPresent()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            User user = optionalUser.get();
-            List<Cart> userCarts = cartRepository.findByUser(user);
-
-            return ResponseEntity.ok(userCarts);
-        } catch (Exception e) {
-            System.err.println("Error getting user's carts: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//    @GetMapping("/carts/{userId}")
+//    public ResponseEntity<List<Cart>> getUserCarts(@PathVariable int userId) {
+//        try {
+//            Optional<User> optionalUser = userRepository.findById(userId);
+//            if (!optionalUser.isPresent()) {
+//                return ResponseEntity.notFound().build();
+//            }
+//
+//            User user = optionalUser.get();
+//            List<Cart> userCarts = cartRepository.findByUser(user);
+//
+//            return ResponseEntity.ok(userCarts);
+//        } catch (Exception e) {
+//            System.err.println("Error getting user's carts: " + e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//        }
+//    }
+@GetMapping("/carts/{userId}")
+//@Transactional(readOnly = true)
+public ResponseEntity<List<CartDTO>> getUserCarts(@PathVariable int userId) {
+    try {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (!optionalUser.isPresent()) {
+            return ResponseEntity.notFound().build();
         }
+
+        User user = optionalUser.get();
+        List<Cart> userCarts = cartRepository.findByUser(user);
+        List<CartDTO> cartDTOs = userCarts.stream().map(this::convertToDto).collect(Collectors.toList());
+
+        return ResponseEntity.ok(cartDTOs);
+    } catch (Exception e) {
+        System.err.println("Error getting user's carts: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
+}
+
+    private CartDTO convertToDto(Cart cart) {
+        CartDTO cartDTO = new CartDTO();
+        cartDTO.setId(cart.getId());
+        cartDTO.setUserId(cart.getUser().getId());
+        cartDTO.setQuantity(cart.getQuantity());
+        cartDTO.setOrderDate(cart.getOrderDate());
+
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(cart.getProduct().getId());
+        productDTO.setNameProd(cart.getProduct().getNameProd());
+        productDTO.setPrice(cart.getProduct().getPrice());
+        productDTO.setImg(cart.getProduct().getImg());
+        productDTO.setQuantity(cart.getProduct().getQuantity());
+        productDTO.setDescription(cart.getProduct().getDescription());
+//        productDTO.setCategory(cart.getProduct().getCategory().getNameCategory());
+
+        cartDTO.setProduct(productDTO);
+        return cartDTO;
     }
 
 //    @PostMapping("/carts/checkout")

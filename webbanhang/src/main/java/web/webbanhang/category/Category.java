@@ -12,7 +12,7 @@ import web.webbanhang.user.User;
 import java.util.List;
 
 @Entity
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 
 public class Category {
     @Id
@@ -21,9 +21,13 @@ public class Category {
 
     private String nameCategory;
 
-    @OneToMany(mappedBy="category", fetch = FetchType.EAGER)
-//    @JsonIgnore
-    @JsonManagedReference
+//    @OneToMany(mappedBy="category", fetch = FetchType.EAGER)
+////    @JsonIgnore
+//    @JsonManagedReference
+
+    // Trong lớp Category
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+//    @JsonManagedReference
     private List<Product> product;
 
     public Category(int id, String nameCategory) {

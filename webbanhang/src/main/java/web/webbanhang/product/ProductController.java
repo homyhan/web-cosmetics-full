@@ -3,8 +3,11 @@ package web.webbanhang.product;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import web.webbanhang.category.Category;
+import web.webbanhang.dto.CategoryDTO;
+import web.webbanhang.dto.ProductDTO;
 import web.webbanhang.jpa.CategoryJpa;
 import web.webbanhang.jpa.ProductJpa;
 import org.springframework.data.domain.Page;
@@ -85,20 +88,55 @@ public class ProductController {
 //    }
 //}
 
+//    @GetMapping("/productsPage")
+//    public ResponseEntity<Page<Product>> retrieveAllProduct(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size
+//    ) {
+//        try {
+//            PageRequest pageRequest = PageRequest.of(page, size);
+//            Page<Product> products = productRepositoty.findAll(pageRequest);
+//            System.out.println("Number of products: " + products.getTotalElements());
+//            return ResponseEntity.ok(products);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
+
     @GetMapping("/productsPage")
-    public ResponseEntity<Page<Product>> retrieveAllProduct(
+    @Transactional(readOnly = true)
+    public ResponseEntity<Page<ProductDTO>> retrieveAllProduct(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         try {
             PageRequest pageRequest = PageRequest.of(page, size);
             Page<Product> products = productRepositoty.findAll(pageRequest);
+            Page<ProductDTO> productDTOs = products.map(this::convertToDto);
             System.out.println("Number of products: " + products.getTotalElements());
-            return ResponseEntity.ok(products);
+            return ResponseEntity.ok(productDTOs);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    private ProductDTO convertToDto(Product product) {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(product.getId());
+        productDTO.setNameProd(product.getNameProd());
+        productDTO.setPrice(product.getPrice());
+        productDTO.setImg(product.getImg());
+        productDTO.setQuantity(product.getQuantity());
+        productDTO.setDescription(product.getDescription());
+
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setId(product.getCategory().getId());
+        categoryDTO.setNameCategory(product.getCategory().getNameCategory());
+        productDTO.setCategory(categoryDTO);
+
+        return productDTO;
     }
 
     @GetMapping("/searchProducts")

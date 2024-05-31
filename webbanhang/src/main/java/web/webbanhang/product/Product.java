@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 
 public class Product {
     @Id
@@ -31,9 +31,14 @@ public class Product {
 
 
 
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "category_id")
+//    @JsonBackReference
+
+    // Trong lớp Product
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
-    @JsonBackReference
+//    @JsonBackReference
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
