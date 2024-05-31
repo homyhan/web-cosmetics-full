@@ -33,10 +33,13 @@ const HomeAdmin = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         await dispatch(deleteProduct(id));
-        await dispatch(fetchProducts);
-        Swal.fire({
+        const page = searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1;
+        await dispatch(fetchProdsList(page-1, 8));
+        await Swal.fire({
           title: "Deleted!",
           icon: "success",
+          showConfirmButton: false,
+          timer:1000
         });
       }
     });
