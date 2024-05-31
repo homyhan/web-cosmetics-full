@@ -379,6 +379,12 @@ const Cart = () => {
               </div>
             </div>
           </div>
+          <a
+                  onClick={() => {
+                    navigate("/user/checkout/" + user?.id);
+                  }}
+                  className="nav-link"
+                ><button className="btn btn-primary btn-block">Thanh toán</button></a>
           {listItemProd?.length == 0 ? (
             ""
           ) : (

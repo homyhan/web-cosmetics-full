@@ -172,5 +172,8 @@ export const cosmeticsServ = {
 
   fetchProfile: (data)=>{
     return http.post("/profile", data);
+  },
+  checkout: (data)=>{
+    return http.post("/carts/checkout", data);
   }
 };
