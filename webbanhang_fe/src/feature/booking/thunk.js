@@ -185,3 +185,11 @@ export const updateCommentsProd = (id, data)=>async (dispatch)=>{
     console.log(error);
   }
 }
+
+export const checkout = (data)=>async (dispatch)=>{
+  try {
+    const res = await cosmeticsServ.checkout(data);
+  } catch (error) {
+    console.log(error);
+  }
+}
