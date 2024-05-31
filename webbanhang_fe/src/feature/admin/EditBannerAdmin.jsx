@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import LayoutAdmin from '../../HOCs/LayoutAdmin';
 import { getBanner, updateBanner } from './thunk';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import { storage } from "../../firebase";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const EditBannerAdmin = () => {
   const { selectedBanner } = useSelector((state) => state.admin);
+  const navigate = useNavigate();
   const params = useParams();
   const idBanner = params?.id;
   const dispatch = useDispatch();
@@ -40,15 +43,38 @@ const EditBannerAdmin = () => {
     }));
   };
 
+  const handleChangeFile = (e) => {
+    const imageFile = e.target.files[0];
+
+    const storageRef = ref(storage, `imagesBanner/${imageFile.name}`);
+
+    uploadBytes(storageRef, imageFile)
+      .then((snapshot) => {
+        getDownloadURL(snapshot.ref)
+          .then((url) => {
+            setBannerData({...bannerData, img: url});
+          })
+          .catch((error) => {
+            console.error("Error URL:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Error upload img:", error);
+      });
+  };
+
   const handleSubmit = async() => {
     const res = await dispatch(updateBanner(idBanner, bannerData));
-    Swal.fire({
+    await Swal.fire({
       position: "center",
       icon: "success",
       title: res,
       showConfirmButton: false,
       timer: 1500
     });
+
+    navigate(-1);
+    
   };
 
   return (
@@ -66,12 +92,12 @@ const EditBannerAdmin = () => {
       <div className="mb-3">
         <label className="form-label">Image URL</label>
         <input
-          type="text"
-          className="form-control"
-          name="img"
-          value={bannerData?.img}
-          onChange={handleInputChange}
-        />
+            type="file"
+            className="form-control"
+            name="img"
+            onChange={handleChangeFile}
+          />
+          <img src={bannerData?.img} alt="" />
       </div>
       <div className="mb-3">
         <label className="form-label">Content</label>

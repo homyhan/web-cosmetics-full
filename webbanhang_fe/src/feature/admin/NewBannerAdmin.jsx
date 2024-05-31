@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import LayoutAdmin from "../../HOCs/LayoutAdmin";
 import { useDispatch } from "react-redux";
 import { postBanners } from "./thunk";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import { storage } from "../../firebase";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const NewBannerAdmin = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const [imgUrl, setImgUrl] = useState('');
     const [bannerData, setBannerData] = useState({
       name_banner: "",
       img: "",
@@ -18,7 +21,8 @@ const NewBannerAdmin = () => {
     };
   
     const handleSave = async() => {
-      await dispatch(postBanners(bannerData))
+      const newBannerData = {...bannerData, img: imgUrl};
+      await dispatch(postBanners(newBannerData))
         .then((res) => {
           Swal.fire({
             position: "center",
@@ -30,6 +34,26 @@ const NewBannerAdmin = () => {
         })
         .catch((error) => {
           console.log("Error creating banner:", error);
+        });
+    };
+
+    const handleChangeFile = (e) => {
+      const imageFile = e.target.files[0];
+    
+      const storageRef = ref(storage, `imagesBanner/${imageFile.name}`);
+
+      uploadBytes(storageRef, imageFile)
+        .then((snapshot) => {
+          getDownloadURL(snapshot.ref)
+            .then((url) => {
+              setImgUrl(url);
+            })
+            .catch((error) => {
+              console.error("Error URL:", error);
+            });
+        })
+        .catch((error) => {
+          console.error("Error upload img:", error);
         });
     };
   
@@ -47,14 +71,16 @@ const NewBannerAdmin = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Image URL</label>
+          {/* <label className="form-label">Image URL</label>
           <input
             type="text"
             className="form-control"
             name="img"
             value={bannerData.img}
             onChange={handleChange}
-          />
+          /> */}
+          <input type="file" className="form-control" onChange={(e)=>{handleChangeFile(e)}}/>
+          <img src={imgUrl} alt="" />
         </div>
         <div className="mb-3">
           <label className="form-label">Content</label>
