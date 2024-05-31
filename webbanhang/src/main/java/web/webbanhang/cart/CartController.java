@@ -205,9 +205,9 @@ public class CartController {
             StateOrder stateOrder;
             if (checkoutRequest.getStatusCheckout() == 1) {
                 // statusCheckout 1 => stateOrderId 2
-                stateOrder = stateOrderRepository.findById(2).orElse(null);
+                stateOrder = stateOrderRepository.findByState(2);
             } else {
-                stateOrder = stateOrderRepository.findById(1).orElse(null);
+                stateOrder = stateOrderRepository.findByState(1);
             }
 
             if (stateOrder == null) {
