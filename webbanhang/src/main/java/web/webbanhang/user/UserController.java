@@ -310,8 +310,9 @@ public class UserController {
 
 			String newPassword = passwordMap.get("password");
 
-			// Cập nhật mật khẩu mới cho người dùng
-			user.setPassword(newPassword);
+			// Mã hóa mật khẩu bằng MD5
+			String hashedPassword = DigestUtils.md5Hex(newPassword);
+			user.setPassword(hashedPassword);
 
 			// Lưu thông tin người dùng đã cập nhật vào cơ sở dữ liệu
 			userRepository.save(user);
