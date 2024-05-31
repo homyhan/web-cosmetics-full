@@ -8,8 +8,8 @@ const RouterComponent = ({isAdmin, redirectPath, Component}) => {
   const [admin, setAdmin] = useState(false);
   useEffect(()=>{
     setUserState(user);
-    const idRole = user?.role?.id;
-    const admin = idRole==2;    
+    const nameRole = user?.role?.nameRole;
+    const admin = nameRole=="Admin";    
     setAdmin(admin);    
     
   }, [user])
