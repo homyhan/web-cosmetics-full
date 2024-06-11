@@ -94,5 +94,20 @@ public class OrderController {
         return orderDetailJpa.findByOrdersId(orderId);
     }
 
+//    @GetMapping("/orderDetail/{productId}")
+//    public List<OrderDetail> getOrderDetailsByProductId(@PathVariable int productId) {
+//        return orderDetailJpa.findByProductId(productId);
+//    }
+
+    public List<OrderDetail> getOrderDetailsByProductId(int productId) {
+        return orderDetailJpa.findByProductId(productId);
+    }
+    @GetMapping("/orderDetail/{productId}/user/{userId}")
+    public boolean isUserInOrderDetails(@PathVariable int productId, @PathVariable int userId) {
+        List<OrderDetail> orderDetails = getOrderDetailsByProductId(productId);
+        return orderDetails.stream()
+                .anyMatch(orderDetail -> orderDetail.getOrders().getUser().getId() == userId);
+    }
+
 }
 

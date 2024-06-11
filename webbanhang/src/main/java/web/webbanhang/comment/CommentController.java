@@ -6,12 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import web.webbanhang.jpa.CommentJpa;
+import web.webbanhang.jpa.OrderDetailJpa;
 import web.webbanhang.jpa.ProductJpa;
 import web.webbanhang.jpa.UserJpa;
+import web.webbanhang.order.OrderDetail;
 import web.webbanhang.product.Product;
 import web.webbanhang.user.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -20,10 +23,14 @@ public class CommentController {
     private UserJpa userRepository;
     private ProductJpa productRepository;
 
-    public CommentController(CommentJpa commentRepository, UserJpa userRepository, ProductJpa productRepository) {
+    private OrderDetailJpa orderDetailJpa;
+
+    public CommentController(CommentJpa commentRepository, UserJpa userRepository, ProductJpa productRepository, OrderDetailJpa orderDetailJpa) {
+
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
+        this.orderDetailJpa = orderDetailJpa;
     }
 
 //    @PostMapping("/comment")
@@ -112,6 +119,15 @@ public class CommentController {
 //        }
 //    }
 
+    public List<OrderDetail> getOrderDetailsByProductId(int productId) {
+        return orderDetailJpa.findByProductId(productId);
+    }
+    public boolean isUserInOrderDetails( int productId, int userId) {
+        List<OrderDetail> orderDetails = getOrderDetailsByProductId(productId);
+        return orderDetails.stream()
+                .anyMatch(orderDetail -> orderDetail.getOrders().getUser().getId() == userId);
+    }
+
     @PostMapping("/comments")
     public ResponseEntity<String> addComment(@RequestBody CommentRequest commentRequest) {
         try {
@@ -120,6 +136,10 @@ public class CommentController {
             String contentComment = commentRequest.getContentComment();
             int quantityStart = commentRequest.getQuantityStart();
             LocalDateTime dateTime = commentRequest.getDateTime();
+
+            if(!isUserInOrderDetails(productId, userId)){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Bạn chỉ được comment khi đã mua sản phẩm");
+            }
 
             Optional<User> optionalUser = userRepository.findById(userId);
             Optional<Product> optionalProduct = productRepository.findById(productId);
