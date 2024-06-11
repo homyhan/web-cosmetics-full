@@ -174,8 +174,10 @@ export const fetchCommentsProd = (id, page, size) => async (dispatch) => {
 export const commentsProd = (data)=>async (dispatch)=>{
   try {
     const res = await cosmeticsServ.commentsProd(data);
+    return res;
   } catch (error) {
     console.log(error);
+    return error.response;
   }
 }
 export const updateCommentsProd = (id, data)=>async (dispatch)=>{
