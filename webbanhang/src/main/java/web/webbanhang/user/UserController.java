@@ -66,6 +66,23 @@ public class UserController {
 		}
 	}
 
+	@GetMapping("/searchUsers")
+	public ResponseEntity<Page<User>> searchUsers(
+			@RequestParam String name,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size
+	) {
+		try {
+			PageRequest pageRequest = PageRequest.of(page, size);
+			Page<User> users = userRepository.findByFullNameContaining(name, pageRequest);
+			return ResponseEntity.ok(users);
+		} catch (Exception e) {
+			System.err.println("Error searching users: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+
 	@PostMapping("/users")
 	public ResponseEntity<String> createUser(@RequestBody User user) {
 		User existingUser = userRepository.findByEmail(user.getEmail());

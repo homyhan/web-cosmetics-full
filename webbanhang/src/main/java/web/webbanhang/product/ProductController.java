@@ -140,20 +140,24 @@ public class ProductController {
     }
 
     @GetMapping("/searchProducts")
-    public ResponseEntity<Page<Product>> searchProductsByName(
+    @Transactional(readOnly = true)
+    public ResponseEntity<Page<ProductDTO>> searchProductByName(
             @RequestParam String name,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         try {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<Product> products = productRepositoty.findByNameProdContainingIgnoreCase(name, pageable);
-            return ResponseEntity.ok(products);
+            PageRequest pageRequest = PageRequest.of(page, size);
+            Page<Product> products = productRepositoty.findByNameProdContainingIgnoreCase(name, pageRequest);
+            Page<ProductDTO> productDTOs = products.map(this::convertToDto);
+            System.out.println("Number of products: " + products.getTotalElements());
+            return ResponseEntity.ok(productDTOs);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
 
     @GetMapping("/products1")
