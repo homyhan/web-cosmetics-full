@@ -191,5 +191,9 @@ export const cosmeticsServ = {
   searchUserByName: (name, page, size)=>{
     return http.get("/searchUsers",{params:{name, page, size}})
   },
+  //ORDER FOR ADMIN
+  getOrderForAdmin: () => {
+    return http.get("/orders");
+  }
 
 };

@@ -312,3 +312,15 @@ export const fetchUsersByName = (name, page, size) => async (dispatch) => {
     console.log(error);
   }
 };
+//order for admin
+export const fetchOrders = async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.getOrderForAdmin();
+    dispatch({
+      type: "SET_ORDERS_ADMIN",
+      payload: res.data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
