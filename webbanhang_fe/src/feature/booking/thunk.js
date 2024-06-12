@@ -29,7 +29,7 @@ export const fetBanners = async (dispatch)=>{
   try{
     const res = await cosmeticsServ.getBanners();
     dispatch({
-      type: "SET_BANNER",
+      type: "SET_BANNER_USER",
       payload: res.data
     })
   }catch(err){
@@ -37,17 +37,17 @@ export const fetBanners = async (dispatch)=>{
   }
 }
 //USER
-export const fetUsers = async (dispatch)=>{
-  try{
-    const res = await cosmeticsServ.getUsers();
-    dispatch({
-      type: "SET_USER",
-      payload: res.data
-    })
-  }catch(err){
-    console.log(err);
-  }
-}
+// export const fetUsers = async (dispatch)=>{
+//   try{
+//     const res = await cosmeticsServ.getUsers();
+//     dispatch({
+//       type: "SET_USER",
+//       payload: res.data
+//     })
+//   }catch(err){
+//     console.log(err);
+//   }
+// }
 
 export const addToCart = (data) => async(dispatch)=>{
   try {
@@ -55,6 +55,7 @@ export const addToCart = (data) => async(dispatch)=>{
     return res;
   } catch (error) {
     console.log(error);
+    return error?.response;
   }
 }
 
@@ -155,6 +156,7 @@ export const fetchProdsByName = (name, page, size) => async (dispatch) => {
       type: "SET_PRODUCTS",
       payload: res.data,
     });
+    console.log(res?.data);
   } catch (error) {
     console.log(error);
   }

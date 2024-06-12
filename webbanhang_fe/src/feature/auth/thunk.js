@@ -46,9 +46,17 @@ export const updatePass = (id, data)=>async(dispatch)=>{
 export const login = (data)=>async (dispatch)=>{
     try {
         const res = await cosmeticsServ.login(data);
+        const objPayload={
+            id: res?.data?.id,
+            email: res?.data?.email,
+            role: res?.data?.role,
+            phone: res?.data?.phone,
+            fullName: res?.data?.fullName,
+            address: res?.data?.address
+        }
         dispatch({
             type: "USER_LOGIN",
-            payload: res.data
+            payload: objPayload
         })
         return res;
     } catch (error) {
@@ -58,9 +66,17 @@ export const login = (data)=>async (dispatch)=>{
 export const fetchProfile = (data)=>async (dispatch)=>{
     try {
         const res = await cosmeticsServ.fetchProfile(data);
+        const objUser = {
+            id: res?.data?.id,
+            email: res?.data?.email,
+            role: res?.data?.role,
+            phone: res?.data?.phone,
+            fullName: res?.data?.fullName,
+            address: res?.data?.address
+        }
         dispatch({
             type: "USER_LOGIN",
-            payload: res.data
+            payload: objUser
         })        
         return res;
     } catch (error) {

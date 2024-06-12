@@ -8,9 +8,9 @@ const initialState = {
     listProdsPage: {},
     selectedCate: {},
     selectedProd: {},
-    banners:[],
+    banners:{},
     selectedBanner: {},
-    users: [],
+    users: {},
     selectedUser: {},
     selectedRole:{}
   };

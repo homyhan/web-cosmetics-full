@@ -262,5 +262,53 @@ export const fetchCategories = async (dispatch)=>{
     })
   }catch(err){
     console.log(err);
+  };
+};
+
+export const fetBanners=(page, size) => async (dispatch)=>{
+  try{
+    const res = await cosmeticsServ.getBannersAdmin(page, size);
+    dispatch({
+      type: "SET_BANNER",
+      payload: res.data
+    })
+  }catch(err){
+    console.log(err);
+  }
+}
+
+export const fetchBannersByName = (name, page, size) => async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.searchBannerByName(name, page, size);
+    dispatch({
+      type: "SET_BANNER",
+      payload: res.data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetUsers =(page, size)=> async (dispatch)=>{
+  try{
+    const res = await cosmeticsServ.getUsers(page, size);
+    dispatch({
+      type: "SET_USER",
+      payload: res.data
+    })
+  }catch(err){
+    console.log(err);
+  }
+}
+
+export const fetchUsersByName = (name, page, size) => async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.searchUserByName(name, page, size);
+    dispatch({
+      type: "SET_USER",
+      payload: res.data,
+    });
+  } catch (error) {
+    console.log(error);
   }
 };

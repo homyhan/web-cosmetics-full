@@ -1,88 +1,94 @@
 import React, { useCallback, useEffect, useState } from "react";
 import "../../components/style.css";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts, addToCart, fetchCartById, fetchCategories, fetBanners, fetchProdsByName } from "./thunk";
+import {
+  fetchProducts,
+  addToCart,
+  fetchCartById,
+  fetchCategories,
+  fetBanners,
+  fetchProdsByName,
+} from "./thunk";
 
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import _ from 'lodash';
+import _ from "lodash";
 import { Pagination, Tabs } from "antd";
 import { Carousel } from "react-bootstrap";
 
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {products, listCategory} = useSelector((state) => state.booking);
-  const {user} = useSelector(state=>state.auth);
+  const { products, listCategory } = useSelector((state) => state.booking);
+  const { user } = useSelector((state) => state.auth);
   const [searchParam, setSearchParam] = useSearchParams();
   const [quantityProdCart, setQuantityProdCart] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const isLoggedIn = localStorage.getItem("emailCosmetics");
 
-  const banners = useSelector(state => state.booking.banners);
-
+  const banners = useSelector((state) => state.booking.banners);
 
   useEffect(() => {
-    const page = searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1;
-    dispatch(fetchProducts(page-1, 8));
-    dispatch(fetchCategories)
+    const page = searchParam.get("page")
+      ? parseInt(searchParam.get("page"), 10)
+      : 1;
+    dispatch(fetchProducts(page - 1, 8));
+    dispatch(fetchCategories);
     dispatch(fetBanners);
     // dispatch(fetchProducts);
     getQuantityProdInCart();
   }, [dispatch, searchParam]);
 
-
   const getQuantityProdInCart = async () => {
     const idUser = user?.id;
     if (idUser) {
-      const res = await dispatch(fetchCartById(idUser));   
+      const res = await dispatch(fetchCartById(idUser));
       setQuantityProdCart(res?.data?.length);
     }
   };
 
-  const handleAddToCart=async(id)=>{
+  const handleAddToCart = async (id) => {
     const userId = user?.id;
-    if(userId){
+    if (userId) {
       const productId = id;
-    const res = await dispatch(addToCart({userId, productId, quantity: 1}));
-    getQuantityProdInCart();
-    if(res.status=="200"){
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: res.data,
-        showConfirmButton: false,
-        timer: 1500
-    });
-    }else{
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: res.data,
-        showConfirmButton: false,
-        timer: 1500
-    });
+      const res = await dispatch(addToCart({ userId, productId, quantity: 1 }));
+      getQuantityProdInCart();
+      if (res?.status == "200") {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: res?.data,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: res?.data,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    } else {
+      navigate("/login");
     }
-    }else{
-      navigate("/login")
-    }
-    
-  }
+  };
 
-  const handleToCartPage=async()=>{
+  const handleToCartPage = async () => {
     navigate("/cart");
-  }
-  
+  };
+
   const handleLogout = () => {
-      localStorage.removeItem("emailCosmetics");
-      localStorage.removeItem("passcosmetics");
-      navigate('/login');
+    localStorage.removeItem("emailCosmetics");
+    localStorage.removeItem("passcosmetics");
+    navigate("/login");
   };
 
   const onChange = (key) => {
     console.log(key);
-  };  
+  };
 
   // const handleInputChange = (e) => {
   //   setSearchTerm(e.target.value);
@@ -126,21 +132,39 @@ const Home = () => {
         key: item?.id,
         children: (
           <>
-          {item?.product?.length==0? <p style={{padding:'12px', backgroundColor:'#82ae4663'}}>Sản phẩm sẽ sớm được cập nhật</p>: <div className="listProductHome3">
-              {item?.product?.map((item, key)=>{
-                return (
-                  <div key={item?.id} className="item">
-                    <img src={item?.img} onClick={()=>{navigate("/product-detail/"+item?.id)}} alt="" />
-                    <h1>{item?.nameProd}</h1>
-                    <p className="price">{formatCurrencyVND(item?.price)} vnd</p>
-                    <button onClick={()=>{handleAddToCart(item?.id)}}>
-                      <i className="fa-solid fa-cart-shopping"></i>
-                    </button>
-                  </div>
-                    )
-                  })}
-                </div>}
-            
+            {item?.product?.length == 0 ? (
+              <p style={{ padding: "12px", backgroundColor: "#82ae4663" }}>
+                Sản phẩm sẽ sớm được cập nhật
+              </p>
+            ) : (
+              <div className="listProductHome3">
+                {item?.product?.map((item, key) => {
+                  return (
+                    <div key={item?.id} className="item">
+                      <img
+                        src={item?.img}
+                        onClick={() => {
+                          navigate("/product-detail/" + item?.id);
+                        }}
+                        alt=""
+                      />
+                      <h1>{item?.nameProd}</h1>
+                      <p className="price">
+                        {formatCurrencyVND(item?.price)} vnd
+                      </p>
+                      <button
+                        onClick={() => {
+                          handleAddToCart(item?.id);
+                        }}
+                      >
+                        <i className="fa-solid fa-cart-shopping"></i>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
             {/* {item?.listItemProduct?.length == 0 ? (
               <p
                 style={{ backgroundColor: "#fff3cd", color: "#856404" }}
@@ -172,7 +196,6 @@ const Home = () => {
     });
   };
 
-  
   return (
     <div>
       <div className="py-1 bg-primary">
@@ -208,11 +231,15 @@ const Home = () => {
         id="ftco-navbar"
       >
         <div className="container">
-        <a className="navbar-brand" style={{cursor:'pointer'}} onClick={() => {
-                    navigate("/");
-                  }}>
-              COSMETICS
-            </a>
+          <a
+            className="navbar-brand"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            COSMETICS
+          </a>
           <button
             className="navbar-toggler"
             type="button"
@@ -227,7 +254,15 @@ const Home = () => {
           <div className="collapse navbar-collapse" id="ftco-nav">
             <ul className="navbar-nav ml-auto">
               <li className="nav-item active">
-                <a className="nav-link" style={{cursor:'pointer'}} onClick={()=>{navigate("/")}}>Home</a>
+                <a
+                  className="nav-link"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    navigate("/");
+                  }}
+                >
+                  Home
+                </a>
               </li>
               <li className="nav-item dropdown">
                 <a
@@ -256,29 +291,34 @@ const Home = () => {
               <li className="nav-item">
                 <a className="nav-link">Contact</a>
               </li>
-              <li className="nav-item cta cta-colored">
+              {user?.role?.nameRole=="Admin"? '': <li className="nav-item cta cta-colored">
                 <a
-                  style={{cursor:'pointer'}}
-                onClick={() => {
-                    handleToCartPage();
-                  }} className="nav-link">
-                  <i className="fa-solid fa-cart-shopping" />
-                  [{quantityProdCart}]
-                </a>
-              </li>
-              {isLoggedIn ? (
-                <>
-                  <li className="nav-item cta cta-colored tagLiIconUser">
-                <a
+                  style={{ cursor: "pointer" }}
                   onClick={() => {
-                    navigate("/user/profile");
+                    handleToCartPage();
                   }}
                   className="nav-link"
                 >
-                  <i className="fa-solid fa-user"></i>
-                  <span className="text-email">{isLoggedIn ? user.email : null}</span>
+                  <i className="fa-solid fa-cart-shopping" />[{quantityProdCart}
+                  ]
                 </a>
-              </li>
+              </li>}
+              
+              {isLoggedIn ? (
+                <>
+                  <li className="nav-item cta cta-colored tagLiIconUser">
+                    <a
+                      onClick={() => {
+                        navigate("/user/profile");
+                      }}
+                      className="nav-link"
+                    >
+                      <i className="fa-solid fa-user"></i>
+                      <span className="text-email">
+                        {isLoggedIn ? user.email : null}
+                      </span>
+                    </a>
+                  </li>
                   <li className="nav-item cta cta-colored tagLiIconUser">
                     <a className="nav-link" onClick={handleLogout}>
                       <i className="fa-solid fa-power-off"></i>
@@ -287,19 +327,24 @@ const Home = () => {
                 </>
               ) : (
                 <li className="nav-item cta cta-colored tagLiIconUser">
-                  <a onClick={() => { navigate("/login"); }} className="nav-link">
+                  <a
+                    onClick={() => {
+                      navigate("/login");
+                    }}
+                    className="nav-link"
+                  >
                     <i className="fa-solid fa-right-to-bracket"></i>
                   </a>
                 </li>
               )}
-              
+
               {/* <li className="nav-item cta cta-colored tagLiIconUser"><a className="nav-link" onClick={handleLogout}><i class="fa-solid fa-power-off"></i></a></li> */}
             </ul>
           </div>
         </div>
       </nav>
 
-      {/* BANNER  */}     
+      {/* BANNER  */}
       <section className="banner-section">
         <Carousel>
           {banners.map((banner, index) => (
@@ -318,18 +363,19 @@ const Home = () => {
       <section className="sectionProduct sectionProductCate py-5">
         <h2 className="text-center">OUR CATEGORY</h2>
         <div className="listProductCateHome1">
-          <Tabs defaultActiveKey="1" items={renderTabCate()} onChange={onChange} />
+          <Tabs
+            defaultActiveKey="1"
+            items={renderTabCate()}
+            onChange={onChange}
+          />
         </div>
-        
       </section>
 
       {/* PRODUCT  */}
       <section className="sectionProduct py-5">
         <h2 className="text-center">OUR PRODUCT</h2>
         <div className="container my-3">
-
-          
-       {/*   <input
+          {/*   <input
         type="text"
         className="form-control"
         placeholder="search by name"
@@ -340,25 +386,35 @@ const Home = () => {
        <button onClick={handleSearch} className="btn btn-primary">
         Search
       </button> */}
-      <input
-        type="text"
-        className="form-control"
-        placeholder="search by name"
-        value={searchTerm}
-        onChange={handleChange}
-      />
+          <input
+            type="text"
+            className="form-control"
+            placeholder="search by name"
+            value={searchTerm}
+            onChange={handleChange}
+          />
         </div>
         <div className="listProductHome">
           {products?.content?.map((item, key) => {
             return (
               <div key={item?.id} className="item">
-                <img src={item?.img} onClick={()=>{navigate("/product-detail/"+item?.id)}} alt="" />
+                <img
+                  src={item?.img}
+                  onClick={() => {
+                    navigate("/product-detail/" + item?.id);
+                  }}
+                  alt=""
+                />
                 <h1>{item?.nameProd}</h1>
                 <p className="price">{formatCurrencyVND(item?.price)} vnd</p>
-                <button onClick={()=>{handleAddToCart(item?.id)}}>
+                <button
+                  onClick={() => {
+                    handleAddToCart(item?.id);
+                  }}
+                >
                   <i className="fa-solid fa-cart-shopping"></i>
                 </button>
-                <button onClick={()=>{}}>
+                <button onClick={() => {}}>
                   <i className="fa-solid fa-credit-card"></i>
                 </button>
               </div>
@@ -366,109 +422,199 @@ const Home = () => {
           })}
         </div>
         <Pagination
-        className="text-center my-4"
-        current={searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1}
-        pageSize={8}
-        total={products?.totalElements}
-        onChange={(page) => {
-          setSearchParam({ page: page.toString() });
-        }}
-      />
+          className="text-center my-4"
+          current={
+            searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1
+          }
+          pageSize={8}
+          total={products?.totalElements}
+          onChange={(page) => {
+            setSearchParam({ page: page.toString() });
+          }}
+        />
       </section>
 
-     <section className="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
-  <div className="container py-4">
-    <div className="row d-flex justify-content-center py-5">
-      <div className="col-md-6">
-        <h2 style={{fontSize: 22}} className="mb-0">Subcribe to our Newsletter</h2>
-        <span>Get e-mail updates about our latest shops and special offers</span>
-      </div>
-      <div className="col-md-6 d-flex align-items-center">
-        <form action="#" className="subscribe-form">
-          <div className="form-group d-flex">
-            <input type="text" className="form-control" placeholder="Enter email address" />
-            <input type="submit" defaultValue="Subscribe" className="submit px-3" />
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
-
-     <footer className="ftco-footer ftco-section">
-  <div className="container">
-    <div className="row">
-      <div className="mouse">
-        <a href="#" className="mouse-icon">
-          <div className="mouse-wheel"><i className="fa-solid fa-chevron-up"></i></div>
-        </a>
-      </div>
-    </div>
-    <div className="row mb-5">
-      <div className="col-md">
-        <div className="ftco-footer-widget mb-4">
-          <h2 className="ftco-heading-2">Vegefoods</h2>
-          <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia.</p>
-          <ul className="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
-            <li className="ftco-animate"><a href="#"><span className="icon-twitter" /></a></li>
-            <li className="ftco-animate"><a href="#"><span className="icon-facebook" /></a></li>
-            <li className="ftco-animate"><a href="#"><span className="icon-instagram" /></a></li>
-          </ul>
-        </div>
-      </div>
-      <div className="col-md">
-        <div className="ftco-footer-widget mb-4 ml-md-5">
-          <h2 className="ftco-heading-2">Menu</h2>
-          <ul className="list-unstyled">
-            <li><a href="#" className="py-2 d-block">Shop</a></li>
-            <li><a href="#" className="py-2 d-block">About</a></li>
-            <li><a href="#" className="py-2 d-block">Journal</a></li>
-            <li><a href="#" className="py-2 d-block">Contact Us</a></li>
-          </ul>
-        </div>
-      </div>
-      <div className="col-md-4">
-        <div className="ftco-footer-widget mb-4">
-          <h2 className="ftco-heading-2">Help</h2>
-          <div className="d-flex">
-            <ul className="list-unstyled mr-l-5 pr-l-3 mr-4">
-              <li><a href="#" className="py-2 d-block">Shipping Information</a></li>
-              <li><a href="#" className="py-2 d-block">Returns &amp; Exchange</a></li>
-              <li><a href="#" className="py-2 d-block">Terms &amp; Conditions</a></li>
-              <li><a href="#" className="py-2 d-block">Privacy Policy</a></li>
-            </ul>
-            <ul className="list-unstyled">
-              <li><a href="#" className="py-2 d-block">FAQs</a></li>
-              <li><a href="#" className="py-2 d-block">Contact</a></li>
-            </ul>
+      <section className="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
+        <div className="container py-4">
+          <div className="row d-flex justify-content-center py-5">
+            <div className="col-md-6">
+              <h2 style={{ fontSize: 22 }} className="mb-0">
+                Subcribe to our Newsletter
+              </h2>
+              <span>
+                Get e-mail updates about our latest shops and special offers
+              </span>
+            </div>
+            <div className="col-md-6 d-flex align-items-center">
+              <form action="#" className="subscribe-form">
+                <div className="form-group d-flex">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter email address"
+                  />
+                  <input
+                    type="submit"
+                    defaultValue="Subscribe"
+                    className="submit px-3"
+                  />
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="col-md">
-        <div className="ftco-footer-widget mb-4">
-          <h2 className="ftco-heading-2">Have a Questions?</h2>
-          <div className="block-23 mb-3">
-            <ul>
-              <li><span className="icon icon-map-marker" /><span className="text">203 Fake St. Mountain View, San Francisco, California, USA</span></li>
-              <li><a href="#"><span className="icon icon-phone" /><span className="text">+2 392 3929 210</span></a></li>
-              <li><a href="#"><span className="icon icon-envelope" /><span className="text">info@yourdomain.com</span></a></li>
-            </ul>
+      </section>
+
+      <footer className="ftco-footer ftco-section">
+        <div className="container">
+          <div className="row">
+            <div className="mouse">
+              <a href="#" className="mouse-icon">
+                <div className="mouse-wheel">
+                  <i className="fa-solid fa-chevron-up"></i>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div className="row mb-5">
+            <div className="col-md">
+              <div className="ftco-footer-widget mb-4">
+                <h2 className="ftco-heading-2">Vegefoods</h2>
+                <p>
+                  Far far away, behind the word mountains, far from the
+                  countries Vokalia and Consonantia.
+                </p>
+                <ul className="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
+                  <li className="ftco-animate">
+                    <a href="#">
+                      <span className="icon-twitter" />
+                    </a>
+                  </li>
+                  <li className="ftco-animate">
+                    <a href="#">
+                      <span className="icon-facebook" />
+                    </a>
+                  </li>
+                  <li className="ftco-animate">
+                    <a href="#">
+                      <span className="icon-instagram" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="col-md">
+              <div className="ftco-footer-widget mb-4 ml-md-5">
+                <h2 className="ftco-heading-2">Menu</h2>
+                <ul className="list-unstyled">
+                  <li>
+                    <a href="#" className="py-2 d-block">
+                      Shop
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="py-2 d-block">
+                      About
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="py-2 d-block">
+                      Journal
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="py-2 d-block">
+                      Contact Us
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="ftco-footer-widget mb-4">
+                <h2 className="ftco-heading-2">Help</h2>
+                <div className="d-flex">
+                  <ul className="list-unstyled mr-l-5 pr-l-3 mr-4">
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Shipping Information
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Returns &amp; Exchange
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Terms &amp; Conditions
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Privacy Policy
+                      </a>
+                    </li>
+                  </ul>
+                  <ul className="list-unstyled">
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        FAQs
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Contact
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="col-md">
+              <div className="ftco-footer-widget mb-4">
+                <h2 className="ftco-heading-2">Have a Questions?</h2>
+                <div className="block-23 mb-3">
+                  <ul>
+                    <li>
+                      <span className="icon icon-map-marker" />
+                      <span className="text">
+                        203 Fake St. Mountain View, San Francisco, California,
+                        USA
+                      </span>
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span className="icon icon-phone" />
+                        <span className="text">+2 392 3929 210</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span className="icon icon-envelope" />
+                        <span className="text">info@yourdomain.com</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-12 text-center">
+              <p>
+                {/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
+                Copyright © All rights reserved | This template is made with{" "}
+                <i className="icon-heart color-danger" aria-hidden="true" /> by{" "}
+                <a href="https://colorlib.com" target="_blank">
+                  Colorlib
+                </a>
+                {/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div className="row">
-      <div className="col-md-12 text-center">
-        <p>{/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
-          Copyright © All rights reserved | This template is made with <i className="icon-heart color-danger" aria-hidden="true" /> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-          {/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
-        </p>
-      </div>
-    </div>
-  </div>
-</footer>
-
-
+      </footer>
     </div>
   );
 };

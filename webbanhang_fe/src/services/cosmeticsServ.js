@@ -34,6 +34,9 @@ export const cosmeticsServ = {
   getBanners: () => {
     return http.get("/banners");
   },
+  getBannersAdmin: () => {
+    return http.get("/bannersPage");
+  },
   getBanner: (id) => {
     return http.get("/banner/" + id);
   },
@@ -64,8 +67,13 @@ export const cosmeticsServ = {
   },
 
   //USER
-  getUsers: () => {
-    return http.get("/users");
+  getUsers: (page, size) => {
+    return http.get("/usersPage",{
+      params: {
+        page,
+        size,
+      }
+    });
   },
   getUser: (id) => {
     return http.get("/users/" + id);
@@ -175,5 +183,13 @@ export const cosmeticsServ = {
   },
   checkout: (data)=>{
     return http.post("/carts/checkout", data);
-  }
+  },
+
+  searchBannerByName: (name, page, size)=>{
+    return http.get("/searchBanner",{params:{name, page, size}})
+  },
+  searchUserByName: (name, page, size)=>{
+    return http.get("/searchUsers",{params:{name, page, size}})
+  },
+
 };
