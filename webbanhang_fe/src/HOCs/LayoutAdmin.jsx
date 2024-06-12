@@ -119,6 +119,18 @@ const LayoutAdmin = (props) => {
                 Role
               </a>
             </li>
+            <li
+              onClick={() => {
+                navigate("/admin/orders");
+                handleNavClick("orders");
+              }}
+              className={activeTab === "orders" ? "active" : ""}
+            >
+              <a href="#" onClick={() => handleNavClick("orders")}>
+                <i className="fa fa-solid fa-bag-shopping"></i>
+                Orders
+              </a>
+            </li>
             <li>
               <a href="#">
                 <i className="fa fa-life-ring"></i>

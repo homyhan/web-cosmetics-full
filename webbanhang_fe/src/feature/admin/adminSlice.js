@@ -12,7 +12,8 @@ const initialState = {
     selectedBanner: {},
     users: {},
     selectedUser: {},
-    selectedRole:{}
+    selectedRole:{},
+    orders: []
   };
 
   export const adminReducer = (state = initialState, { type, payload }) => {
@@ -65,6 +66,11 @@ const initialState = {
         }
         if(type==="SET_CATEGORY_ADMIN"){
           draft.listCate = payload;
+        }
+
+        //ORDER FOR ADMIN
+        if(type==="SET_ORDERS_ADMIN"){
+          draft.orders = payload;
         }
     });
   };
