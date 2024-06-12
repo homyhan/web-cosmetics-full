@@ -49,6 +49,10 @@ public class CartController {
             }
 
             User user = optionalUser.get();
+            if(user.getRole().getNameRole().equals("Admin") ){
+                System.out.println("ADmin");
+               return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Admin not allow to add to cart");
+            }
             Product product = optionalProduct.get();
 
             Optional<Cart> optionalCart = cartRepository.findByUserAndProduct(user, product);
@@ -143,6 +147,7 @@ public ResponseEntity<List<CartDTO>> getUserCarts(@PathVariable int userId) {
         }
 
         User user = optionalUser.get();
+
         List<Cart> userCarts = cartRepository.findByUser(user);
         List<CartDTO> cartDTOs = userCarts.stream().map(this::convertToDto).collect(Collectors.toList());
 
