@@ -14,7 +14,6 @@ const HomeAdmin = () => {
   const products = useSelector((state) => state.booking.products);
   const {listProdsPage} = useSelector(state=>state.admin);
   const [searchParam, setSearchParam] = useSearchParams();
-  const [keySearch, setKeySearch] = useState("");
   const [searchTerm, setSearchTerm] = useState('');
   useEffect(() => {
     // dispatch(fetchProducts);

@@ -41,8 +41,7 @@ const ProductDetail = () => {
   const [editComment, setEditComment] = useState("");
   const [editRating, setEditRating] = useState(0);
   const [idCmt, setIdCmt] = useState(0);
-  const [updateButtonText, setUpdateButtonText] = useState("Comment"); 
-
+  const [updateButtonText, setUpdateButtonText] = useState("Comment");
 
   const increaseQuantity = () => {
     setQuantity(quantity + 1);
@@ -118,44 +117,73 @@ const ProductDetail = () => {
     const userId = user?.id;
     const dateTime = new Date().toISOString();
 
-    if (editButtonClicked) {
-      const updatedComment = {
-        ...editComment,
-        contentComment: editComment,
-        quantityStart: editRating,
-      };
-      setEditButtonClicked(true);
-      await dispatch(updateCommentsProd(idCmt, updatedComment));
+    // if (editButtonClicked) {
+    //   const updatedComment = {
+    //     ...editComment,
+    //     contentComment: editComment,
+    //     quantityStart: editRating,
+    //   };
+    //   setEditButtonClicked(true);
+    //   await dispatch(updateCommentsProd(idCmt, updatedComment));
+    //   const page = searchParam.get("page")
+    //     ? parseInt(searchParam.get("page"), 10)
+    //     : 1;
+    //   await dispatch(fetchCommentsProd(productId, page - 1, 8));
+    //   setEditRating(0);
+    //   setEditComment('');
+    //   setRating(0);
+    // setContentComment("");
+    // setUpdateButtonText("Comment");
+    // } else {
+    const data = {
+      userId,
+      productId,
+      contentComment,
+      quantityStart: rating,
+      dateTime,
+    };
+    try {
+      const res = await dispatch(commentsProd(data));
+      console.log("handleSubmitComment response:", res);
+      if (res?.status == 500) {
+        return Swal.fire({
+          icon: "error",
+          text: res?.data,
+        });
+        
+      }
       const page = searchParam.get("page")
-        ? parseInt(searchParam.get("page"), 10)
-        : 1;
-      await dispatch(fetchCommentsProd(productId, page - 1, 8));
-      setEditRating(0);
-      setEditComment('');
-      setRating(0);
-    setContentComment("");
-    setUpdateButtonText("Comment"); 
-    } else {
-      const data = {
-        userId,
-        productId,
-        contentComment,
-        quantityStart: rating,
-        dateTime,
-      };
-      await dispatch(commentsProd(data));
-      const page = searchParam.get("page")
-        ? parseInt(searchParam.get("page"), 10)
-        : 1;
-      await dispatch(fetchCommentsProd(productId, page - 1, 8));
-      setRating(0);
-      setContentComment("");
-      setEditRating(0);
-      setEditComment('');
-      setEditButtonClicked(false);
-    }
+          ? parseInt(searchParam.get("page"), 10)
+          : 1;
+        await dispatch(fetchCommentsProd(productId, page - 1, 8));
 
-    
+        setRating(0);
+        setContentComment("");
+        setEditRating(0);
+        setEditComment("");
+    } catch (error) {
+      console.log("handleSubmitComment error:", error);
+    }
+    // if(res?.status==500){
+    //   Swal.fire({
+    //     icon: "error",
+    //     title: "Oops...",
+    //     text: res?.data,
+    //     timer: 1500,
+    //     showConfirmButton:false
+    //   });
+    // }
+    // const page = searchParam.get("page")
+    //   ? parseInt(searchParam.get("page"), 10)
+    //   : 1;
+    // await dispatch(fetchCommentsProd(productId, page - 1, 8));
+
+    // setRating(0);
+    // setContentComment("");
+    // setEditRating(0);
+    // setEditComment('');
+    // setEditButtonClicked(false);
+    // }
   };
 
   const [editButtonClicked, setEditButtonClicked] = useState(false);
@@ -165,7 +193,7 @@ const ProductDetail = () => {
     setEditRating(comment.quantityStart);
     setIdCmt(comment?.id);
     setEditButtonClicked(true);
-    setUpdateButtonText("Update"); 
+    setUpdateButtonText("Update");
   };
 
   const commentsRef = useRef(null);
@@ -346,8 +374,8 @@ const ProductDetail = () => {
                   value={quantity}
                   placeholder=""
                   aria-label="Example text with button addon"
-                  aria-describedby="button-addon1" 
-                  readOnly                
+                  aria-describedby="button-addon1"
+                  readOnly
                 />
                 <div className="input-group-append">
                   <button
@@ -411,9 +439,9 @@ const ProductDetail = () => {
             </div>
           </div>
           {comments?.content &&
-            [...comments.content].reverse().map((item, key) => {              
-              const stars = [];              
-              for (let i = 0; i < 5; i++) {                
+            [...comments.content].reverse().map((item, key) => {
+              const stars = [];
+              for (let i = 0; i < 5; i++) {
                 if (i < item?.quantityStart) {
                   stars.push(
                     <i

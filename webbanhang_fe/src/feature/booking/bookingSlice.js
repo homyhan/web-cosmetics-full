@@ -28,7 +28,7 @@ const initialState = {
         if(type==="SET_CATEGORY"){
           draft.listCategory = payload;
         }
-        if(type==="SET_BANNER"){
+        if(type==="SET_BANNER_USER"){
           
           draft.banners = payload
         }
