@@ -117,9 +117,7 @@ export const cosmeticsServ = {
   getOrder: (userId) => {
     return http.get("/orders/" + userId);
   },
-  getDetailOrder: (orderId) => {
-    return http.get("/order-details/" + orderId);
-  },
+  
 
   getRole: () => {
     return http.get("/roles");
@@ -194,6 +192,9 @@ export const cosmeticsServ = {
   //ORDER FOR ADMIN
   getOrderForAdmin: () => {
     return http.get("/orders");
-  }
+  },
+  getDetailOrder: (orderId) => {
+    return http.get("/order-details/" + orderId);
+  },
 
 };

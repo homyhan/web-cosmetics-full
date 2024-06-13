@@ -126,13 +126,13 @@ const LayoutAdmin = (props) => {
               }}
               className={activeTab === "orders" ? "active" : ""}
             >
-              <a href="#" onClick={() => handleNavClick("orders")}>
+              <a onClick={() => handleNavClick("orders")}>
                 <i className="fa fa-solid fa-bag-shopping"></i>
                 Orders
               </a>
             </li>
             <li>
-              <a href="#">
+              <a href="">
                 <i className="fa fa-life-ring"></i>
                 FAQs
               </a>
