@@ -1,6 +1,9 @@
 package web.webbanhang.order;
 
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,17 +50,30 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
     @GetMapping("/orders")
-    public ResponseEntity<List<Orders>> getAllOrders() {
+    public ResponseEntity<Page<Orders>> getAllOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         try {
-            List<Orders> allOrders = orderJpa.findAll();
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Orders> allOrders = orderJpa.findAll(pageable);
             return ResponseEntity.ok(allOrders);
         } catch (Exception e) {
             System.err.println("Error getting all orders: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+//    @GetMapping("/orders")
+//    public ResponseEntity<List<Orders>> getAllOrders() {
+//        try {
+//            List<Orders> allOrders = orderJpa.findAll();
+//            return ResponseEntity.ok(allOrders);
+//        } catch (Exception e) {
+//            System.err.println("Error getting all orders: " + e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//        }
+//    }
     @PutMapping("/orders/{orderId}/state")
     public ResponseEntity<String> updateOrderStatePut(@PathVariable int orderId, @RequestBody Map<String, Integer> requestBody) {
         try {
@@ -107,6 +123,22 @@ public class OrderController {
         List<OrderDetail> orderDetails = getOrderDetailsByProductId(productId);
         return orderDetails.stream()
                 .anyMatch(orderDetail -> orderDetail.getOrders().getUser().getId() == userId);
+    }
+
+    @GetMapping("/orders/searchByUserId")
+    public ResponseEntity<Page<Orders>> searchOrdersByUserId(
+            @RequestParam int userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Orders> orders = orderJpa.findByUserId(userId, pageable);
+            return ResponseEntity.ok(orders);
+        } catch (Exception e) {
+            System.err.println("Error searching orders by user ID: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }
