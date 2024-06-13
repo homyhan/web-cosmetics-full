@@ -190,11 +190,18 @@ export const cosmeticsServ = {
     return http.get("/searchUsers",{params:{name, page, size}})
   },
   //ORDER FOR ADMIN
-  getOrderForAdmin: () => {
-    return http.get("/orders");
+  getOrderForAdmin: (page, size) => {
+    return http.get("/orders", {
+      params: {
+        page,
+        size,
+      }
+    });
   },
   getDetailOrder: (orderId) => {
     return http.get("/order-details/" + orderId);
   },
-
+  searchOrderByUserID: (userID, page, size) => {
+    return http.get("/orders/searchByUserId", { params: { userId: userID, page, size } });
+  }  
 };

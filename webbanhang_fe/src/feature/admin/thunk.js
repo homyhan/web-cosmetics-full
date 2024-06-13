@@ -313,9 +313,9 @@ export const fetchUsersByName = (name, page, size) => async (dispatch) => {
   }
 };
 //order for admin
-export const fetchOrders = async (dispatch) => {
+export const fetchOrders = (page, size) => async (dispatch) => {
   try {
-    const res = await cosmeticsServ.getOrderForAdmin();
+    const res = await cosmeticsServ.getOrderForAdmin(page, size);
     dispatch({
       type: "SET_ORDERS_ADMIN",
       payload: res.data,
@@ -335,4 +335,16 @@ export const fetchDetailOrder = (orderId) => async (dispatch) => {
   } catch (error) {
     console.log(error);
   }
-};
+}
+
+export const fetchOrdersByUserID = (userID, page, size) => async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.searchOrderByUserID(userID, page, size);
+    dispatch({
+      type: "SET_ORDERS_ADMIN",
+      payload: res.data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
