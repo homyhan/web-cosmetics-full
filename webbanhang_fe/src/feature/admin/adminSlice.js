@@ -13,7 +13,7 @@ const initialState = {
     users: {},
     selectedUser: {},
     selectedRole:{},
-    orders: [],
+    orders: {},
     detail: []
   };
 

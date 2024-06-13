@@ -2,8 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react'
 import LayoutAdmin from '../../HOCs/LayoutAdmin'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { fetchOrders } from "./thunk";
+import { fetchOrders, fetchOrdersByUserID } from "./thunk";
 import _ from 'lodash';
+import Swal from "sweetalert2";
+import { Pagination } from "antd";
 
 
 const OrdersAdmin = () => {
@@ -11,10 +13,26 @@ const OrdersAdmin = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const orders = useSelector(state => state.admin.orders);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchParam, setSearchParam] = useSearchParams();
 
   useEffect(() => {
-    dispatch(fetchOrders); // Fetch orders when component mounts
-  }, [dispatch]);
+    const page = searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1;
+    dispatch(fetchOrders(page-1, 8)); // Fetch orders when component mounts
+  }, [dispatch, searchParam]);
+
+  const debouncedSearch = useCallback(
+    _.debounce((term) => {
+      dispatch(fetchOrdersByUserID(term, 0, 8));
+    }, 500),
+    [dispatch]
+  );
+
+  const handleChange = (event) => {
+    const term = event.target.value;
+    setSearchTerm(term);
+    debouncedSearch(term);
+  };
 
   const formatCurrencyVND = (number) => {
     var formattedAmount = number?.toLocaleString("vi-VN", {
@@ -27,12 +45,14 @@ const OrdersAdmin = () => {
     
   return (
     <LayoutAdmin>
-      <div className='mb-3'>
+      <div>
         <input
-        type="text"
-        className="form-control"
-        placeholder="search by name"
-      />
+          type="text"
+          className="form-control"
+          placeholder="search by name"
+          value={searchTerm}
+          onChange={handleChange}
+        />
       </div>
       <table className="table">
         <thead>
@@ -48,7 +68,7 @@ const OrdersAdmin = () => {
           </tr>
         </thead>
         <tbody>
-        {orders.map((order, index) => (
+        {orders?.content?.map((order, index) => (
             <tr key={order.id}>
               <th scope="row">{index + 1}</th>
               <td>{order.user.id}</td>
@@ -72,6 +92,15 @@ const OrdersAdmin = () => {
           ))}
         </tbody>
       </table>
+      <Pagination
+        className="text-center my-4"
+        current={searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1}
+        pageSize={8}
+        total={orders?.totalElements}
+        onChange={(page) => {
+          setSearchParam({ page: page.toString() });
+        }}
+      />
       
     </LayoutAdmin>
   )
