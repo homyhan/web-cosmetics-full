@@ -41,8 +41,7 @@ const OrdersAdmin = () => {
             <th scope="col">Mã khách hàng</th>            
             <th scope="col">Tên khách hàng</th>  
             <th scope="col">Số điện thoại</th>            
-            <th scope="col">Email</th>    
-            <th scope="col">Địa chỉ</th>            
+            <th scope="col">Email</th>             
             <th scope="col">Tổng tiền</th> 
             <th scope="col">Trạng thái</th>        
             <th scope="col">Action</th>
@@ -56,13 +55,15 @@ const OrdersAdmin = () => {
               <td>{order.user.fullName}</td>
               <td>{order.user.phone}</td>
               <td>{order.user.email}</td>
-              <td>{order.address}</td>
               <td>{formatCurrencyVND(order.totalPrice)}</td>
               <td>{order.stateOrder.state_name}</td>
               <td>
                 <button >
                   <i className="fa-solid fa-pen-to-square"></i>
                 </button>
+                <button onClick={()=>{navigate("/admin/order-detail/"+order?.id)}}>
+                          <i className="fa-solid fa-eye"></i>
+                        </button>
                 <button>
                   <i className="fa-solid fa-xmark"></i>
                 </button>

@@ -13,7 +13,8 @@ const initialState = {
     users: {},
     selectedUser: {},
     selectedRole:{},
-    orders: []
+    orders: [],
+    detail: []
   };
 
   export const adminReducer = (state = initialState, { type, payload }) => {
@@ -71,6 +72,9 @@ const initialState = {
         //ORDER FOR ADMIN
         if(type==="SET_ORDERS_ADMIN"){
           draft.orders = payload;
+        }
+        if (type === "SET_DETAIL") {
+          draft.detail = payload;
         }
     });
   };

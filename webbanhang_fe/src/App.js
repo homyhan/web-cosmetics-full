@@ -29,6 +29,7 @@ import FormAddRole from './feature/admin/FormAddRole';
 import FormEditRole from './feature/admin/FormEditRole';
 import Checkout from './feature/booking/Checkout';
 import OrdersAdmin from './feature/admin/OrdersAdmin';
+import DetailOrderAdmin from './feature/admin/DetailOrderAdmin';
 
 function App() {
  
@@ -87,6 +88,7 @@ function App() {
         <Route path='/admin/edit-role/:id' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={FormEditRole}></RouterComponent>}></Route>
         <Route path='/user/checkout/:id' element={<RouterComponent Component={Checkout}></RouterComponent>}></Route>
         <Route path='/admin/orders' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={OrdersAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/order-detail/:orderId' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={DetailOrderAdmin}></RouterComponent>}></Route>
       </Routes>
     </BrowserRouter>
   );

@@ -324,3 +324,15 @@ export const fetchOrders = async (dispatch) => {
     console.log(error);
   }
 }
+
+export const fetchDetailOrder = (orderId) => async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.getDetailOrder(orderId);
+    dispatch({
+      type: "SET_DETAIL",
+      payload: res.data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};

@@ -11,9 +11,7 @@ const DetailOrder = () => {
     const params = useParams();
     const idOrder = params?.id;
     const dispatch = useDispatch();
-    const products = useSelector((state) => state.booking.products);
     const {user} = useSelector(state=>state.auth);
-    const orders = useSelector((state) => state.booking.orders);
     const details = useSelector((state) => state.booking.details);
     const [quantityProdCart, setQuantityProdCart] = useState(0);
 
@@ -184,6 +182,7 @@ const DetailOrder = () => {
                         <th scope="col">#</th>
                         <th scope="col">ID đơn hàng</th>
                         <th scope="col">Tên sản phẩm</th>
+                        <th scope="col">Hình ảnh</th>
                         <th scope="col">Giá sản phẩm</th>
                         <th scope="col">Số lượng</th>
                         <th scope="col">Tổng tiền</th>
@@ -195,6 +194,9 @@ const DetailOrder = () => {
               <th>{index + 1}</th>
               <td>{detail.orders?.id}</td>
               <td>{detail.product.nameProd}</td>
+              <td>
+                <img src={detail.product.img} alt={detail.product.nameProd} width={100} />
+              </td>
               <td>{detail.price}</td>
               <td>{detail.quantity}</td>
               <td>{detail.orders.totalPrice}</td>
