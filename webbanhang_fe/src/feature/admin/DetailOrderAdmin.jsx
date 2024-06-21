@@ -44,7 +44,7 @@ const DetailOrderAdmin = () => {
           {orderDetail.map((item, index) => (
             <tr key={item.id}>
               <th scope="row">{index + 1}</th>
-              <td>{item.id}</td>
+              <td>{item.orders.id}</td>
               <td>{item.orders.address}</td>
               <td>{item.product.nameProd}</td>
               <td>

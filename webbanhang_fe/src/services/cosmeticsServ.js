@@ -203,5 +203,8 @@ export const cosmeticsServ = {
   },
   searchOrderByUserID: (userID, page, size) => {
     return http.get("/orders/searchByUserId", { params: { userId: userID, page, size } });
-  }  
+  } ,
+  updateStatusOrder: (orderId, data) => {
+    return http.put("/orders/" + orderId + "/state", data);
+  } 
 };

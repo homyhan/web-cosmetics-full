@@ -30,6 +30,7 @@ import FormEditRole from './feature/admin/FormEditRole';
 import Checkout from './feature/booking/Checkout';
 import OrdersAdmin from './feature/admin/OrdersAdmin';
 import DetailOrderAdmin from './feature/admin/DetailOrderAdmin';
+import EditStateOrder from './feature/admin/EditStateOrder';
 
 function App() {
  
@@ -89,6 +90,7 @@ function App() {
         <Route path='/user/checkout/:id' element={<RouterComponent Component={Checkout}></RouterComponent>}></Route>
         <Route path='/admin/orders' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={OrdersAdmin}></RouterComponent>}></Route>
         <Route path='/admin/order-detail/:orderId' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={DetailOrderAdmin}></RouterComponent>}></Route>
+        <Route path='/admin/edit-stateOrder/:orderId' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={EditStateOrder}></RouterComponent>}></Route>
       </Routes>
     </BrowserRouter>
   );
