@@ -348,3 +348,12 @@ export const fetchOrdersByUserID = (userID, page, size) => async (dispatch) => {
     console.log(error);
   }
 }
+
+export const updateStateOrder =(orderId, data)=> async (dispatch)=>{
+  try{
+    const res = await cosmeticsServ.updateStatusOrder(orderId, data);      
+    return res.data;
+  }catch(err){
+    console.log(err);
+  }
+}

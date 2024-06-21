@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import LayoutAdmin from '../../HOCs/LayoutAdmin'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { fetchOrders, fetchOrdersByUserID } from "./thunk";
+import { fetchOrders, fetchOrdersByUserID, updateStateOrder } from "./thunk";
 import _ from 'lodash';
 import Swal from "sweetalert2";
 import { Pagination } from "antd";
@@ -43,6 +43,24 @@ const OrdersAdmin = () => {
     return formattedAmount;
   };
     
+  const handleUpdateState = async (orderId) => {
+    try {
+      const data = { stateOrderId: 2 }; // Example: 2 represents the new state (e.g., approved)
+      const result = await dispatch(updateStateOrder(orderId, data));
+      if (result) {
+        // Show success message if update is successful
+        Swal.fire('Success', 'Order state updated successfully', 'success');
+        const page = searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1;
+        dispatch(fetchOrders(page-1, 8)); 
+      } else {
+        // Show error message if update fails
+        Swal.fire('Error', 'Failed to update order state', 'error');
+      }
+    } catch (error) {
+      console.log(error);
+      Swal.fire('Error', 'Failed to update order state', 'error');
+    }
+  };
   return (
     <LayoutAdmin>
       <div>
@@ -78,9 +96,14 @@ const OrdersAdmin = () => {
               <td>{formatCurrencyVND(order.totalPrice)}</td>
               <td>{order.stateOrder.state_name}</td>
               <td>
-                <button >
+                <button onClick={()=>{navigate("/admin/edit-stateOrder/"+order?.id)}} >
                   <i className="fa-solid fa-pen-to-square"></i>
                 </button>
+                {order.stateOrder.state === 1 && ( // Chỉ hiển thị button khi trạng thái là 1
+                                    <button onClick={() => handleUpdateState(order.id)} >
+                                        <i className="fa-solid fa-check"></i>
+                                    </button>
+                                )}
                 <button onClick={()=>{navigate("/admin/order-detail/"+order?.id)}}>
                           <i className="fa-solid fa-eye"></i>
                         </button>
