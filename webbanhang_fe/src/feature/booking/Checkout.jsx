@@ -20,6 +20,9 @@ const Checkout = () => {
     const [cartItems, setCartItems] = useState([]);
     const isLoggedIn = localStorage.getItem("emailCosmetics");
     const [payOnDeliveryChecked, setPayOnDeliveryChecked] = useState(false);
+
+    const shippingFee = 20000;
+
     useEffect(() => {
       const page = searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1;
       dispatch(fetchProducts(page-1, 8));
@@ -40,14 +43,26 @@ const Checkout = () => {
         };
         getCartItems();
       }, [dispatch, user]);
-
-      const sumTotalPay = () => {
+      const sumTotalPro = () => {
         return cartItems?.reduce((prev, item) => {
           if (item?.product && item?.quantity) {
             return prev + item.product.price * item.quantity;
           }
           return prev;
         }, 0);
+      };
+
+      const sumTotalPay = () => {
+        // Tính tổng tiền các sản phẩm trong giỏ hàng
+        const subtotal = cartItems?.reduce((prev, item) => {
+          if (item?.product && item?.quantity) {
+            return prev + item.product.price * item.quantity;
+          }
+          return prev;
+        }, 0);
+
+        // Tổng tiền cộng với phí vận chuyển
+        return subtotal + shippingFee;
       };
 
     const getQuantityProdInCart = async () => {
@@ -283,7 +298,15 @@ const Checkout = () => {
               </li>
               ))}
               <li className="list-group-item d-flex justify-content-between">
-                <span>Tổng tiền</span>
+                <span>Tổng tiền sản phẩm:</span>
+                <strong>{formatCurrencyVND(sumTotalPro())}</strong>
+              </li>
+              <li className="list-group-item d-flex justify-content-between">
+                <span>Phí vận chuyển:</span>
+                <strong>20.000</strong>
+              </li>
+              <li className="list-group-item d-flex justify-content-between">
+                <span>Tổng tiền:</span>
                 <strong>{formatCurrencyVND(sumTotalPay())}</strong>
               </li>
             </ul>
@@ -292,6 +315,17 @@ const Checkout = () => {
           <div className="col-md-6">
             <h4>Checkout</h4>
             <form onSubmit={handleCheckout}>
+            <div className="mb-3">
+                <label htmlFor="fullName">Tên khách hàng:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="fullName"
+                  value={user.fullName}  
+                  readOnly 
+                  required
+                />
+              </div>
               <div className="mb-3">
                 <label htmlFor="address">Address</label>
                 <input
@@ -324,7 +358,7 @@ const Checkout = () => {
               </div>
               <button type="submit" className="btn btn-primary btn-block">
                 Thanh toán
-              </button>
+              </button><br></br>
             </form>
           </div>
         </div>
