@@ -61,6 +61,25 @@ const OrdersAdmin = () => {
       Swal.fire('Error', 'Failed to update order state', 'error');
     }
   };
+
+  const handleCancelOrder = async (orderId) => {
+    try {
+      const data = { stateOrderId: 5 }; // Example: 2 represents the new state (e.g., approved)
+      const result = await dispatch(updateStateOrder(orderId, data));
+      if (result) {
+        // Show success message if update is successful
+        Swal.fire('Success', 'Order state updated successfully', 'success');
+        const page = searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1;
+        dispatch(fetchOrders(page-1, 8)); 
+      } else {
+        // Show error message if update fails
+        Swal.fire('Error', 'Failed to update order state', 'error');
+      }
+    } catch (error) {
+      console.log(error);
+      Swal.fire('Error', 'Failed to update order state', 'error');
+    }
+  };
   return (
     <LayoutAdmin>
       <div>
@@ -107,9 +126,11 @@ const OrdersAdmin = () => {
                 <button onClick={()=>{navigate("/admin/order-detail/"+order?.id)}}>
                           <i className="fa-solid fa-eye"></i>
                         </button>
-                <button>
-                  <i className="fa-solid fa-xmark"></i>
-                </button>
+                {order.stateOrder.state === 1 && (
+                  <button onClick={() => handleCancelOrder(order.id)}>
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                )}
               </td>
             </tr>
           ))}
