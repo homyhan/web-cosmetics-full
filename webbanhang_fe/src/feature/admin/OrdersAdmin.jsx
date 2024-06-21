@@ -12,7 +12,7 @@ const OrdersAdmin = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const orders = useSelector(state => state.admin.orders);
+    const {orders} = useSelector(state => state.admin);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchParam, setSearchParam] = useSearchParams();
 
