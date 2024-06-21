@@ -14,7 +14,7 @@ const initialState = {
     selectedUser: {},
     selectedRole:{},
     orders: {},
-    detail: {}
+    detail: []
   };
 
   export const adminReducer = (state = initialState, { type, payload }) => {
