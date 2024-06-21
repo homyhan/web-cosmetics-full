@@ -115,9 +115,11 @@ const OrdersAdmin = () => {
               <td>{formatCurrencyVND(order.totalPrice)}</td>
               <td>{order.stateOrder.state_name}</td>
               <td>
-                <button onClick={()=>{navigate("/admin/edit-stateOrder/"+order?.id)}} >
-                  <i className="fa-solid fa-pen-to-square"></i>
-                </button>
+              {order.stateOrder.state !== 5 && ( // Chỉ hiển thị button khi trạng thái là 1
+                                    <button onClick={()=>{navigate("/admin/edit-stateOrder/"+order?.id)}} >
+                                       <i className="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                )}
                 {order.stateOrder.state === 1 && ( // Chỉ hiển thị button khi trạng thái là 1
                                     <button onClick={() => handleUpdateState(order.id)} >
                                         <i className="fa-solid fa-check"></i>
