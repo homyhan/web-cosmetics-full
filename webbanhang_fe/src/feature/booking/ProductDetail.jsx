@@ -41,6 +41,7 @@ const ProductDetail = () => {
   const [editRating, setEditRating] = useState(0);
   const [idCmt, setIdCmt] = useState(0);
   const [updateButtonText, setUpdateButtonText] = useState("Comment");
+  const [editButtonClicked, setEditButtonClicked] = useState(false);
 
   const increaseQuantity = () => {
     setQuantity(quantity + 1);
@@ -116,83 +117,65 @@ const ProductDetail = () => {
     const userId = user?.id;
     const dateTime = new Date().toISOString();
 
-    // if (editButtonClicked) {
-    //   const updatedComment = {
-    //     ...editComment,
-    //     contentComment: editComment,
-    //     quantityStart: editRating,
-    //   };
-    //   setEditButtonClicked(true);
-    //   await dispatch(updateCommentsProd(idCmt, updatedComment));
-    //   const page = searchParam.get("page")
-    //     ? parseInt(searchParam.get("page"), 10)
-    //     : 1;
-    //   await dispatch(fetchCommentsProd(productId, page - 1, 8));
-    //   setEditRating(0);
-    //   setEditComment('');
-    //   setRating(0);
-    // setContentComment("");
-    // setUpdateButtonText("Comment");
-    // } else {
-    const data = {
-      userId,
-      productId,
-      contentComment,
-      quantityStart: rating,
-      dateTime,
-    };
-    try {
+    if (updateButtonText == "Update") {
+      const data = {
+        userId,
+        productId,
+        contentComment,
+        quantityStart: rating,
+        dateTime,
+      };
+      console.log("Save");
+      console.log(data);
+      const res = await dispatch(updateCommentsProd(idCmt, data));
+      const page = searchParam.get("page")
+        ? parseInt(searchParam.get("page"), 10)
+        : 1;
+      await dispatch(fetchCommentsProd(productId, page - 1, 8));
+      setContentComment("");
+      setRating(0);
+      setUpdateButtonText("Comment");
+    } else {
+      console.log("post");
+      const data = {
+        userId,
+        productId,
+        contentComment,
+        quantityStart: rating,
+        dateTime,
+      };
+
       const res = await dispatch(commentsProd(data));
-      console.log("handleSubmitComment response:", res);
-      if (res?.status == 500) {
+      if (res?.status == 404) {
         return Swal.fire({
           icon: "error",
-          text: res?.data,
+          title: res?.data,
         });
-        
       }
       const page = searchParam.get("page")
-          ? parseInt(searchParam.get("page"), 10)
-          : 1;
-        await dispatch(fetchCommentsProd(productId, page - 1, 8));
-
-        setRating(0);
-        setContentComment("");
-        setEditRating(0);
-        setEditComment("");
-    } catch (error) {
-      console.log("handleSubmitComment error:", error);
+        ? parseInt(searchParam.get("page"), 10)
+        : 1;
+      await dispatch(fetchCommentsProd(productId, page - 1, 8));
+      setContentComment("");
+      setRating(0);
     }
-    // if(res?.status==500){
-    //   Swal.fire({
-    //     icon: "error",
-    //     title: "Oops...",
-    //     text: res?.data,
-    //     timer: 1500,
-    //     showConfirmButton:false
-    //   });
-    // }
-    // const page = searchParam.get("page")
-    //   ? parseInt(searchParam.get("page"), 10)
-    //   : 1;
-    // await dispatch(fetchCommentsProd(productId, page - 1, 8));
 
-    // setRating(0);
-    // setContentComment("");
-    // setEditRating(0);
-    // setEditComment('');
-    // setEditButtonClicked(false);
-    // }
+    
   };
 
-  const [editButtonClicked, setEditButtonClicked] = useState(false);
-
   const handleEdit = (comment) => {
-    setEditComment(comment.contentComment);
-    setEditRating(comment.quantityStart);
+   
+
+    setContentComment(comment?.contentComment);
+    setRating(comment?.quantityStart);
     setIdCmt(comment?.id);
-    setEditButtonClicked(true);
     setUpdateButtonText("Update");
+  };
+
+  const handleCancel = (comment) => {
+    setContentComment("");
+    setRating(0);
+    setUpdateButtonText("Comment");
   };
 
   const commentsRef = useRef(null);
@@ -410,7 +393,7 @@ const ProductDetail = () => {
           <hr />
           <div className="card mb-3">
             <div className="card-body">
-              <h5 className="card-title">Hãy để lại bình luận.</h5>
+              <h5 className="card-title">Leave a comment</h5>
               <hr />
               <div className="form-group">
                 {[1, 2, 3, 4, 5].map((star, index) => (
@@ -425,9 +408,9 @@ const ProductDetail = () => {
                 <textarea
                   rows={3}
                   className="form-control bg-light"
-                  placeholder="Nhập bình luận"
+                  placeholder="Enter your comment here..."
                   style={{ resize: "none" }}
-                  defaultValue={contentComment || editComment || ""}
+                  value={contentComment}
                   onChange={handleChangeContent}
                 />
               </div>
@@ -468,16 +451,30 @@ const ProductDetail = () => {
                         {stars} - {item?.dateTime?.replace("T", " ")}
                       </li>
                       {item?.user?.id == user?.id ? (
-                        <li
-                          id="editButton"
-                          onClick={() => {
-                            handleEdit(item);
-                          }}
-                          style={{ cursor: "pointer" }}
-                          className="list-inline-item"
-                        >
-                          Chỉnh sửa
-                        </li>
+
+                        updateButtonText === "Update" ? (
+                          <li
+                            id="cancelButton"
+                            onClick={() => {
+                              handleCancel(item);
+                            }}
+                            style={{ cursor: "pointer" }}
+                            className="list-inline-item"
+                          >
+                            Cancel
+                          </li>
+                        ) : (
+                          <li
+                            id="editButton"
+                            onClick={() => {
+                              handleEdit(item);
+                            }}
+                            style={{ cursor: "pointer" }}
+                            className="list-inline-item"
+                          >
+                            Edit
+                          </li>
+                        )
                       ) : (
                         ""
                       )}
