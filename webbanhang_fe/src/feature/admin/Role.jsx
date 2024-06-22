@@ -52,8 +52,8 @@ const Role = () => {
           type="text"
           placeholder="search"
         />
-      </div>
-        <div style={{textAlign:'right', marginBottom:'20px'}}><button onClick={()=>{navigate("/admin/add-role")}}>Add Role New</button></div> 
+      </div><br></br>
+        <div style={{textAlign:'right', marginBottom:'20px'}}><button className="add-button" onClick={()=>{navigate("/admin/add-role")}}>Add Role New</button></div> 
       <table className="table">
         <thead>
           <tr>
@@ -67,11 +67,11 @@ const Role = () => {
             return <tr key={item?.id}>
              <td >{key+1}</td>
              <td >{item.nameRole}</td>             
-             <td >
-               <button onClick={()=>{handleEdit(item?.id)}}>
+             <td className="action-buttons" >
+               <button className="edit-button" onClick={()=>{handleEdit(item?.id)}}>
                  <i className="fa-solid fa-pen-to-square"></i>
                </button>
-               <button onClick={()=>{handleDelete(item?.id)}}>
+               <button className="delete-button" onClick={()=>{handleDelete(item?.id)}}>
                  <i className="fa-solid fa-trash"></i>
                </button>
              </td>

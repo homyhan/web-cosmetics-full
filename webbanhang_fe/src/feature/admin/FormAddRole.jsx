@@ -56,7 +56,7 @@ const FormAddRole = () => {
         className="form-control mb-3"
       />
 
-      <button
+      <button className="add-button"
         onClick={() => {
           handleAddRole()
         }}

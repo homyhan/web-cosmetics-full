@@ -4,7 +4,7 @@ const initialState = {
     products:{},
     selectedPro: {},
     listCategory:[],
-    orders:[],
+    orders:{},
     details: [],
     banners: [],
     comments:{}

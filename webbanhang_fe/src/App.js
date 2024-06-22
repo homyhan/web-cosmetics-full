@@ -31,6 +31,10 @@ import Checkout from './feature/booking/Checkout';
 import OrdersAdmin from './feature/admin/OrdersAdmin';
 import DetailOrderAdmin from './feature/admin/DetailOrderAdmin';
 import EditStateOrder from './feature/admin/EditStateOrder';
+import About from './feature/booking/About';
+import Contact from './feature/booking/Contact';
+import { Statistic } from 'antd';
+import Statistics from './feature/admin/Statistics';
 
 function App() {
  
@@ -91,6 +95,9 @@ function App() {
         <Route path='/admin/orders' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={OrdersAdmin}></RouterComponent>}></Route>
         <Route path='/admin/order-detail/:orderId' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={DetailOrderAdmin}></RouterComponent>}></Route>
         <Route path='/admin/edit-stateOrder/:orderId' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={EditStateOrder}></RouterComponent>}></Route>
+        <Route path='/about' element={<RouterComponent Component={About}></RouterComponent>}></Route>
+        <Route path='/contact' element={<RouterComponent Component={Contact}></RouterComponent>}></Route>
+        <Route path='/admin/statistics' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={Statistics}></RouterComponent>}></Route>
       </Routes>
     </BrowserRouter>
   );

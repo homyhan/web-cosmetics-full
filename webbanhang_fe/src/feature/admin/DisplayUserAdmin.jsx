@@ -43,9 +43,9 @@ const DisplayUserAdmin = () => {
           value={searchTerm}
           onChange={handleChange}
         />
-      </div>
+      </div><br></br>
       <div style={{ textAlign: "right", marginBottom: "20px" }}>
-        <button
+        <button className="add-button"
           onClick={() => {
             navigate("/admin/add-user");
           }}
@@ -63,6 +63,7 @@ const DisplayUserAdmin = () => {
             <th scope="col">Adress</th>
             <th scope="col">Role</th>
             <th scope="col">Status</th>
+            <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -76,15 +77,15 @@ const DisplayUserAdmin = () => {
                 <td>{item.address}</td>
                 <td>{item.role ? item.role.nameRole : "N/A"}</td>
                 <td>{item.status}</td>
-                <td>
-                  <button
+                <td className="action-buttons">
+                  <button className="edit-button"
                     onClick={() => {
                       navigate("/admin/edit-info-user/" + item?.id);
                     }}
                   >
                     <i className="fa-solid fa-pen-to-square"></i>
                   </button>
-                  <button
+                  <button className="delete-button"
                     onClick={() => {
                       navigate("/admin/edit-status/" + item?.id);
                     }}

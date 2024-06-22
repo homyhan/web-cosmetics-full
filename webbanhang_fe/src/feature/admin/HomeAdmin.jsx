@@ -85,9 +85,9 @@ const HomeAdmin = () => {
         value={searchTerm}
         onChange={handleChange}
       />
-      </div>
+      </div><br></br>
       <div style={{ textAlign: "right", marginBottom: "20px" }}>
-        <button
+        <button className="add-button"
           onClick={() => {
             navigate("/admin/add-product");
           }}
@@ -122,8 +122,8 @@ const HomeAdmin = () => {
                   <td>{formatCurrencyVND(item?.price)}</td>
                   <td className="truncate-multiline" dangerouslySetInnerHTML={{ __html: item?.description }} />
                   <td>{item?.quantity}</td>
-                  <td>
-                    <button
+                  <td className="action-buttons">
+                    <button className="edit-button"
                       onClick={() => {
                         handleEdit(item?.id);
                         console.log(item);
@@ -131,7 +131,7 @@ const HomeAdmin = () => {
                     >
                       <i className="fa-solid fa-pen-to-square"></i>
                     </button>
-                    <button
+                    <button className="delete-button"
                       onClick={() => {
                         handleDeleteProduct(item?.id);
                       }}

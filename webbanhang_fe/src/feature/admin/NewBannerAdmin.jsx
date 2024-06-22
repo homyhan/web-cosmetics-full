@@ -91,8 +91,7 @@ const NewBannerAdmin = () => {
             onChange={handleChange}
           ></textarea>
         </div>
-        <button
-          className="btn btn-primary"
+        <button className="add-button"
           onClick={handleSave}
         >
           Save

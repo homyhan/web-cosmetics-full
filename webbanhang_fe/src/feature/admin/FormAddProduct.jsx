@@ -143,7 +143,7 @@ const FormAddProduct = () => {
         </div>        
 
         <div className="mb-3">
-          <button onClick={()=>{handleAdd()}}>Add</button>
+          <button className="add-button" onClick={()=>{handleAdd()}}>Add</button>
         </div>
       </div>
     </LayoutAdmin>

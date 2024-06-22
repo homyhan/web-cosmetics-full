@@ -63,9 +63,9 @@ const BannerAdmin = () => {
           value={searchTerm}
           onChange={handleChange}
         />
-      </div>
+      </div><br></br>
       <div style={{ textAlign: "right", marginBottom: "20px" }}>
-        <button
+        <button className="add-button"
           onClick={() => {
             navigate("/admin/add-banner");
           }}
@@ -93,15 +93,15 @@ const BannerAdmin = () => {
                 <td>
                   <img style={{ width: "100px" }} src={item?.img} alt="" />
                 </td>
-                <td>
-                  <button
+                <td className="action-buttons">
+                  <button className="edit-button"
                     onClick={() => {
                       navigate("/admin/edit-banner/" + item?.id);
                     }}
                   >
                     <i className="fa-solid fa-pen-to-square"></i>
                   </button>
-                  <button
+                  <button className="delete-button"
                     onClick={() => {
                       handleDeleteBanner(item?.id);
                     }}
