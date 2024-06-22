@@ -74,7 +74,7 @@ const LayoutAdmin = (props) => {
               }}
               className={activeTab === "knowledge" ? "active" : ""}
             >
-              <a href="#">
+              <a>
                 <i className="fa fa-tachometer"></i>
                 Products
               </a>
@@ -86,7 +86,7 @@ const LayoutAdmin = (props) => {
               }}
               className={activeTab === "activity" ? "active" : ""}
             >
-              <a href="#" >
+              <a>
                 <i className="fa fa-solid fa-list"></i>
                 Category
               </a>
@@ -98,7 +98,7 @@ const LayoutAdmin = (props) => {
               }}
               className={activeTab === "banner" ? "active" : ""}
             >
-              <a href="#" onClick={() => handleNavClick("banner")}>
+              <a>
                 <i className="fa fa-brands fa-medium"></i>
                 Banner
               </a>
@@ -108,12 +108,13 @@ const LayoutAdmin = (props) => {
                 handleNavClick("user");
               }}
               className={activeTab === "user" ? "active" : ""}>
-              <a href="#" onClick={() => handleNavClick("user")}>
+              <a>
                 <i className="fa fa-solid fa-user"></i>
                 User
               </a>
             </li>
-            <li onClick={() => navigate("/admin/role")}>
+            <li onClick={() => navigate("/admin/role")}
+              className={activeTab === "role" ? "active" : ""}>
               <a >
                 <i className="fa fa-calendar"></i>
                 Role
@@ -126,17 +127,29 @@ const LayoutAdmin = (props) => {
               }}
               className={activeTab === "orders" ? "active" : ""}
             >
-              <a onClick={() => handleNavClick("orders")}>
+              <a>
                 <i className="fa fa-solid fa-bag-shopping"></i>
                 Orders
               </a>
             </li>
-            <li>
+            <li
+              onClick={() => {
+                navigate("/admin/statistics");
+                handleNavClick("statistics");
+              }}
+              className={activeTab === "statistics" ? "active" : ""}
+            >
+              <a>
+                <i className="fa fa-life-ring"></i>
+                Statistics
+              </a>
+            </li>
+            {/* <li>
               <a href="">
                 <i className="fa fa-life-ring"></i>
                 FAQs
               </a>
-            </li>
+            </li> */}
           </ul>
         </nav>
         <form id="admin-search">

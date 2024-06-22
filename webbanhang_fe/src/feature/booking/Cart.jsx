@@ -15,7 +15,7 @@ const Cart = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [listItemProd, setListItemProd] = useState([]);
-  const isLoggedIn = localStorage.getItem("emailCosmetics") && localStorage.getItem("passcosmetics");
+  const isLoggedIn = localStorage.getItem("emailCosmetics");
 
   const formatCurrencyVND = (number) => {
     var formattedAmount = number?.toLocaleString("vi-VN", {
@@ -123,7 +123,7 @@ const Cart = () => {
                   <div className="icon mr-2 d-flex justify-content-center align-items-center">
                     <span className="icon-phone2" />
                   </div>
-                  <span className="text">+ 1235 2355 98</span>
+                  <span className="text">0384968576</span>
                 </div>
                 <div className="col-md pr-4 d-flex topper align-items-center">
                   <div className="icon mr-2 d-flex justify-content-center align-items-center">
@@ -133,7 +133,7 @@ const Cart = () => {
                 </div>
                 <div className="col-md-5 pr-4 d-flex topper align-items-center text-lg-right">
                   <span className="text">
-                    3-5 Business days delivery &amp; Free Returns
+                    Giao hàng từ 3 đến 5 ngày &amp; Đổi/Trả hàng miễn phí
                   </span>
                 </div>
               </div>
@@ -168,7 +168,7 @@ const Cart = () => {
           </button>
           <div className="collapse navbar-collapse" id="ftco-nav">
             <ul className="navbar-nav ml-auto">
-              <li className="nav-item">
+            <li className="nav-item">
                 <a
                   style={{ cursor: "pointer" }}
                   onClick={() => {
@@ -176,51 +176,29 @@ const Cart = () => {
                   }}
                   className="nav-link"
                 >
-                  Home
+                  Trang chủ
                 </a>
               </li>
-              <li className="nav-item active dropdown">
+              <li className="nav-item">
                 <a
-                  className="nav-link dropdown-toggle"
-                  href="#"
-                  id="dropdown04"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
+                  className="nav-link"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    navigate("/about");
+                  }}
                 >
-                  Shop
-                </a>
-                <div className="dropdown-menu" aria-labelledby="dropdown04">
-                  <a className="dropdown-item" href="shop.html">
-                    Shop
-                  </a>
-                  <a className="dropdown-item" href="wishlist.html">
-                    Wishlist
-                  </a>
-                  <a className="dropdown-item" href="product-single.html">
-                    Single Product
-                  </a>
-                  <a className="dropdown-item" href="cart.html">
-                    Cart
-                  </a>
-                  <a className="dropdown-item" href="checkout.html">
-                    Checkout
-                  </a>
-                </div>
-              </li>
-              <li className="nav-item">
-                <a href="about.html" className="nav-link">
-                  About
+                  Giới thiệu
                 </a>
               </li>
               <li className="nav-item">
-                <a href="blog.html" className="nav-link">
-                  Blog
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="contact.html" className="nav-link">
-                  Contact
+                <a
+                  className="nav-link"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    navigate("/contact");
+                  }}
+                >
+                  Liên hệ
                 </a>
               </li>
               <li className="nav-item cta cta-colored">
@@ -238,16 +216,18 @@ const Cart = () => {
               {isLoggedIn ? (
                 <>
                   <li className="nav-item cta cta-colored tagLiIconUser">
-                <a
-                  onClick={() => {
-                    navigate("/user/profile");
-                  }}
-                  className="nav-link"
-                >
-                  <i className="fa-solid fa-user"></i>
-                  <span className="text-email">{isLoggedIn ? user.email : null}</span>
-                </a>
-              </li>
+                    <a
+                      onClick={() => {
+                        navigate("/user/profile");
+                      }}
+                      className="nav-link"
+                    >
+                      <i className="fa-solid fa-user"></i>
+                      <span className="text-email">
+                        {isLoggedIn ? user.email : null}
+                      </span>
+                    </a>
+                  </li>
                   <li className="nav-item cta cta-colored tagLiIconUser">
                     <a className="nav-link" onClick={handleLogout}>
                       <i className="fa-solid fa-power-off"></i>
@@ -256,7 +236,12 @@ const Cart = () => {
                 </>
               ) : (
                 <li className="nav-item cta cta-colored tagLiIconUser">
-                  <a onClick={() => { navigate("/login"); }} className="nav-link">
+                  <a
+                    onClick={() => {
+                      navigate("/login");
+                    }}
+                    className="nav-link"
+                  >
                     <i className="fa-solid fa-right-to-bracket"></i>
                   </a>
                 </li>
@@ -267,7 +252,8 @@ const Cart = () => {
       </nav>
       {/* END nav */}
       <section className=" ftco-cart">
-        <div className="container">
+        <div className="container"><br></br>
+          <h2 className="title-checkout">Giỏ hàng</h2>
           <div className="row">
             <div className="col-md-12 ">
               <div className="cart-list">
@@ -283,15 +269,15 @@ const Cart = () => {
                             cursor: "pointer",
                           }}
                         >
-                          Clear All
+                          Xóa tất cả
                         </span>}
                         
                       </th>
                       <th></th>
-                      <th>Product name</th>
-                      <th>Price</th>
-                      <th>Quantity</th>
-                      <th>Total</th>
+                      <th>Tên sản phẩm</th>
+                      <th>Giá</th>
+                      <th>Số lượng</th>
+                      <th>Tổng</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -379,23 +365,191 @@ const Cart = () => {
               </div>
             </div>
           </div>
-          <a
+          {listItemProd?.length == 0 ? (
+            ""
+          ) : (
+            <div >
+              <h3 className="row justify-content-end my-3">
+                Tổng thanh toán: {formatCurrencyVND(sumTotalPay())} vnd
+              </h3>
+              <div>
+                <a
                   onClick={() => {
                     navigate("/user/checkout/" + user?.id);
                   }}
                   className="nav-link"
-                ><button className="btn btn-primary btn-block">Thanh toán</button></a>
-          {listItemProd?.length == 0 ? (
-            ""
-          ) : (
-            <div className="row justify-content-end">
-              <h3 className="my-3">
-                Tổng thanh toán: {formatCurrencyVND(sumTotalPay())} vnd
-              </h3>
+                ><button className="btn btn-primary btn-block">Thanh toán</button></a><br></br>
+              </div>
             </div>
           )}
         </div>
       </section>
+      <section className="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
+  <div className="container py-4">
+    <div className="row d-flex justify-content-center py-5">
+      <div className="col-md-6">
+        <h2 style={{fontSize: 22}} className="mb-0">Đăng ký nhận bản tin của chúng tôi</h2>
+        <span>Nhận cập nhật qua email về các cửa hàng mới nhất và các ưu đãi đặc biệt của chúng tôi</span>
+      </div>
+      <div className="col-md-6 d-flex align-items-center">
+        <form action="#" className="subscribe-form">
+          <div className="form-group d-flex">
+            <input type="text" className="form-control" placeholder="Nhập địa chỉ email" />
+            <input type="submit" value="Đăng ký" className="submit px-3" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+<footer className="ftco-footer ftco-section">
+        <div className="container">
+          <div className="row">
+            <div className="mouse">
+              <a href="#" className="mouse-icon">
+                <div className="mouse-wheel">
+                  <i className="fa-solid fa-chevron-up"></i>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div className="row mb-5">
+            <div className="col-md">
+              <div className="ftco-footer-widget mb-4">
+                <h2 className="ftco-heading-2">Cosmetics</h2>
+                <p>
+                COSMETICS cam kết mang đến cho bạn những sản phẩm chăm sóc da và làm đẹp tốt nhất. Sứ mệnh của chúng tôi là nâng cao vẻ đẹp tự nhiên của bạn và tăng cường sự tự tin với những sản phẩm mỹ phẩm cao cấp, hiệu quả và an toàn.
+                </p>
+                <ul className="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
+                  <li className="ftco-animate">
+                    <a href="#">
+                      <span className="icon-twitter" />
+                    </a>
+                  </li>
+                  <li className="ftco-animate">
+                    <a href="#">
+                      <span className="icon-facebook" />
+                    </a>
+                  </li>
+                  <li className="ftco-animate">
+                    <a href="#">
+                      <span className="icon-instagram" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="col-md">
+              <div className="ftco-footer-widget mb-4 ml-md-5">
+                <h2 className="ftco-heading-2">Menu</h2>
+                <ul className="list-unstyled">
+                  <li>
+                    <a href="#" className="py-2 d-block">
+                      Shop
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="py-2 d-block">
+                      About
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="py-2 d-block">
+                      Journal
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="py-2 d-block">
+                      Contact Us
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="ftco-footer-widget mb-4">
+                <h2 className="ftco-heading-2">Help</h2>
+                <div className="d-flex">
+                  <ul className="list-unstyled mr-l-5 pr-l-3 mr-4">
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Shipping Information
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Returns &amp; Exchange
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Terms &amp; Conditions
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Privacy Policy
+                      </a>
+                    </li>
+                  </ul>
+                  <ul className="list-unstyled">
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        FAQs
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Contact
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="col-md">
+              <div className="ftco-footer-widget mb-4">
+                <h2 className="ftco-heading-2">Bạn muốn biết thêm thông tin vui lòng liên hệ!</h2>
+                <div className="block-23 mb-3">
+                  <ul>
+                    <li>
+                      <span className="icon icon-map-marker" />
+                      <span className="text">
+                        Khu phố 6, Linh Trung, Thủ Đức, TP.HCM
+                      </span>
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span className="icon icon-phone" />
+                        <span className="text">0384968576</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span className="icon icon-envelope" />
+                        <span className="text">COSMETICSVN@GMAIL.COM</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-12 text-center">
+              <p>
+                {/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
+                Copyright © All rights reserved | This template is made with{" "}
+                <i className="icon-heart color-danger" aria-hidden="true" /> by{" "}
+                <a href="https://colorlib.com" target="_blank">
+                  Colorlib
+                </a>
+                {/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

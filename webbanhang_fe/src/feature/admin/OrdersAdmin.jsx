@@ -114,22 +114,22 @@ const OrdersAdmin = () => {
               <td>{order.user.email}</td>
               <td>{formatCurrencyVND(order.totalPrice)}</td>
               <td>{order.stateOrder.state_name}</td>
-              <td>
+              <td className="action-buttons">
               {order.stateOrder.state !== 5 && ( // Chỉ hiển thị button khi trạng thái là 1
-                                    <button onClick={()=>{navigate("/admin/edit-stateOrder/"+order?.id)}} >
+                                    <button className="edit-button" onClick={()=>{navigate("/admin/edit-stateOrder/"+order?.id)}} >
                                        <i className="fa-solid fa-pen-to-square"></i>
                                     </button>
                                 )}
                 {order.stateOrder.state === 1 && ( // Chỉ hiển thị button khi trạng thái là 1
-                                    <button onClick={() => handleUpdateState(order.id)} >
+                                    <button className="check-button" onClick={() => handleUpdateState(order.id)} >
                                         <i className="fa-solid fa-check"></i>
                                     </button>
                                 )}
-                <button onClick={()=>{navigate("/admin/order-detail/"+order?.id)}}>
+                <button  className="edit-button" onClick={()=>{navigate("/admin/order-detail/"+order?.id)}}>
                           <i className="fa-solid fa-eye"></i>
                         </button>
                 {order.stateOrder.state === 1 && (
-                  <button onClick={() => handleCancelOrder(order.id)}>
+                  <button className="delete-button" onClick={() => handleCancelOrder(order.id)}>
                     <i className="fa-solid fa-xmark"></i>
                   </button>
                 )}

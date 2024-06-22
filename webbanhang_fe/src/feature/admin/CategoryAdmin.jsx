@@ -81,8 +81,8 @@ const CategoryAdmin = () => {
         value={searchTerm}
         onChange={handleChange}
       />
-      </div>
-        <div style={{textAlign:'right', marginBottom:'20px'}}><button onClick={()=>{navigate("/admin/add-category")}}>Add Category New</button></div> 
+      </div><br></br>
+        <div style={{textAlign:'right', marginBottom:'20px'}}><button className="add-button" onClick={()=>{navigate("/admin/add-category")}}>Add Category New</button></div> 
       <table className="table">
         <thead>
           <tr>
@@ -100,11 +100,11 @@ const CategoryAdmin = () => {
                 <td>{item.nameCategory}</td>
                 <td>{item?.product?.length}</td>
                 
-                <td>
-                  <button onClick={()=>{navigate("/admin/edit-category/"+item?.id)}}>
+                <td className="action-buttons">
+                  <button className="edit-button" onClick={()=>{navigate("/admin/edit-category/"+item?.id)}}>
                     <i className="fa-solid fa-pen-to-square"></i>
                   </button>
-                  <button onClick={()=>{handleDeleteCate(item?.id)}}>
+                  <button className="delete-button" onClick={()=>{handleDeleteCate(item?.id)}}>
                     <i className="fa-solid fa-trash"></i>
                   </button>
                 </td>

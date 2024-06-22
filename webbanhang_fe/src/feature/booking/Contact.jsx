@@ -1,120 +1,21 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import "../../components/style.css";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchProducts,
-  addToCart,
+  changeQuantityProdCart,
+  clearCart,
   fetchCartById,
-  fetchCategories,
-  fetBanners,
-  fetchProdsByName,
+  removeProdInCart,
 } from "./thunk";
-
-import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import _ from "lodash";
-import { Pagination, Tabs } from "antd";
-import { Carousel } from "react-bootstrap";
 
-const Home = () => {
+const Contact = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { products, listCategory } = useSelector((state) => state.booking);
   const { user } = useSelector((state) => state.auth);
-  const [searchParam, setSearchParam] = useSearchParams();
-  const [quantityProdCart, setQuantityProdCart] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
-
+  const dispatch = useDispatch();
+  const [listItemProd, setListItemProd] = useState([]);
   const isLoggedIn = localStorage.getItem("emailCosmetics");
-
-  const banners = useSelector((state) => state.booking.banners);
-
-  useEffect(() => {
-    const page = searchParam.get("page")
-      ? parseInt(searchParam.get("page"), 10)
-      : 1;
-    dispatch(fetchProducts(page - 1, 8));
-    dispatch(fetchCategories);
-    dispatch(fetBanners);
-    // dispatch(fetchProducts);
-    getQuantityProdInCart();
-  }, [dispatch, searchParam]);
-
-  const getQuantityProdInCart = async () => {
-    const idUser = user?.id;
-    if (idUser) {
-      const res = await dispatch(fetchCartById(idUser));
-      setQuantityProdCart(res?.data?.length);
-    }
-  };
-
-  const handleAddToCart = async (id) => {
-    const userId = user?.id;
-    if (userId) {
-      const productId = id;
-      const res = await dispatch(addToCart({ userId, productId, quantity: 1 }));
-      getQuantityProdInCart();
-      if (res?.status == "200") {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: res?.data,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      } else {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          title: res?.data,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      }
-    } else {
-      navigate("/login");
-    }
-  };
-
-  const handleToCartPage = async () => {
-    navigate("/cart");
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("emailCosmetics");
-    localStorage.removeItem("passcosmetics");
-    navigate("/login");
-  };
-
-  const onChange = (key) => {
-    console.log(key);
-  };
-
-  // const handleInputChange = (e) => {
-  //   setSearchTerm(e.target.value);
-  // };
-  // const handleSearch = () => {
-  //   dispatch(fetchProdsByName(searchTerm, 0, 10)); // Bắt đầu từ trang 0 và kích thước trang là 10
-  // };
-
-  // const handleKeyPress = (e) => {
-  //   if (e.key === 'Enter') {
-  //     handleSearch();
-  //   }
-  // };
-
-  const debouncedSearch = useCallback(
-    _.debounce((term) => {
-      dispatch(fetchProdsByName(term, 0, 8));
-    }, 500), // 500ms debounce time
-    [dispatch]
-  );
-
-  const handleChange = (event) => {
-    const term = event.target.value;
-    setSearchTerm(term);
-    debouncedSearch(term);
-  };
 
   const formatCurrencyVND = (number) => {
     var formattedAmount = number?.toLocaleString("vi-VN", {
@@ -125,76 +26,24 @@ const Home = () => {
     return formattedAmount;
   };
 
-  let renderTabCate = () => {
-    return listCategory?.map((item) => {
-      return {
-        label: item?.nameCategory,
-        key: item?.id,
-        children: (
-          <>
-            {item?.product?.length == 0 ? (
-              <p style={{ padding: "12px", backgroundColor: "#82ae4663" }}>
-                Sản phẩm sẽ sớm được cập nhật
-              </p>
-            ) : (
-              <div className="listProductHome3">
-                {item?.product?.map((item, key) => {
-                  return (
-                    <div key={item?.id} className="item">
-                      <img
-                        src={item?.img}
-                        onClick={() => {
-                          navigate("/product-detail/" + item?.id);
-                        }}
-                        alt=""
-                      />
-                      <h1>{item?.nameProd}</h1>
-                      <p className="price">
-                        {formatCurrencyVND(item?.price)} vnd
-                      </p>
-                      <button
-                        onClick={() => {
-                          handleAddToCart(item?.id);
-                        }}
-                      >
-                        <i className="fa-solid fa-cart-shopping"></i>
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* {item?.listItemProduct?.length == 0 ? (
-              <p
-                style={{ backgroundColor: "#fff3cd", color: "#856404" }}
-                className="p-4 rounded-lg text-center"
-              >
-                Danh mục sản phẩm trống
-              </p>
-            ) : (
-              <>
-                <div className={`${styles.listItem } grid grid-cols-4 bg-white`}>
-                  {item.listItemProduct.map((prod) => {
-                    return (
-                      <ItemProduct key={prod.uuid} prod={prod}></ItemProduct>
-                    );
-                  })}
-                </div>
-                {item?.listItemProduct?.length<8?"": (
-                  <div className="text-center">
-                  <Pagination defaultCurrent={1} total={50} />
-                </div>
-                )}
-                
-              </>
-              
-            )} */}
-          </>
-        ),
-      };
-    });
+  const getListProdInCart = async () => {
+    const idUser = user?.id;
+    if (idUser) {
+      const res = await dispatch(fetchCartById(idUser));
+      setListItemProd([...res?.data]);
+    }
   };
+
+  useEffect(() => {
+    getListProdInCart();
+  }, [user]);
+
+  const handleLogout = () => {
+      localStorage.removeItem("emailCosmetics");
+      localStorage.removeItem("passcosmetics");
+      navigate('/login'); 
+  };
+ 
 
   return (
     <div>
@@ -225,15 +74,14 @@ const Home = () => {
           </div>
         </div>
       </div>
-
       <nav
         className="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light"
         id="ftco-navbar"
       >
         <div className="container">
           <a
-            className="navbar-brand"
             style={{ cursor: "pointer" }}
+            className="navbar-brand"
             onClick={() => {
               navigate("/");
             }}
@@ -286,34 +134,31 @@ const Home = () => {
                   Liên hệ
                 </a>
               </li>
-              {user?.role?.nameRole=="Admin"? '': <li className="nav-item cta cta-colored">
+              <li className="nav-item cta cta-colored">
                 <a
                   style={{ cursor: "pointer" }}
                   onClick={() => {
-                    handleToCartPage();
+                    navigate("/cart");
                   }}
                   className="nav-link"
                 >
-                  <i className="fa-solid fa-cart-shopping" />[{quantityProdCart}
-                  ]
+                  <i className="fa-solid fa-cart-shopping" />[
+                  {listItemProd?.length}]
                 </a>
-              </li>}
-              
+              </li>
               {isLoggedIn ? (
                 <>
                   <li className="nav-item cta cta-colored tagLiIconUser">
-                    <a
-                      onClick={() => {
-                        navigate("/user/profile");
-                      }}
-                      className="nav-link"
-                    >
-                      <i className="fa-solid fa-user"></i>
-                      <span className="text-email">
-                        {isLoggedIn ? user.email : null}
-                      </span>
-                    </a>
-                  </li>
+                <a
+                  onClick={() => {
+                    navigate("/user/profile");
+                  }}
+                  className="nav-link"
+                >
+                  <i className="fa-solid fa-user"></i>
+                  <span className="text-email">{isLoggedIn ? user.email : null}</span>
+                </a>
+              </li>
                   <li className="nav-item cta cta-colored tagLiIconUser">
                     <a className="nav-link" onClick={handleLogout}>
                       <i className="fa-solid fa-power-off"></i>
@@ -322,114 +167,91 @@ const Home = () => {
                 </>
               ) : (
                 <li className="nav-item cta cta-colored tagLiIconUser">
-                  <a
-                    onClick={() => {
-                      navigate("/login");
-                    }}
-                    className="nav-link"
-                  >
+                  <a onClick={() => { navigate("/login"); }} className="nav-link">
                     <i className="fa-solid fa-right-to-bracket"></i>
                   </a>
                 </li>
               )}
-
-              {/* <li className="nav-item cta cta-colored tagLiIconUser"><a className="nav-link" onClick={handleLogout}><i class="fa-solid fa-power-off"></i></a></li> */}
             </ul>
           </div>
         </div>
       </nav>
+      
+      {/* END nav */}
+      {/* HÃY THỰC HIỆN CODE TRANG CONTACT Ở ĐÂY */}
+<section className="ftco-section contact-section">
+  <div className="container">
+    <div className="row block-9">
+      <div className="col-md-6 order-md-last d-flex">
+        <form className="bg-light p-5 contact-form">
+          <div className="form-group">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Nhập tên của bạn"
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Nhập địa chỉ email"
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Chủ đề"
+            />
+          </div>
+          <div className="form-group">
+            <textarea
+              name=""
+              id=""
+              cols="30"
+              rows="7"
+              className="form-control"
+              placeholder="Nội dung"
+            ></textarea>
+          </div>
+          <div className="form-group">
+            <input
+              type="submit"
+              value="Gửi"
+              className="btn btn-primary py-3 px-5"
+            />
+          </div>
+        </form>
+      </div>
 
-      {/* BANNER  */}
-      <section className="banner-section">
-        <Carousel>
-          {banners.map((banner, index) => (
-            <Carousel.Item key={index}>
-              <img className="d-block w-100" src={banner.img} />
-              <Carousel.Caption>
-                <h3>{banner.name_banner}</h3>
-                <p>{banner.content}</p>
-              </Carousel.Caption>
-            </Carousel.Item>
-          ))}
-        </Carousel>
-      </section>
-
-      {/* CATE  */}
-      <section className="sectionProduct sectionProductCate py-5">
-        <h2 className="text-center">Danh mục</h2>
-        <div className="listProductCateHome1">
-          <Tabs
-            defaultActiveKey="1"
-            items={renderTabCate()}
-            onChange={onChange}
+      <div className="col-md-6 d-flex">
+        <div className="info bg-white p-4">
+          <h2 className="mb-4">Thông tin liên hệ</h2>
+          <p>
+            Địa chỉ: Khu phố 6, Linh Trung, Thủ Đức, TP.HCM
+          </p>
+          <p>
+            Số điện thoại: <a href="tel:+23923929210">0384968576</a>
+          </p>
+          <p>
+            Email: <a href="mailto:info@yourdomain.com">COSMETICSVN@GMAIL.COM</a>
+          </p>
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.214594705107!2d106.78918677485836!3d10.871276389283283!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175276398969f7b%3A0x9672b7efd0893fc4!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBOw7RuZyBMw6JtIFRQLiBI4buTIENow60gTWluaA!5e0!3m2!1svi!2s!4v1719045474113!5m2!1svi!2s"
+            width="100%"
+            height="300"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
           />
         </div>
-      </section>
-
-      {/* PRODUCT  */}
-      <section className="sectionProduct py-5">
-        <h2 className="text-center">Sản phẩm</h2>
-        <div className="container my-3">
-          {/*   <input
-        type="text"
-        className="form-control"
-        placeholder="search by name"
-        value={searchTerm}
-        onChange={handleInputChange}
-        onKeyPress={handleKeyPress}
-      />
-       <button onClick={handleSearch} className="btn btn-primary">
-        Search
-      </button> */}
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Tìm kiếm theo tên sản phẩm"
-            value={searchTerm}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="listProductHome">
-          {products?.content?.map((item, key) => {
-            return (
-              <div key={item?.id} className="item">
-                <img
-                  src={item?.img}
-                  onClick={() => {
-                    navigate("/product-detail/" + item?.id);
-                  }}
-                  alt=""
-                />
-                <h1>{item?.nameProd}</h1>
-                <p className="price">{formatCurrencyVND(item?.price)} vnd</p>
-                <button
-                  onClick={() => {
-                    handleAddToCart(item?.id);
-                  }}
-                >
-                  <i className="fa-solid fa-cart-shopping"></i>
-                </button>
-                <button onClick={() => {}}>
-                  <i className="fa-solid fa-credit-card"></i>
-                </button>
-              </div>
-            );
-          })}
-        </div>
-        <Pagination
-          className="text-center my-4"
-          current={
-            searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1
-          }
-          pageSize={8}
-          total={products?.totalElements}
-          onChange={(page) => {
-            setSearchParam({ page: page.toString() });
-          }}
-        />
-      </section>
-
-      <section className="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
+      </div>
+    </div>
+  </div>
+</section>
+<section className="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
   <div className="container py-4">
     <div className="row d-flex justify-content-center py-5">
       <div className="col-md-6">
@@ -599,4 +421,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Contact;

@@ -3,7 +3,7 @@ import "../../components/style.css";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts, addToCart, fetchCartById, changePassword, fetchOrders } from "./thunk";
 import { useNavigate } from "react-router-dom";
-import { updateInforUser } from './thunk';
+import { updateInforUser, updateStateOrder } from './thunk';
 import { validationPass } from "../../services/validationPass";
 import { validationInfor } from "../../services/validationInfor";
 import Swal from "sweetalert2";
@@ -23,7 +23,7 @@ const ProfileUser = () => {
     const [newPasswordError, setNewPasswordError] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
-    const isLoggedIn = localStorage.getItem("emailCosmetics") && localStorage.getItem("passcosmetics");
+    const isLoggedIn = localStorage.getItem("emailCosmetics");
   
     useEffect(() => {
       dispatch(fetchProducts);
@@ -210,6 +210,25 @@ const ProfileUser = () => {
       });
    }
   };
+
+  const handleCancelOrder = async (orderId) => {
+    try {
+      const data = { stateOrderId: 5 }; // Example: 2 represents the new state (e.g., approved)
+      const result = await dispatch(updateStateOrder(orderId, data));
+      if (result) {
+        // Show success message if update is successful
+        Swal.fire('Success', 'Order state updated successfully', 'success');
+        dispatch(fetchOrders(user.id)); 
+      } else {
+        // Show error message if update fails
+        Swal.fire('Error', 'Failed to update order state', 'error');
+      }
+    } catch (error) {
+      console.log(error);
+      Swal.fire('Error', 'Failed to update order state', 'error');
+    }
+  };
+  
   return (
     <div>
       <div className="py-1 bg-primary">
@@ -221,7 +240,7 @@ const ProfileUser = () => {
                   <div className="icon mr-2 d-flex justify-content-center align-items-center">
                     <span className="icon-phone2" />
                   </div>
-                  <span className="text">+ 1235 2355 98</span>
+                  <span className="text">0384968576</span>
                 </div>
                 <div className="col-md pr-4 d-flex topper align-items-center">
                   <div className="icon mr-2 d-flex justify-content-center align-items-center">
@@ -231,7 +250,7 @@ const ProfileUser = () => {
                 </div>
                 <div className="col-md-5 pr-4 d-flex topper align-items-center text-lg-right">
                   <span className="text">
-                    3-5 Business days delivery &amp; Free Returns
+                    Giao hàng từ 3 đến 5 ngày &amp; Đổi/Trả hàng miễn phí
                   </span>
                 </div>
               </div>
@@ -263,35 +282,38 @@ const ProfileUser = () => {
           </button>
           <div className="collapse navbar-collapse" id="ftco-nav">
             <ul className="navbar-nav ml-auto">
-              <li className="nav-item active">
-                <a className="nav-link" style={{cursor:'pointer'}} onClick={()=>{navigate("/")}}>Home</a>
-              </li>
-              <li className="nav-item dropdown">
+            <li className="nav-item">
                 <a
-                  className="nav-link dropdown-toggle"
-                  id="dropdown04"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    navigate("/");
+                  }}
+                  className="nav-link"
                 >
-                  Shop
+                  Trang chủ
                 </a>
-                <div className="dropdown-menu" aria-labelledby="dropdown04">
-                  <a className="dropdown-item">Shop</a>
-                  <a className="dropdown-item">Wishlist</a>
-                  <a className="dropdown-item">Single Product</a>
-                  <a className="dropdown-item">Cart</a>
-                  <a className="dropdown-item">Checkout</a>
-                </div>
               </li>
               <li className="nav-item">
-                <a className="nav-link">About</a>
+                <a
+                  className="nav-link"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    navigate("/about");
+                  }}
+                >
+                  Giới thiệu
+                </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link">Blog</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link">Contact</a>
+                <a
+                  className="nav-link"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    navigate("/contact");
+                  }}
+                >
+                  Liên hệ
+                </a>
               </li>
               <li className="nav-item cta cta-colored">
                 <a
@@ -456,13 +478,15 @@ const ProfileUser = () => {
                     <td>{order.address}</td>
                     <td>{order.totalPrice}</td>
                     <td>{order.stateOrder.state_name}</td>
-                    <td>
-                        <button onClick={()=>{navigate("/user/detail-order/"+order?.id)}}>
+                    <td className="action-buttons">
+                        <button className="eye-button" onClick={()=>{navigate("/user/detail-order/"+order?.id)}}>
                           <i className="fa-solid fa-eye"></i>
                         </button>
-                        <button >
-                          <i className="fa-solid fa-xmark"></i>
-                        </button>
+                        {order.stateOrder.state === 1 && (
+                          <button className="delete-button" onClick={() => handleCancelOrder(order.id)}>
+                            <i className="fa-solid fa-xmark"></i>
+                          </button>
+                        )}
                     </td>
                   </tr>
                 ))}
@@ -495,6 +519,172 @@ const ProfileUser = () => {
       </div>
     </div>
 
+    <section className="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
+  <div className="container py-4">
+    <div className="row d-flex justify-content-center py-5">
+      <div className="col-md-6">
+        <h2 style={{fontSize: 22}} className="mb-0">Đăng ký nhận bản tin của chúng tôi</h2>
+        <span>Nhận cập nhật qua email về các cửa hàng mới nhất và các ưu đãi đặc biệt của chúng tôi</span>
+      </div>
+      <div className="col-md-6 d-flex align-items-center">
+        <form action="#" className="subscribe-form">
+          <div className="form-group d-flex">
+            <input type="text" className="form-control" placeholder="Nhập địa chỉ email" />
+            <input type="submit" value="Đăng ký" className="submit px-3" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+<footer className="ftco-footer ftco-section">
+        <div className="container">
+          <div className="row">
+            <div className="mouse">
+              <a href="#" className="mouse-icon">
+                <div className="mouse-wheel">
+                  <i className="fa-solid fa-chevron-up"></i>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div className="row mb-5">
+            <div className="col-md">
+              <div className="ftco-footer-widget mb-4">
+                <h2 className="ftco-heading-2">Cosmetics</h2>
+                <p>
+                COSMETICS cam kết mang đến cho bạn những sản phẩm chăm sóc da và làm đẹp tốt nhất. Sứ mệnh của chúng tôi là nâng cao vẻ đẹp tự nhiên của bạn và tăng cường sự tự tin với những sản phẩm mỹ phẩm cao cấp, hiệu quả và an toàn.
+                </p>
+                <ul className="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
+                  <li className="ftco-animate">
+                    <a href="#">
+                      <span className="icon-twitter" />
+                    </a>
+                  </li>
+                  <li className="ftco-animate">
+                    <a href="#">
+                      <span className="icon-facebook" />
+                    </a>
+                  </li>
+                  <li className="ftco-animate">
+                    <a href="#">
+                      <span className="icon-instagram" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="col-md">
+              <div className="ftco-footer-widget mb-4 ml-md-5">
+                <h2 className="ftco-heading-2">Menu</h2>
+                <ul className="list-unstyled">
+                  <li>
+                    <a href="#" className="py-2 d-block">
+                      Shop
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="py-2 d-block">
+                      About
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="py-2 d-block">
+                      Journal
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="py-2 d-block">
+                      Contact Us
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="ftco-footer-widget mb-4">
+                <h2 className="ftco-heading-2">Help</h2>
+                <div className="d-flex">
+                  <ul className="list-unstyled mr-l-5 pr-l-3 mr-4">
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Shipping Information
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Returns &amp; Exchange
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Terms &amp; Conditions
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Privacy Policy
+                      </a>
+                    </li>
+                  </ul>
+                  <ul className="list-unstyled">
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        FAQs
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="py-2 d-block">
+                        Contact
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="col-md">
+              <div className="ftco-footer-widget mb-4">
+                <h2 className="ftco-heading-2">Bạn muốn biết thêm thông tin vui lòng liên hệ!</h2>
+                <div className="block-23 mb-3">
+                  <ul>
+                    <li>
+                      <span className="icon icon-map-marker" />
+                      <span className="text">
+                        Khu phố 6, Linh Trung, Thủ Đức, TP.HCM
+                      </span>
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span className="icon icon-phone" />
+                        <span className="text">0384968576</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span className="icon icon-envelope" />
+                        <span className="text">COSMETICSVN@GMAIL.COM</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-12 text-center">
+              <p>
+                {/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
+                Copyright © All rights reserved | This template is made with{" "}
+                <i className="icon-heart color-danger" aria-hidden="true" /> by{" "}
+                <a href="https://colorlib.com" target="_blank">
+                  Colorlib
+                </a>
+                {/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

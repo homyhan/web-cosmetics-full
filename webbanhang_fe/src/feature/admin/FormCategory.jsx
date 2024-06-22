@@ -39,7 +39,7 @@ const FormCategory = () => {
         />
       </div>
       
-        <button
+        <button className="add-button"
           onClick={() => {
             handleSubmit();
           }}

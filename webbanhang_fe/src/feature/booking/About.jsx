@@ -1,120 +1,21 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import "../../components/style.css";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchProducts,
-  addToCart,
+  changeQuantityProdCart,
+  clearCart,
   fetchCartById,
-  fetchCategories,
-  fetBanners,
-  fetchProdsByName,
+  removeProdInCart,
 } from "./thunk";
-
-import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import _ from "lodash";
-import { Pagination, Tabs } from "antd";
-import { Carousel } from "react-bootstrap";
 
-const Home = () => {
+const About = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { products, listCategory } = useSelector((state) => state.booking);
   const { user } = useSelector((state) => state.auth);
-  const [searchParam, setSearchParam] = useSearchParams();
-  const [quantityProdCart, setQuantityProdCart] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
-
+  const dispatch = useDispatch();
+  const [listItemProd, setListItemProd] = useState([]);
   const isLoggedIn = localStorage.getItem("emailCosmetics");
-
-  const banners = useSelector((state) => state.booking.banners);
-
-  useEffect(() => {
-    const page = searchParam.get("page")
-      ? parseInt(searchParam.get("page"), 10)
-      : 1;
-    dispatch(fetchProducts(page - 1, 8));
-    dispatch(fetchCategories);
-    dispatch(fetBanners);
-    // dispatch(fetchProducts);
-    getQuantityProdInCart();
-  }, [dispatch, searchParam]);
-
-  const getQuantityProdInCart = async () => {
-    const idUser = user?.id;
-    if (idUser) {
-      const res = await dispatch(fetchCartById(idUser));
-      setQuantityProdCart(res?.data?.length);
-    }
-  };
-
-  const handleAddToCart = async (id) => {
-    const userId = user?.id;
-    if (userId) {
-      const productId = id;
-      const res = await dispatch(addToCart({ userId, productId, quantity: 1 }));
-      getQuantityProdInCart();
-      if (res?.status == "200") {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: res?.data,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      } else {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          title: res?.data,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      }
-    } else {
-      navigate("/login");
-    }
-  };
-
-  const handleToCartPage = async () => {
-    navigate("/cart");
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("emailCosmetics");
-    localStorage.removeItem("passcosmetics");
-    navigate("/login");
-  };
-
-  const onChange = (key) => {
-    console.log(key);
-  };
-
-  // const handleInputChange = (e) => {
-  //   setSearchTerm(e.target.value);
-  // };
-  // const handleSearch = () => {
-  //   dispatch(fetchProdsByName(searchTerm, 0, 10)); // Bắt đầu từ trang 0 và kích thước trang là 10
-  // };
-
-  // const handleKeyPress = (e) => {
-  //   if (e.key === 'Enter') {
-  //     handleSearch();
-  //   }
-  // };
-
-  const debouncedSearch = useCallback(
-    _.debounce((term) => {
-      dispatch(fetchProdsByName(term, 0, 8));
-    }, 500), // 500ms debounce time
-    [dispatch]
-  );
-
-  const handleChange = (event) => {
-    const term = event.target.value;
-    setSearchTerm(term);
-    debouncedSearch(term);
-  };
 
   const formatCurrencyVND = (number) => {
     var formattedAmount = number?.toLocaleString("vi-VN", {
@@ -125,75 +26,22 @@ const Home = () => {
     return formattedAmount;
   };
 
-  let renderTabCate = () => {
-    return listCategory?.map((item) => {
-      return {
-        label: item?.nameCategory,
-        key: item?.id,
-        children: (
-          <>
-            {item?.product?.length == 0 ? (
-              <p style={{ padding: "12px", backgroundColor: "#82ae4663" }}>
-                Sản phẩm sẽ sớm được cập nhật
-              </p>
-            ) : (
-              <div className="listProductHome3">
-                {item?.product?.map((item, key) => {
-                  return (
-                    <div key={item?.id} className="item">
-                      <img
-                        src={item?.img}
-                        onClick={() => {
-                          navigate("/product-detail/" + item?.id);
-                        }}
-                        alt=""
-                      />
-                      <h1>{item?.nameProd}</h1>
-                      <p className="price">
-                        {formatCurrencyVND(item?.price)} vnd
-                      </p>
-                      <button
-                        onClick={() => {
-                          handleAddToCart(item?.id);
-                        }}
-                      >
-                        <i className="fa-solid fa-cart-shopping"></i>
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+  const getListProdInCart = async () => {
+    const idUser = user?.id;
+    if (idUser) {
+      const res = await dispatch(fetchCartById(idUser));
+      setListItemProd([...res?.data]);
+    }
+  };
 
-            {/* {item?.listItemProduct?.length == 0 ? (
-              <p
-                style={{ backgroundColor: "#fff3cd", color: "#856404" }}
-                className="p-4 rounded-lg text-center"
-              >
-                Danh mục sản phẩm trống
-              </p>
-            ) : (
-              <>
-                <div className={`${styles.listItem } grid grid-cols-4 bg-white`}>
-                  {item.listItemProduct.map((prod) => {
-                    return (
-                      <ItemProduct key={prod.uuid} prod={prod}></ItemProduct>
-                    );
-                  })}
-                </div>
-                {item?.listItemProduct?.length<8?"": (
-                  <div className="text-center">
-                  <Pagination defaultCurrent={1} total={50} />
-                </div>
-                )}
-                
-              </>
-              
-            )} */}
-          </>
-        ),
-      };
-    });
+  useEffect(() => {
+    getListProdInCart();
+  }, [user]);
+
+  const handleLogout = () => {
+      localStorage.removeItem("emailCosmetics");
+      localStorage.removeItem("passcosmetics");
+      navigate('/login'); 
   };
 
   return (
@@ -225,15 +73,14 @@ const Home = () => {
           </div>
         </div>
       </div>
-
       <nav
         className="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light"
         id="ftco-navbar"
       >
         <div className="container">
           <a
-            className="navbar-brand"
             style={{ cursor: "pointer" }}
+            className="navbar-brand"
             onClick={() => {
               navigate("/");
             }}
@@ -253,7 +100,7 @@ const Home = () => {
           </button>
           <div className="collapse navbar-collapse" id="ftco-nav">
             <ul className="navbar-nav ml-auto">
-            <li className="nav-item">
+              <li className="nav-item">
                 <a
                   style={{ cursor: "pointer" }}
                   onClick={() => {
@@ -286,34 +133,31 @@ const Home = () => {
                   Liên hệ
                 </a>
               </li>
-              {user?.role?.nameRole=="Admin"? '': <li className="nav-item cta cta-colored">
+              <li className="nav-item cta cta-colored">
                 <a
                   style={{ cursor: "pointer" }}
                   onClick={() => {
-                    handleToCartPage();
+                    navigate("/cart");
                   }}
                   className="nav-link"
                 >
-                  <i className="fa-solid fa-cart-shopping" />[{quantityProdCart}
-                  ]
+                  <i className="fa-solid fa-cart-shopping" />[
+                  {listItemProd?.length}]
                 </a>
-              </li>}
-              
+              </li>
               {isLoggedIn ? (
                 <>
                   <li className="nav-item cta cta-colored tagLiIconUser">
-                    <a
-                      onClick={() => {
-                        navigate("/user/profile");
-                      }}
-                      className="nav-link"
-                    >
-                      <i className="fa-solid fa-user"></i>
-                      <span className="text-email">
-                        {isLoggedIn ? user.email : null}
-                      </span>
-                    </a>
-                  </li>
+                <a
+                  onClick={() => {
+                    navigate("/user/profile");
+                  }}
+                  className="nav-link"
+                >
+                  <i className="fa-solid fa-user"></i>
+                  <span className="text-email">{isLoggedIn ? user.email : null}</span>
+                </a>
+              </li>
                   <li className="nav-item cta cta-colored tagLiIconUser">
                     <a className="nav-link" onClick={handleLogout}>
                       <i className="fa-solid fa-power-off"></i>
@@ -322,114 +166,56 @@ const Home = () => {
                 </>
               ) : (
                 <li className="nav-item cta cta-colored tagLiIconUser">
-                  <a
-                    onClick={() => {
-                      navigate("/login");
-                    }}
-                    className="nav-link"
-                  >
+                  <a onClick={() => { navigate("/login"); }} className="nav-link">
                     <i className="fa-solid fa-right-to-bracket"></i>
                   </a>
                 </li>
               )}
-
-              {/* <li className="nav-item cta cta-colored tagLiIconUser"><a className="nav-link" onClick={handleLogout}><i class="fa-solid fa-power-off"></i></a></li> */}
             </ul>
           </div>
         </div>
       </nav>
+      
+      {/* END nav */}
+      {/* HÃY THỰC HIỆN CODE TRANG ABOUT Ở ĐÂY */}
 
-      {/* BANNER  */}
-      <section className="banner-section">
-        <Carousel>
-          {banners.map((banner, index) => (
-            <Carousel.Item key={index}>
-              <img className="d-block w-100" src={banner.img} />
-              <Carousel.Caption>
-                <h3>{banner.name_banner}</h3>
-                <p>{banner.content}</p>
-              </Carousel.Caption>
-            </Carousel.Item>
-          ))}
-        </Carousel>
-      </section>
+      {/* About Section */}
+{/* About Section */}
+<section className="ftco-section">
+  <div className="container">
+    <div className="row">
+      <div className="col-md-12">
+        <h2 className="heading-section mb-4 title-checkout">Thương hiệu của chúng tôi</h2>
+        <p>
+          COSMETICS cam kết mang đến cho bạn những sản phẩm chăm sóc da và làm đẹp tốt nhất. Sứ mệnh của chúng tôi là nâng cao vẻ đẹp tự nhiên của bạn và tăng cường sự tự tin với những sản phẩm mỹ phẩm cao cấp, hiệu quả và an toàn. Chúng tôi tin vào sức mạnh của việc chăm sóc bản thân và nỗ lực giúp mọi người luôn tự tin nhất hàng ngày.
+        </p>
+        <p>
+          Được thành lập từ đầu năm 2024, COSMETICS nhanh chóng trở thành một cái tên đáng tin cậy trong ngành công nghiệp làm đẹp. Các sản phẩm của chúng tôi được tỉ mỉ lựa chọn để đáp ứng nhu cầu đa dạng của khách hàng, đảm bảo chất lượng và hiệu quả xuất sắc. Cho dù bạn đang tìm kiếm các sản phẩm chăm sóc da cơ bản hay những món đồ trang điểm không thể thiếu, chúng tôi đều có sản phẩm phù hợp cho mọi người.
+        </p>
+        <p>
+          Tại COSMETICS, chúng tôi cam kết với sự bền vững và các thực tiễn đạo đức. Chúng tôi ưu tiên sử dụng bao bì thân thiện với môi trường và các nguyên liệu được cung cấp một cách có trách nhiệm. Hãy cùng tham gia với chúng tôi trong hành trình đến một tương lai đẹp và bền vững hơn.
+        </p>
+      </div>
+    </div>
+    <div className="row mt-5">
+      <div className="col-md-6">
+        <img src="https://phuongnamvina.com/img_data/images/co-nen-mo-cua-hang-ban-my-pham.jpg" className="img-fluid" alt="About Us" />
+      </div>
+      <div className="col-md-6">
+        <p className="mb-4">
+          Sự tận tâm của chúng tôi đối với chất lượng và sáng tạo đã giành được lòng tin của các tín đồ làm đẹp trên toàn thế giới. Hãy khám phá các bộ sưu tập của chúng tôi và khám phá sự khác biệt mà COSMETICS có thể mang đến cho chế độ chăm sóc da của bạn.
+        </p>
+        <p>
+          Hãy cùng tham gia vào sứ mệnh của chúng tôi để tái định nghĩa các tiêu chuẩn vẻ đẹp và tôn vinh sự độc nhất vô nhị của từng cá nhân. Trải nghiệm sức mạnh biến đổi của COSMETICS và ôm trọn vẻ đẹp độc đáo của bạn ngay hôm nay.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      {/* CATE  */}
-      <section className="sectionProduct sectionProductCate py-5">
-        <h2 className="text-center">Danh mục</h2>
-        <div className="listProductCateHome1">
-          <Tabs
-            defaultActiveKey="1"
-            items={renderTabCate()}
-            onChange={onChange}
-          />
-        </div>
-      </section>
 
-      {/* PRODUCT  */}
-      <section className="sectionProduct py-5">
-        <h2 className="text-center">Sản phẩm</h2>
-        <div className="container my-3">
-          {/*   <input
-        type="text"
-        className="form-control"
-        placeholder="search by name"
-        value={searchTerm}
-        onChange={handleInputChange}
-        onKeyPress={handleKeyPress}
-      />
-       <button onClick={handleSearch} className="btn btn-primary">
-        Search
-      </button> */}
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Tìm kiếm theo tên sản phẩm"
-            value={searchTerm}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="listProductHome">
-          {products?.content?.map((item, key) => {
-            return (
-              <div key={item?.id} className="item">
-                <img
-                  src={item?.img}
-                  onClick={() => {
-                    navigate("/product-detail/" + item?.id);
-                  }}
-                  alt=""
-                />
-                <h1>{item?.nameProd}</h1>
-                <p className="price">{formatCurrencyVND(item?.price)} vnd</p>
-                <button
-                  onClick={() => {
-                    handleAddToCart(item?.id);
-                  }}
-                >
-                  <i className="fa-solid fa-cart-shopping"></i>
-                </button>
-                <button onClick={() => {}}>
-                  <i className="fa-solid fa-credit-card"></i>
-                </button>
-              </div>
-            );
-          })}
-        </div>
-        <Pagination
-          className="text-center my-4"
-          current={
-            searchParam.get("page") ? parseInt(searchParam.get("page"), 10) : 1
-          }
-          pageSize={8}
-          total={products?.totalElements}
-          onChange={(page) => {
-            setSearchParam({ page: page.toString() });
-          }}
-        />
-      </section>
 
-      <section className="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
+<section className="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
   <div className="container py-4">
     <div className="row d-flex justify-content-center py-5">
       <div className="col-md-6">
@@ -599,4 +385,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default About;
