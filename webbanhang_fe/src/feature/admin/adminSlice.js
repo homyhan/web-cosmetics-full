@@ -14,7 +14,8 @@ const initialState = {
     selectedUser: {},
     selectedRole:{},
     orders: {},
-    detail: []
+    detail: [],
+    monthlySales: new Array(12).fill(0)
   };
 
   export const adminReducer = (state = initialState, { type, payload }) => {
@@ -76,6 +77,8 @@ const initialState = {
         if (type === "SET_DETAIL") {
           draft.detail = payload;
         }
-        
+        if (type === "SET_MONTHLY_SALES") {
+          draft.monthlySales = payload;
+        }
     });
   };
