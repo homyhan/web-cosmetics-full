@@ -14,9 +14,11 @@ import web.webbanhang.jpa.UserJpa;
 import web.webbanhang.stateOrder.StateOrder;
 import web.webbanhang.user.User;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class OrderController {
@@ -140,6 +142,28 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    @GetMapping("/orders/monthly-sales")
+    public ResponseEntity<List<Double>> getMonthlySales() {
+        try {
+            List<Orders> allOrders = orderJpa.findAll();
+            double[] monthlySales = new double[12];
+
+            allOrders.forEach(order -> {
+                int month = order.getOrderDate().getMonth();
+                monthlySales[month] += order.getTotalPrice();
+            });
+
+            List<Double> monthlySalesList = Arrays.stream(monthlySales)
+                    .boxed()
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(monthlySalesList);
+        } catch (Exception e) {
+            System.err.println("Error calculating monthly sales: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 
 }
 
