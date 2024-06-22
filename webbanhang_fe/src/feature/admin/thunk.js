@@ -357,3 +357,15 @@ export const updateStateOrder =(orderId, data)=> async (dispatch)=>{
     console.log(err);
   }
 }
+
+export const fetchMonthlySales = () => async (dispatch) => {
+  try {
+    const res = await cosmeticsServ.getSales();
+    dispatch({
+      type: "SET_MONTHLY_SALES",
+      payload: res.data
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}

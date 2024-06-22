@@ -206,5 +206,10 @@ export const cosmeticsServ = {
   } ,
   updateStatusOrder: (orderId, data) => {
     return http.put("/orders/" + orderId + "/state", data);
-  } 
+  },
+
+  ///Thong ke
+  getSales: () => {
+    return http.get("/orders/monthly-sales");
+  }
 };
