@@ -144,6 +144,7 @@ export const fetchDetailOrder = (orderId) => async (dispatch) => {
       type: "SET_DETAIL",
       payload: res.data,
     });
+    console.log(res?.data);
   } catch (error) {
     console.log(error);
   }

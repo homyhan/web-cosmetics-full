@@ -86,12 +86,12 @@ function App() {
         <Route path='/admin/add-user' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={NewUserForAdmin}></RouterComponent>}></Route>
         <Route path='/cart' element={<RouterComponent Component={Cart}></RouterComponent>}></Route>
         <Route path='/product-detail/:id' element={<RouterComponent Component={ProductDetail}></RouterComponent>}></Route>
-        <Route path='/user/profile' element={<RouterComponent Component={ProfileUser}></RouterComponent>}></Route>
-        <Route path='/user/detail-order/:id' element={<RouterComponent Component={DetailOrder}></RouterComponent>}></Route>
+        <Route path='/user/profile' element={<RouterComponent isLogin={true} Component={ProfileUser} redirectPath="/login"></RouterComponent>}></Route>
+        <Route path='/user/detail-order/:id' element={<RouterComponent Component={DetailOrder} isLogin={true} redirectPath="/login"></RouterComponent>}></Route>
         <Route path='/admin/role' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={Role}></RouterComponent>}></Route>
         <Route path='/admin/add-role' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={FormAddRole}></RouterComponent>}></Route>
         <Route path='/admin/edit-role/:id' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={FormEditRole}></RouterComponent>}></Route>
-        <Route path='/user/checkout/:id' element={<RouterComponent Component={Checkout}></RouterComponent>}></Route>
+        <Route path='/user/checkout/:id' element={<RouterComponent Component={Checkout} isLogin={true} redirectPath="/login"></RouterComponent>}></Route>
         <Route path='/admin/orders' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={OrdersAdmin}></RouterComponent>}></Route>
         <Route path='/admin/order-detail/:orderId' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={DetailOrderAdmin}></RouterComponent>}></Route>
         <Route path='/admin/edit-stateOrder/:orderId' element={<RouterComponent isAdmin={true} redirectPath="/login" Component={EditStateOrder}></RouterComponent>}></Route>
