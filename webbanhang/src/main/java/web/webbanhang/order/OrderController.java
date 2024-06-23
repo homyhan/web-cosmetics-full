@@ -107,10 +107,27 @@ public class OrderController {
         }
     }
 
+//    @GetMapping("/order-details/{orderId}")
+//    public List<OrderDetail> getOrderDetailsByOrderId(@PathVariable int orderId) {
+//        return orderDetailJpa.findByOrdersId(orderId);
+//    }
+
     @GetMapping("/order-details/{orderId}")
-    public List<OrderDetail> getOrderDetailsByOrderId(@PathVariable int orderId) {
-        return orderDetailJpa.findByOrdersId(orderId);
+    public List<OrderDetailDTO> getOrderDetailsByOrderId(@PathVariable int orderId) {
+        List<OrderDetail> orderDetails = orderDetailJpa.findByOrdersId(orderId);
+        return orderDetails.stream().map(orderDetail -> {
+            OrderDetailDTO dto = new OrderDetailDTO();
+            dto.setId(orderDetail.getId());
+            dto.setProductId(orderDetail.getProduct().getId());
+            dto.setProductName(orderDetail.getProduct().getNameProd());
+            dto.setProductPrice(orderDetail.getProduct().getPrice());
+            dto.setImg(orderDetail.getProduct().getImg());
+            dto.setQuantity(orderDetail.getQuantity());
+            dto.setPrice(orderDetail.getPrice());
+            return dto;
+        }).collect(Collectors.toList());
     }
+
 
 //    @GetMapping("/orderDetail/{productId}")
 //    public List<OrderDetail> getOrderDetailsByProductId(@PathVariable int productId) {

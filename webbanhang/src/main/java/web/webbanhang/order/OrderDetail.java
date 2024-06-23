@@ -13,7 +13,7 @@ public class OrderDetail {
     @JoinColumn(name = "order_id")
     private Orders orders;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
     private Product product;
 

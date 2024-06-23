@@ -1,12 +1,10 @@
 package web.webbanhang.product;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import web.webbanhang.category.Category;
 import web.webbanhang.comment.Comment;
+import web.webbanhang.order.OrderDetail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +43,9 @@ public class Product {
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
 
-
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<OrderDetail> orderDetails = new ArrayList<>();
     public Product(int id, String nameProd, double price, String img, int quantity, String description, Category category, List<Comment> comments) {
         this.id = id;
         this.nameProd = nameProd;
