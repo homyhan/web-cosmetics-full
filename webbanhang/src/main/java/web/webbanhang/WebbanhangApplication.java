@@ -19,7 +19,8 @@ public class WebbanhangApplication {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
 						.allowedMethods("*")
-						.allowedOrigins("http://localhost:3000/", "https://web-cosmetics-full.vercel.app/");
+						.allowedOrigins("http://localhost:3000/", "https://web-cosmetics-full.vercel.app/")
+						;
 			}
 		};
 	}
