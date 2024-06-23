@@ -146,7 +146,7 @@ const ProductDetail = () => {
       };
 
       const res = await dispatch(commentsProd(data));
-      if (res?.status == 404) {
+      if (res?.status == 500) {
         return Swal.fire({
           icon: "error",
           title: res?.data,
